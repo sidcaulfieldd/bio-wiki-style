@@ -1,4 +1,4 @@
-import { User } from "lucide-react";
+import profilePic from "@/assets/profile_pic.jpg";
 
 const Index = () => {
   return (
@@ -81,10 +81,11 @@ const Index = () => {
             <aside className="w-[300px] flex-shrink-0">
               <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-3">
                 <div className="text-center mb-3">
-                  <div className="w-full aspect-square bg-[#e9ecef] flex items-center justify-center mb-2">
-                    <User className="w-20 h-20 text-[#a2a9b1]" />
-                  </div>
-                  <div className="text-xs text-[#54595d]">Upload JPG/PNG photo</div>
+                  <img 
+                    src={profilePic} 
+                    alt="Sid Caulfield" 
+                    className="w-full aspect-square object-cover mb-2"
+                  />
                 </div>
                 
                 <table className="w-full text-sm">
