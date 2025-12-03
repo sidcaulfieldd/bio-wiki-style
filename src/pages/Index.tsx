@@ -1,8 +1,6 @@
 import profilePic from "@/assets/profile_pic.jpg";
-
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-[#f6f6f6]">
+  return <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
       <header className="bg-white border-b border-[#a7d7f9]">
         <div className="max-w-[1000px] mx-auto px-4 py-3 flex items-center gap-4">
@@ -173,27 +171,9 @@ const Index = () => {
                 Skills and Areas of Expertise
               </h2>
               <div className="flex flex-wrap gap-2 mb-4">
-                {[
-                  "Journalism",
-                  "Multimedia Production",
-                  "Audio Editing",
-                  "Social Media Content",
-                  "Communications",
-                  "Podcast Production",
-                  "Project Coordination",
-                  "Surf Instruction",
-                  "Feature Writing",
-                  "Copywriting",
-                  "Research",
-                  "Interview Techniques"
-                ].map((skill) => (
-                  <span
-                    key={skill}
-                    className="border border-[#a2a9b1] bg-[#f8f9fa] px-2 py-1 text-sm"
-                  >
+                {["Journalism", "Multimedia Production", "Audio Editing", "Social Media Content", "Communications", "Podcast Production", "Project Coordination", "Surf Instruction", "Feature Writing", "Copywriting", "Research", "Interview Techniques"].map(skill => <span key={skill} className="border border-[#a2a9b1] bg-[#f8f9fa] px-2 py-1 text-sm">
                     {skill}
-                  </span>
-                ))}
+                  </span>)}
               </div>
 
               {/* Publications Section */}
@@ -278,11 +258,7 @@ const Index = () => {
 
                 {/* Infobox image */}
                 <div className="text-center p-3 pb-0">
-                  <img
-                    src={profilePic}
-                    alt="Sid Caulfield"
-                    className="w-full aspect-square object-cover"
-                  />
+                  <img src={profilePic} alt="Sid Caulfield" className="w-full aspect-square object-cover" />
                   <div className="text-xs text-[#54595d] mt-1 mb-3">
                     Caulfield in 2025
                   </div>
@@ -331,12 +307,7 @@ const Index = () => {
                         Education
                       </th>
                       <td className="py-2 px-2">
-                        <a
-                          href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology"
-                          className="text-[#0645ad] hover:underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
+                        <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
                           RMIT University
                         </a>
                       </td>
@@ -363,12 +334,7 @@ const Index = () => {
                         Website
                       </th>
                       <td className="py-2 px-2">
-                        <a
-                          href="#"
-                          className="text-[#0645ad] hover:underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
+                        <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
                           [placeholder.com]
                         </a>
                       </td>
@@ -378,12 +344,7 @@ const Index = () => {
                         Contact
                       </th>
                       <td className="py-2 px-2">
-                        <a
-                          href="mailto:placeholder@email.com"
-                          className="text-[#0645ad] hover:underline"
-                        >
-                          placeholder@email.com
-                        </a>
+                        <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">caulfieldsid@gmail.com</a>
                       </td>
                     </tr>
                     <tr className="border-t border-[#a2a9b1]">
@@ -391,21 +352,11 @@ const Index = () => {
                         Social
                       </th>
                       <td className="py-2 px-2">
-                        <a
-                          href="#"
-                          className="text-[#0645ad] hover:underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
+                        <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
                           LinkedIn
                         </a>
                         <br />
-                        <a
-                          href="#"
-                          className="text-[#0645ad] hover:underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
+                        <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
                           Instagram
                         </a>
                       </td>
@@ -427,12 +378,7 @@ const Index = () => {
                       Podcast producers
                     </a>{" "}
                     |{" "}
-                    <a
-                      href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology"
-                      className="text-[#0645ad] hover:underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
                       RMIT University alumni
                     </a>{" "}
                     |{" "}
@@ -453,18 +399,16 @@ const Index = () => {
           <p>
             This page was last edited on{" "}
             {new Date().toLocaleDateString("en-US", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+          })}
           </p>
           <p className="mt-2">
             Content is available under CC BY-SA 4.0 unless otherwise noted.
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
