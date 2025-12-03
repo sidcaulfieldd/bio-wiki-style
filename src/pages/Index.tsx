@@ -77,10 +77,16 @@ const Index = () => {
 
             {/* Infobox Sidebar */}
             <aside className="w-[300px] flex-shrink-0">
-              <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-3">
-                <div className="text-center font-bold text-[125%] mb-2">Sid Caulfield</div>
-                <div className="text-center mb-3">
-                  <img src={profilePic} alt="Sid Caulfield" className="w-full aspect-square object-cover mb-2" />
+              <div className="border border-[#a2a9b1] bg-[#f8f9fa]">
+                {/* Infobox title */}
+                <div className="bg-[#eaecf0] text-center font-bold text-[125%] py-2 border-b border-[#a2a9b1]">
+                  Sid Caulfield
+                </div>
+                
+                {/* Infobox image */}
+                <div className="text-center p-3 pb-0">
+                  <img src={profilePic} alt="Sid Caulfield" className="w-full aspect-square object-cover" />
+                  <div className="text-xs text-[#54595d] mt-1 mb-3">Caulfield in 2024</div>
                 </div>
                 
                 <table className="w-full text-sm">
