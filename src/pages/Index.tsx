@@ -43,7 +43,7 @@ const Index = () => {
                 Notable Works
               </h2>
               <p className="mb-4 leading-relaxed">
-                Caulfield is best known for his SBS documentary <em>"Running the Most Profitable Bunnings Sausage Sizzle of All Time"</em>, which received critical acclaim and won two Grammy Awards.
+                Caulfield is best known for his <a href="https://en.wikipedia.org/wiki/Special_Broadcasting_Service" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">SBS</a> documentary <em>"Running the Most Profitable Bunnings Sausage Sizzle of All Time"</em>, which received critical acclaim and won two Grammy Awards.
               </p>
 
               {/* Awards Section */}
@@ -62,8 +62,8 @@ const Index = () => {
                 Caulfield has contributed to numerous prominent publications including:
               </p>
               <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                <li>VICE</li>
-                <li>SBS (Special Broadcasting Service)</li>
+                <li><a href="https://en.wikipedia.org/wiki/Vice_Media" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">VICE</a></li>
+                <li><a href="https://en.wikipedia.org/wiki/Special_Broadcasting_Service" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">SBS</a> (Special Broadcasting Service)</li>
                 <li>ABC Australia</li>
                 <li>i-D</li>
               </ul>
@@ -107,7 +107,7 @@ const Index = () => {
                     </tr>
                     <tr className="border-t border-[#a2a9b1]">
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Education</th>
-                      <td className="py-2 px-2">RMIT University</td>
+                      <td className="py-2 px-2"><a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a></td>
                     </tr>
                     <tr className="border-t border-[#a2a9b1]">
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Notable work</th>
@@ -139,7 +139,7 @@ const Index = () => {
                   <div className="mt-1">
                     <a href="#" className="text-[#0645ad] hover:underline">Australian journalists</a> |{" "}
                     <a href="#" className="text-[#0645ad] hover:underline">Podcast producers</a> |{" "}
-                    <a href="#" className="text-[#0645ad] hover:underline">RMIT University alumni</a>
+                    <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University alumni</a>
                   </div>
                 </div>
               </div>
