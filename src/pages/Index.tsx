@@ -86,14 +86,12 @@ const Index = () => {
                   <tbody>
                     <tr className="border-t border-[#a2a9b1]">
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Born</th>
-                      <td className="py-2 px-2">Taylor Alison Swift
-December 13, 1989 (age 35)
-West Reading, Pennsylvania, US</td>
+                      <td className="py-2 px-2">Sidney Joseph Caulfield July 27, 2003 (age 22) East Melbourne, Victoria, AUS</td>
                     </tr>
                     <tr className="border-t border-[#a2a9b1]">
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Occupation</th>
-                      <td className="py-2 px-2">
-                        Sidney Joseph Caulfield July 27, 2003 (age 22) East Melbourne, Victoria, AUS <br />
+                      <td className="py-2 px-2">Freelance Journalist
+Podcast Producer<br />
                         Podcast Producer
                       </td>
                     </tr>
