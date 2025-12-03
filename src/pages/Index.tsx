@@ -93,7 +93,7 @@ West Reading, Pennsylvania, US</td>
                     <tr className="border-t border-[#a2a9b1]">
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Occupation</th>
                       <td className="py-2 px-2">
-                        Freelance Journalist<br />
+                        Sidney Joseph Caulfield July 27, 2003 (age 22) East Melbourne, Victoria, AUS <br />
                         Podcast Producer
                       </td>
                     </tr>
