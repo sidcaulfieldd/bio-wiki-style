@@ -78,6 +78,7 @@ const Index = () => {
             {/* Infobox Sidebar */}
             <aside className="w-[300px] flex-shrink-0">
               <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-3">
+                <div className="text-center font-bold text-[125%] mb-2">Sid Caulfield</div>
                 <div className="text-center mb-3">
                   <img src={profilePic} alt="Sid Caulfield" className="w-full aspect-square object-cover mb-2" />
                 </div>
