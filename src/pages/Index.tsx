@@ -1,8 +1,6 @@
 import profilePic from "@/assets/profile_pic.jpg";
-
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-[#f6f6f6]">
+  return <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
       <header className="bg-white border-b border-[#a7d7f9]">
         <div className="max-w-[1000px] mx-auto px-4 py-3 flex items-center gap-4">
@@ -81,18 +79,16 @@ const Index = () => {
             <aside className="w-[300px] flex-shrink-0">
               <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-3">
                 <div className="text-center mb-3">
-                  <img 
-                    src={profilePic} 
-                    alt="Sid Caulfield" 
-                    className="w-full aspect-square object-cover mb-2"
-                  />
+                  <img src={profilePic} alt="Sid Caulfield" className="w-full aspect-square object-cover mb-2" />
                 </div>
                 
                 <table className="w-full text-sm">
                   <tbody>
                     <tr className="border-t border-[#a2a9b1]">
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Born</th>
-                      <td className="py-2 px-2">Sid Caulfield</td>
+                      <td className="py-2 px-2">Taylor Alison Swift
+December 13, 1989 (age 35)
+West Reading, Pennsylvania, US</td>
                     </tr>
                     <tr className="border-t border-[#a2a9b1]">
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Occupation</th>
@@ -103,7 +99,7 @@ const Index = () => {
                     </tr>
                     <tr className="border-t border-[#a2a9b1]">
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Years active</th>
-                      <td className="py-2 px-2">2025–present</td>
+                      <td className="py-2 px-2">2025—present</td>
                     </tr>
                     <tr className="border-t border-[#a2a9b1]">
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Education</th>
@@ -151,12 +147,14 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-white border-t border-[#a7d7f9] mt-8 py-6">
         <div className="max-w-[1000px] mx-auto px-4 text-xs text-[#54595d]">
-          <p>This page was last edited on {new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <p>This page was last edited on {new Date().toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          })}</p>
           <p className="mt-2">Content is available under CC BY-SA 4.0 unless otherwise noted.</p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
