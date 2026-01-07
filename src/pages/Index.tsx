@@ -234,7 +234,7 @@ const Index = () => {
                   <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/sidcaulfield/">Instagram (@sidcaulfield)</a>
                 </li>
                 <li>
-                  <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Podcast — [Placeholder: Podcast Name]</a>
+                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9">The Mons Monday Podcast </a>
                 </li>
                 <li>
                   <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube Channel</a>
