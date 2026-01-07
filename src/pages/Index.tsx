@@ -317,22 +317,10 @@ const Index = () => {
                       </td>
                     </tr>
                     <tr className="border-t border-[#a2a9b1]">
-                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
-                        Notable work
-                      </th>
-                      <td className="py-2 px-2">
-                        <em>
-                          "Running the Most Profitable Bunnings Sausage Sizzle of
-                          All Time"
-                        </em>
-                      </td>
+                      
+                      
                     </tr>
-                    <tr className="border-t border-[#a2a9b1]">
-                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
-                        Awards
-                      </th>
-                      <td className="py-2 px-2">2 Grammy Awards</td>
-                    </tr>
+                    
                     <tr className="border-t border-[#a2a9b1]">
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
                         Website
@@ -356,7 +344,7 @@ const Index = () => {
                         Social
                       </th>
                       <td className="py-2 px-2">
-                        <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
+                        <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/sid-caulfield-27b838356/">
                           LinkedIn
                         </a>
                         <br />
