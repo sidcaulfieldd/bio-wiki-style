@@ -258,7 +258,9 @@ const Index = () => {
 
                 {/* Infobox image */}
                 <div className="text-center p-3 pb-0">
-                  <img src={profilePic} alt="Sid Caulfield" className="w-full aspect-square object-cover" />
+                  <div className="relative w-full aspect-square bg-[#FF69B4]">
+                    <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover" />
+                  </div>
                   <div className="text-xs text-[#54595d] mt-1 mb-3">
                     Caulfield in 2025
                   </div>
