@@ -262,6 +262,17 @@ const Index = () => {
                   <div className="text-xs text-[#54595d] mt-1 mb-3">
                     Caulfield in 2025
                   </div>
+                  {/* Spotify Embed */}
+                  <iframe
+                    style={{ borderRadius: '12px' }}
+                    src="https://open.spotify.com/embed/track/4YACgyR9xdAcyJMBV8H6oX?utm_source=generator&theme=0"
+                    width="100%"
+                    height="80"
+                    frameBorder="0"
+                    allowFullScreen
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy"
+                  />
                 </div>
 
                 <table className="w-full text-sm">
