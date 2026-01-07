@@ -3,10 +3,7 @@ const Index = () => {
   return <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
       <header className="bg-white border-b border-[#a7d7f9]">
-        <div className="max-w-[1000px] mx-auto px-4 py-3 flex items-center gap-4">
-          <div className="text-2xl font-serif">Lit-ipedia</div>
-          <div className="text-sm text-[#54595d]">Sid upside down spells piS</div>
-        </div>
+        
       </header>
 
       {/* Main Content */}
