@@ -348,7 +348,7 @@ const Index = () => {
                           LinkedIn
                         </a>
                         <br />
-                        <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
+                        <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/sidcaulfield/">
                           Instagram
                         </a>
                       </td>
