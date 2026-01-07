@@ -3,7 +3,10 @@ const Index = () => {
   return <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
       <header className="bg-white border-b border-[#a7d7f9]">
-        
+        <div className="max-w-[1000px] mx-auto px-4 py-3 flex items-center gap-4">
+          <div className="text-2xl font-serif">Lit-ipedia</div>
+          <div className="text-sm text-[#54595d]">Sid upside down spells piS</div>
+        </div>
       </header>
 
       {/* Main Content */}
@@ -23,17 +26,17 @@ const Index = () => {
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad]">
                   <li><a href="#career-overview" className="hover:underline">Career Overview</a>
                     <ol className="list-decimal ml-4 text-[#0645ad]">
-                      
+                      <li><a href="#surf-instruction" className="hover:underline">Surf Instruction and Management</a></li>
                       <li><a href="#podcast-production" className="hover:underline">Podcast Production</a></li>
                       <li><a href="#journalism" className="hover:underline">Journalism and Media Work</a></li>
-                      
+                      <li><a href="#freelance" className="hover:underline">Freelance Projects</a></li>
                     </ol>
                   </li>
-                  
+                  <li><a href="#notable-projects" className="hover:underline">Notable Projects</a></li>
                   <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
-                  
-                  
+                  <li><a href="#publications" className="hover:underline">Publications</a></li>
+                  <li><a href="#awards" className="hover:underline">Awards and Recognition</a></li>
                   <li><a href="#references" className="hover:underline">References</a></li>
                   <li><a href="#external-links" className="hover:underline">External Links</a></li>
                 </ol>
@@ -53,13 +56,17 @@ const Index = () => {
               </p>
 
               {/* Surf Instruction and Management */}
-              
-              
+              <h3 id="surf-instruction" className="text-xl font-serif mt-4 mb-2">
+                Surf Instruction and Management
+              </h3>
+              <p className="mb-2 leading-relaxed">
+                Caulfield has worked extensively in surf education, developing programs and managing operations for surf schools.
+              </p>
               <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                
-                
-                
-                
+                <li>Developed and delivered surf instruction programs for beginners through advanced learners</li>
+                <li>Managed day-to-day operations including scheduling, equipment, and safety protocols</li>
+                <li>Coordinated team of instructors and facilitated staff training</li>
+                <li>Built community partnerships to expand program reach</li>
               </ul>
 
               {/* Podcast Production */}
@@ -105,7 +112,9 @@ const Index = () => {
               </ul>
 
               {/* Notable Projects Section */}
-              
+              <h2 id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+                Notable Projects
+              </h2>
 
               <div className="mb-4">
                 <p className="leading-relaxed">
@@ -168,21 +177,33 @@ const Index = () => {
               </div>
 
               {/* Publications Section */}
-              
-              
+              <h2 id="publications" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+                Publications
+              </h2>
+              <p className="mb-2 leading-relaxed italic text-sm text-[#54595d]">Selected works</p>
               <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                
-                
-                
-                
+                <li>
+                  "[Placeholder: Article Title]" — <em>VICE</em>, 2025. [Placeholder: One-line description]. <a href="#" className="text-[#0645ad] hover:underline">[Link]</a>
+                </li>
+                <li>
+                  "[Placeholder: Article Title]" — <em>SBS</em>, 2025. [Placeholder: One-line description]. <a href="#" className="text-[#0645ad] hover:underline">[Link]</a>
+                </li>
+                <li>
+                  "[Placeholder: Article Title]" — <em>ABC Australia</em>, 2025. [Placeholder: One-line description]. <a href="#" className="text-[#0645ad] hover:underline">[Link]</a>
+                </li>
+                <li>
+                  "[Placeholder: Article Title]" — <em>i-D</em>, 2025. [Placeholder: One-line description]. <a href="#" className="text-[#0645ad] hover:underline">[Link]</a>
+                </li>
               </ul>
 
               {/* Awards and Recognition Section */}
-              
+              <h2 id="awards" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+                Awards and Recognition
+              </h2>
               <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                
-                
-                
+                <li>Two Grammy Awards for "Running the Most Profitable Bunnings Sausage Sizzle of All Time" documentary</li>
+                <li>[Placeholder: Podcast Name] debuted at No. 3 on Apple Podcasts Australia (Arts category)</li>
+                <li>[Placeholder: Additional award or recognition]</li>
               </ul>
 
               {/* References Section */}
@@ -207,12 +228,14 @@ const Index = () => {
               </h2>
               <ul className="list-disc ml-6 mb-4 leading-relaxed">
                 <li>
-                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/sid-caulfield-27b838356/">LinkedIn </a>
+                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/sid-caulfield-27b838356/">LinkedIn Profile</a>
                 </li>
                 <li>
                   <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/sidcaulfield/">Instagram (@sidcaulfield)</a>
                 </li>
-                
+                <li>
+                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9">The Mons Monday Podcast </a>
+                </li>
                 
                 <li>
                   <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">Email: caulfieldsid@gmail.com</a>
@@ -251,9 +274,10 @@ const Index = () => {
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
                         Born
                       </th>
-                      <td className="py-2 px-2">Sidney Joseph Caulfield  
-                      <br />
-                        July 27, 2003 (age 22)
+                      <td className="py-2 px-2">
+                        Sidney Joseph Caulfield
+                        <br />
+                        July 27, 2003 (age 21)
                         <br />
                         East Melbourne, Victoria, AUS
                       </td>
@@ -264,7 +288,7 @@ const Index = () => {
                       </th>
                       <td className="py-2 px-2">
                         Freelance Journalist
-                        <br />
+                        
                         Podcast Producer
                         <br />
                         Surf Instructor
