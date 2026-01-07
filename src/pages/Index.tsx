@@ -228,10 +228,10 @@ const Index = () => {
               </h2>
               <ul className="list-disc ml-6 mb-4 leading-relaxed">
                 <li>
-                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/sid-caulfield-27b838356/">LinkedIn Profile</a>
+                  <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LinkedIn Profile</a>
                 </li>
                 <li>
-                  <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram (@placeholder)</a>
+                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/sidcaulfield?igsh=MW5ibzhja2owMHp6Zg%3D%3D&utm_source=qr">Instagram (@placeholder)</a>
                 </li>
                 <li>
                   <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Podcast — [Placeholder: Podcast Name]</a>
