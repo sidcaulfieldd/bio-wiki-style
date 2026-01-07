@@ -1,4 +1,4 @@
-import profilePic from "@/assets/profile_pic.jpg";
+import profilePic from "@/assets/profile_pic.gif";
 const Index = () => {
   return <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
