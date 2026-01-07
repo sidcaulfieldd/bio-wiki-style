@@ -228,7 +228,7 @@ const Index = () => {
               </h2>
               <ul className="list-disc ml-6 mb-4 leading-relaxed">
                 <li>
-                  <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LinkedIn Profile</a>
+                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/sid-caulfield-27b838356/">LinkedIn Profile</a>
                 </li>
                 <li>
                   <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram (@placeholder)</a>
