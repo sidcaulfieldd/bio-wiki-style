@@ -240,10 +240,10 @@ const Index = () => {
                   <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube Channel</a>
                 </li>
                 <li>
-                  <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">Email: placeholder@email.com</a>
+                  <a href="mailto:placeholder@email.com" className="text-[#0645ad] hover:underline">Email: placeholder@email.com</a>
                 </li>
                 <li>
-                  <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Download Resume (PDF)</a>
+                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1T26aUBmdWnSU0To83Md1-1DvCs1Ft6yt/view?usp=sharing">Download Resume (PDF)</a>
                 </li>
               </ul>
             </div>
