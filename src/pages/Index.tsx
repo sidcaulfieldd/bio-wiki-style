@@ -1,4 +1,4 @@
-import profilePic from "@/assets/profile_pic.gif";
+import profilePic from "@/assets/profile_pic.jpg";
 const Index = () => {
   return <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
@@ -228,7 +228,7 @@ const Index = () => {
               </h2>
               <ul className="list-disc ml-6 mb-4 leading-relaxed">
                 <li>
-                  <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LinkedIn Profile</a>
+                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/sid-caulfield-27b838356/">LinkedIn Profile</a>
                 </li>
                 <li>
                   <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram (@placeholder)</a>
@@ -258,9 +258,7 @@ const Index = () => {
 
                 {/* Infobox image */}
                 <div className="text-center p-3 pb-0">
-                  <div className="relative w-full aspect-square bg-[#FF69B4]">
-                    <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover" />
-                  </div>
+                  <img src={profilePic} alt="Sid Caulfield" className="w-full aspect-square object-cover" />
                   <div className="text-xs text-[#54595d] mt-1 mb-3">
                     Caulfield in 2025
                   </div>
