@@ -264,6 +264,7 @@ const Index = () => {
                   </div>
                   {/* Spotify Embed */}
                   <iframe
+                    className="mb-3"
                     style={{ borderRadius: '12px' }}
                     src="https://open.spotify.com/embed/track/4YACgyR9xdAcyJMBV8H6oX?utm_source=generator&theme=0"
                     width="100%"
