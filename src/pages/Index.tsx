@@ -251,10 +251,9 @@ const Index = () => {
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
                         Born
                       </th>
-                      <td className="py-2 px-2">Sidney Joseph Caulfield
-July 27, 2003 (age 22)
-East Melbourne, Victoria, AUS<br />
-                        July 27, 2003 (age 21)
+                      <td className="py-2 px-2">Sidney Joseph Caulfield  
+                      <br />
+                        July 27, 2003 (age 22)
                         <br />
                         East Melbourne, Victoria, AUS
                       </td>
