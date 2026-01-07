@@ -1,4 +1,4 @@
-import profilePic from "@/assets/profile_pic.jpg";
+import profilePic from "@/assets/profile_pic.gif";
 const Index = () => {
   return <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
@@ -243,7 +243,7 @@ const Index = () => {
                   <a href="mailto:placeholder@email.com" className="text-[#0645ad] hover:underline">Email: placeholder@email.com</a>
                 </li>
                 <li>
-                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1T26aUBmdWnSU0To83Md1-1DvCs1Ft6yt/view?usp=sharing">Download Resume (PDF)</a>
+                  <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Download Resume (PDF)</a>
                 </li>
               </ul>
             </div>
@@ -258,7 +258,9 @@ const Index = () => {
 
                 {/* Infobox image */}
                 <div className="text-center p-3 pb-0">
-                  <img src={profilePic} alt="Sid Caulfield" className="w-full aspect-square object-cover" />
+                  <div className="relative w-full aspect-square bg-[#FF69B4]">
+                    <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover" />
+                  </div>
                   <div className="text-xs text-[#54595d] mt-1 mb-3">
                     Caulfield in 2025
                   </div>
