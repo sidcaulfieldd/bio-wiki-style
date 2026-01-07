@@ -236,11 +236,9 @@ const Index = () => {
                 <li>
                   <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9">The Mons Monday Podcast </a>
                 </li>
+                
                 <li>
-                  <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube Channel</a>
-                </li>
-                <li>
-                  <a href="mailto:placeholder@email.com" className="text-[#0645ad] hover:underline">Email: placeholder@email.com</a>
+                  <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">Email: caulfieldsid@gmail.com</a>
                 </li>
                 <li>
                   <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Download Resume (PDF)</a>
