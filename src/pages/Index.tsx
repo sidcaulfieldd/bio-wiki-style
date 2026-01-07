@@ -298,7 +298,7 @@ const Index = () => {
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
                         Location
                       </th>
-                      <td className="py-2 px-2">Melbourne, Victoria, Australia</td>
+                      <td className="py-2 px-2">Greater Melbourne, Victoria, Australia</td>
                     </tr>
                     <tr className="border-t border-[#a2a9b1]">
                       <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
