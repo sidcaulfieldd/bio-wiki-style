@@ -18,27 +18,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: checkout repository
+      # Step 1: Checkout repository
       - uses: actions/checkout@v4
 
-      # Step 2: setup Node
+      # Step 2: Setup Node
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      # Step 3: install dependencies
+      # Step 3: Install dependencies
       - run: npm install
 
-      # Step 4: build the site
+      # Step 4: Build the site
       - run: npm run build
 
-      # Step 5: upload dist folder
-      - name: Upload artifact
+      # Step 5: Upload the dist folder
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: ./dist
 
-      # Step 6: deploy
-      - name: Deploy to GitHub Pages
+      # Step 6: Deploy to GitHub Pages
+      - name: Deploy to Pages
         id: deployment
         uses: actions/deploy-pages@v1
