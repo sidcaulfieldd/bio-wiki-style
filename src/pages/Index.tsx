@@ -1,4 +1,6 @@
 import profilePic from "@/assets/profile_pic.gif";
+import notableSmallGif from "@/assets/notable-small.gif";
+
 const Index = () => {
   return <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
@@ -23,25 +25,21 @@ const Index = () => {
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad]">
                   <li><a href="#career-overview" className="hover:underline">Career Overview</a>
                     <ol className="list-decimal ml-4 text-[#0645ad]">
-                      <li><a href="#surf-instruction" className="hover:underline">Surf Instruction and Management</a></li>
-                      <li><a href="#podcast-production" className="hover:underline">Podcast Production</a></li>
-                      <li><a href="#journalism" className="hover:underline">Journalism and Media Work</a></li>
-                      <li><a href="#freelance" className="hover:underline">Freelance Projects</a></li>
+                      <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
+                      <li><a href="#mons-monday-podcast" className="hover:underline">The Mons Monday Podcast</a></li>
+                      <li><a href="#freelance-work" className="hover:underline">Freelance Work</a></li>
                     </ol>
                   </li>
                   <li><a href="#notable-projects" className="hover:underline">Notable Projects</a></li>
                   <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
-                  <li><a href="#publications" className="hover:underline">Publications</a></li>
-                  <li><a href="#awards" className="hover:underline">Awards and Recognition</a></li>
                   <li><a href="#references" className="hover:underline">References</a></li>
-                  <li><a href="#external-links" className="hover:underline">External Links</a></li>
                 </ol>
               </div>
 
               {/* Lead Section */}
               <p className="mb-4 leading-relaxed">
-                <strong>Sid Caulfield</strong> is an Australian journalist and multimedia content creator based in Melbourne, Victoria. He works across podcast production, digital journalism, social media strategy, and surf instruction. Caulfield is known for his work exploring subcultures, contemporary Australian life, and community storytelling. He currently works as a freelance journalist contributing to various Australian and international publications while managing surf education programs.
+                <strong>Sid Caulfield</strong> is an Australian content and comms professional based in Melbourne, Victoria. His work spans podcast production, digital journalism and social media strategy. Caulfield is known for his ability to tap into the cultural zeitgeist, synthesising and merging it with ideas of contemporary Australian life and community storytelling. Projects slated for 2026 include <em>How to Pull Off the Most Profitable Bunnings Sausage Sizzle of All Time</em>, <em>How to Ride Your Bike to the Pub/Club</em> and <em>Why the F*ck Does My Beer Cost 18 Bucks?</em> He is currently a freelance journalist and the content syndication and social media manager at Flow Mountain Bike.
               </p>
 
               {/* Career Overview Section */}
@@ -49,101 +47,61 @@ const Index = () => {
                 Career Overview
               </h2>
               <p className="mb-4 leading-relaxed">
-                Caulfield's career spans multiple disciplines within media, education, and community engagement. His work combines traditional journalism with emerging digital formats and hands-on instruction.
+                Whether it's bringing a group of 30 strangers together for an arvo on the bike or helping influencers lay down some dating lore on the mic, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the highlights.
               </p>
 
-              {/* Surf Instruction and Management */}
-              <h3 id="surf-instruction" className="text-xl font-serif mt-4 mb-2">
-                Surf Instruction and Management
+              {/* Flow Mountain Bike */}
+              <h3 id="flow-mountain-bike" className="text-xl font-serif mt-4 mb-2">
+                Flow Mountain Bike
               </h3>
               <p className="mb-2 leading-relaxed">
-                Caulfield has worked extensively in surf education, developing programs and managing operations for surf schools.
+                In 2025, Caulfield joined Flow Mountain Bike as Content Syndication and Social Media Manager. In this role, he oversees the publication's social media presence and cross-platform content distribution, reaching a cumulative audience of more than 360,000.
               </p>
-              <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                <li>Developed and delivered surf instruction programs for beginners through advanced learners</li>
-                <li>Managed day-to-day operations including scheduling, equipment, and safety protocols</li>
-                <li>Coordinated team of instructors and facilitated staff training</li>
-                <li>Built community partnerships to expand program reach</li>
-              </ul>
+              <p className="mb-4 leading-relaxed">
+                He redesigned Flow's syndication systems and introduced new workflow tools, including Canva and Sprout Social, to improve efficiency and brand consistency. His work involves repurposing long-form editorial content for multiple platforms, coordinating campaign launches, managing email marketing to a subscriber base of approximately 30,000, and analysing audience performance data to guide editorial strategy. Caulfield also collaborates with commercial partners on campaigns, events and giveaways, and contributes freelance writing to the publication.
+              </p>
 
-              {/* Podcast Production */}
-              <h3 id="podcast-production" className="text-xl font-serif mt-4 mb-2">
-                Podcast Production
+              {/* The Mons Monday Podcast */}
+              <h3 id="mons-monday-podcast" className="text-xl font-serif mt-4 mb-2">
+                The Mons Monday Podcast
               </h3>
               <p className="mb-2 leading-relaxed">
-                As a podcast producer, Caulfield has developed and produced content for various networks and independent projects.
+                Caulfield is the producer of The Mons Monday Podcast, a profile-based interview series launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy.
               </p>
-              <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                <li>End-to-end podcast production including research, scripting, recording, and editing</li>
-                <li>Audio engineering and post-production for narrative and interview formats</li>
-                <li>Audience development and distribution strategy</li>
-                <li>Guest coordination and interview preparation</li>
-              </ul>
+              <p className="mb-4 leading-relaxed">
+                He manages end-to-end production, including research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with LBDO and Krush Organics. Caulfield also created and edited video promotional material to support the launch and ongoing audience growth.
+              </p>
 
-              {/* Journalism and Media Work */}
-              <h3 id="journalism" className="text-xl font-serif mt-4 mb-2">
-                Journalism and Media Work
+              {/* Freelance Work */}
+              <h3 id="freelance-work" className="text-xl font-serif mt-4 mb-2">
+                Freelance Work
               </h3>
-              <p className="mb-2 leading-relaxed">
-                Caulfield has contributed to numerous Australian and international publications as a freelance journalist.
+              <p className="mb-4 leading-relaxed">
+                Alongside his staff role, Caulfield undertakes freelance projects across journalism, content strategy and digital media. His work includes feature writing, interview-based storytelling, social media management and campaign support for publications and organisations. He has contributed to outlets including Forte Magazine and Flow Mountain Bike, and regularly works with brands and community partners on content development and distribution.
               </p>
-              <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                <li>Feature writing for <a href="https://en.wikipedia.org/wiki/Vice_Media" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">VICE</a>, <a href="https://en.wikipedia.org/wiki/Special_Broadcasting_Service" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">SBS</a>, ABC Australia, and i-D</li>
-                <li>Specialisation in subculture reporting and community-focused storytelling</li>
-                <li>Social media listening and audience engagement analysis</li>
-                <li>Copywriting for digital and print campaigns</li>
-              </ul>
-
-              {/* Freelance Projects */}
-              <h3 id="freelance" className="text-xl font-serif mt-4 mb-2">
-                Freelance Projects
-              </h3>
-              <p className="mb-2 leading-relaxed">
-                Beyond staff positions, Caulfield undertakes a range of freelance projects across media and communications.
-              </p>
-              <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                <li>Content strategy and social media management for brands and organisations</li>
-                <li>Documentary research and production assistance</li>
-                <li>Communications consulting for community groups and startups</li>
-                <li>Event coverage and live reporting</li>
-              </ul>
 
               {/* Notable Projects Section */}
               <h2 id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Notable Projects
               </h2>
 
-              <div className="mb-4">
-                <p className="leading-relaxed">
-                  <strong>"Running the Most Profitable Bunnings Sausage Sizzle of All Time"</strong> — A documentary for <a href="https://en.wikipedia.org/wiki/Special_Broadcasting_Service" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">SBS</a> exploring Australian community fundraising culture through the lens of the iconic Bunnings sausage sizzle.
-                </p>
-                <ul className="list-disc ml-6 text-sm leading-relaxed">
-                  <li><em>Role:</em> Producer and Writer</li>
-                  <li><em>Impact:</em> Won two Grammy Awards; critical acclaim</li>
-                  <li><em>Link:</em> <a href="#" className="text-[#0645ad] hover:underline">[Placeholder: SBS Documentary Link]</a></li>
-                </ul>
-              </div>
+              <ul className="list-disc ml-6 mb-4 leading-relaxed">
+                <li><strong>Flow Mountain Bike</strong> — Facebook, Instagram, YouTube campaigns and syndication projects.</li>
+                <li><strong>The Mons Monday Podcast</strong> — Episodes, video teaser and launch marketing.</li>
+                <li><strong>Freelance writing</strong> — Forte Magazine, Flow Mountain Bike.</li>
+                <li><strong>Animation</strong> — Brain (short form / experimental).</li>
+              </ul>
 
-              <div className="mb-4">
-                <p className="leading-relaxed">
-                  <strong>[Placeholder: Project Title]</strong> — [Placeholder: Brief description of the project and its focus.]
-                </p>
-                <ul className="list-disc ml-6 text-sm leading-relaxed">
-                  <li><em>Role:</em> [Placeholder]</li>
-                  <li><em>Impact:</em> [Placeholder: Metrics or outcomes]</li>
-                  <li><em>Link:</em> <a href="#" className="text-[#0645ad] hover:underline">[Placeholder URL]</a></li>
-                </ul>
-              </div>
-
-              <div className="mb-4">
-                <p className="leading-relaxed">
-                  <strong>[Placeholder: Project Title]</strong> — [Placeholder: Brief description of the project and its focus.]
-                </p>
-                <ul className="list-disc ml-6 text-sm leading-relaxed">
-                  <li><em>Role:</em> [Placeholder]</li>
-                  <li><em>Impact:</em> [Placeholder: Metrics or outcomes]</li>
-                  <li><em>Link:</em> <a href="#" className="text-[#0645ad] hover:underline">[Placeholder URL]</a></li>
-                </ul>
+              {/* Notable Small GIF */}
+              <div className="text-center my-6">
+                <img 
+                  alt="Sid Caulfield — small animated clip" 
+                  src={notableSmallGif} 
+                  decoding="async" 
+                  width="180" 
+                  height="100" 
+                  className="mw-file-element inline-block"
+                />
               </div>
 
               {/* Early Life and Education Section */}
@@ -154,93 +112,38 @@ const Index = () => {
                 Sidney Joseph Caulfield was born on July 27, 2003, in East Melbourne, Victoria, Australia.
               </p>
               <p className="mb-4 leading-relaxed">
-                Caulfield completed his secondary education at [Placeholder: Secondary School Name] in Melbourne, where he [Placeholder: notable achievements or interests during school years].
+                Caulfield completed his secondary education at Belmont High School in Geelong, where he studied Media, Linguistics and Indonesian.
               </p>
               <p className="mb-4 leading-relaxed">
-                He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a>, graduating with a degree in [Placeholder: Degree Name]. During his university years, Caulfield [Placeholder: relevant achievements, internships, or extracurricular activities].
-              </p>
-              <p className="mb-4 leading-relaxed">
-                <em>Languages:</em> English (native), [Placeholder: other languages if applicable]
+                He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a> and will graduate with a Bachelor of Communication (Journalism) in 2026.
               </p>
 
               {/* Skills and Areas of Expertise Section */}
               <h2 id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Skills and Areas of Expertise
               </h2>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {["Journalism", "Multimedia Production", "Audio Editing", "Social Media Content", "Communications", "Podcast Production", "Project Coordination", "Surf Instruction", "Feature Writing", "Copywriting", "Research", "Interview Techniques"].map(skill => <span key={skill} className="border border-[#a2a9b1] bg-[#f8f9fa] px-2 py-1 text-sm">
-                    {skill}
-                  </span>)}
-              </div>
-
-              {/* Publications Section */}
-              <h2 id="publications" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Publications
-              </h2>
-              <p className="mb-2 leading-relaxed italic text-sm text-[#54595d]">Selected works</p>
               <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                <li>
-                  "[Placeholder: Article Title]" — <em>VICE</em>, 2025. [Placeholder: One-line description]. <a href="#" className="text-[#0645ad] hover:underline">[Link]</a>
-                </li>
-                <li>
-                  "[Placeholder: Article Title]" — <em>SBS</em>, 2025. [Placeholder: One-line description]. <a href="#" className="text-[#0645ad] hover:underline">[Link]</a>
-                </li>
-                <li>
-                  "[Placeholder: Article Title]" — <em>ABC Australia</em>, 2025. [Placeholder: One-line description]. <a href="#" className="text-[#0645ad] hover:underline">[Link]</a>
-                </li>
-                <li>
-                  "[Placeholder: Article Title]" — <em>i-D</em>, 2025. [Placeholder: One-line description]. <a href="#" className="text-[#0645ad] hover:underline">[Link]</a>
-                </li>
-              </ul>
-
-              {/* Awards and Recognition Section */}
-              <h2 id="awards" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Awards and Recognition
-              </h2>
-              <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                <li>Two Grammy Awards for "Running the Most Profitable Bunnings Sausage Sizzle of All Time" documentary</li>
-                <li>[Placeholder: Podcast Name] debuted at No. 3 on Apple Podcasts Australia (Arts category)</li>
-                <li>[Placeholder: Additional award or recognition]</li>
+                <li>Journalism</li>
+                <li>Multimedia production</li>
+                <li>Podcast production</li>
+                <li>Audio editing and post-production</li>
+                <li>Social media content and syndication</li>
+                <li>Digital content strategy</li>
+                <li>Feature writing</li>
+                <li>Copywriting and editing</li>
+                <li>Email marketing (eDM) production</li>
+                <li>Audience development and analytics</li>
+                <li>Project coordination and workflow design</li>
+                <li>Research and interview techniques</li>
               </ul>
 
               {/* References Section */}
               <h2 id="references" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 References
               </h2>
-              <div className="text-sm leading-relaxed border-l-2 border-[#a2a9b1] pl-4 mb-4">
-                <p className="mb-3">
-                  <sup>1.</sup> <strong>[Placeholder: Reference Name]</strong>, [Placeholder: Title/Position], [Placeholder: Organisation]. <em>"[Placeholder: Brief testimonial or endorsement quote.]"</em> — Available upon request.
-                </p>
-                <p className="mb-3">
-                  <sup>2.</sup> <strong>[Placeholder: Reference Name]</strong>, [Placeholder: Title/Position], [Placeholder: Organisation]. <em>"[Placeholder: Brief testimonial or endorsement quote.]"</em> — Available upon request.
-                </p>
-                <p className="mb-3">
-                  <sup>3.</sup> <strong>[Placeholder: Reference Name]</strong>, [Placeholder: Title/Position], [Placeholder: Organisation]. — Available upon request.
-                </p>
-              </div>
-
-              {/* External Links Section */}
-              <h2 id="external-links" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                External Links
-              </h2>
-              <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                <li>
-                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/sid-caulfield-27b838356/">LinkedIn Profile</a>
-                </li>
-                <li>
-                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/sidcaulfield/">Instagram (@sidcaulfield)</a>
-                </li>
-                <li>
-                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9">The Mons Monday Podcast </a>
-                </li>
-                
-                <li>
-                  <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">Email: caulfieldsid@gmail.com</a>
-                </li>
-                <li>
-                  <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1T26aUBmdWnSU0To83Md1-1DvCs1Ft6yt/view?usp=sharing">Resume </a>
-                </li>
-              </ul>
+              <p className="mb-4 leading-relaxed">
+                — Available upon request
+              </p>
             </div>
 
             {/* Infobox Sidebar */}
@@ -259,10 +162,10 @@ const Index = () => {
                   <div className="text-xs text-[#54595d] mt-1 mb-3">
                     Caulfield in 2025
                   </div>
-                  {/* Spotify Embed */}
+                  {/* Spotify Embed with autoplay attempt */}
                   <iframe className="mb-3" style={{
                   borderRadius: '12px'
-                }} src="https://open.spotify.com/embed/track/4YACgyR9xdAcyJMBV8H6oX?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />
+                }} src="https://open.spotify.com/embed/track/4YACgyR9xdAcyJMBV8H6oX?utm_source=generator&theme=0&autoplay=1" width="100%" height="80" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />
                 </div>
 
                 <table className="w-full text-sm">
@@ -283,10 +186,10 @@ const Index = () => {
                       </th>
                       <td className="py-2 px-2">
                         Freelance Journalist
-                        
-                        Podcast Producer
                         <br />
-                        Surf Instructor
+                        Content Syndication and Social Media Manager
+                        <br />
+                        Podcast Producer
                       </td>
                     </tr>
                     <tr className="border-t border-[#a2a9b1]">
@@ -308,21 +211,6 @@ const Index = () => {
                       <td className="py-2 px-2">
                         <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
                           RMIT University
-                        </a>
-                      </td>
-                    </tr>
-                    <tr className="border-t border-[#a2a9b1]">
-                      
-                      
-                    </tr>
-                    
-                    <tr className="border-t border-[#a2a9b1]">
-                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
-                        Website
-                      </th>
-                      <td className="py-2 px-2">
-                        <a href="#" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
-                          [placeholder.com]
                         </a>
                       </td>
                     </tr>
@@ -370,7 +258,7 @@ const Index = () => {
                     </a>{" "}
                     |{" "}
                     <a href="#" className="text-[#0645ad] hover:underline">
-                      Surf instructors
+                      Content creators
                     </a>
                   </div>
                 </div>
