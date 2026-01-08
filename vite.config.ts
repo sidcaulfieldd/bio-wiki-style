@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: '/bio-wiki-style/', //
+  base: '/bio-wiki-style/',
   server: {
     host: "::",
     port: 8080,
