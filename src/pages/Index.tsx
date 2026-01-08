@@ -80,28 +80,28 @@ const Index = () => {
                 Alongside his staff role, Caulfield undertakes freelance projects across journalism, content strategy and digital media. His work includes feature writing, interview-based storytelling, social media management and campaign support for publications and organisations. He has contributed to outlets including Forte Magazine and Flow Mountain Bike, and regularly works with brands and community partners on content development and distribution.
               </p>
 
-              {/* Notable Projects Section */}
-              <h2 id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Notable Projects
-              </h2>
-
-              <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                <li><strong>Flow Mountain Bike</strong> — Facebook, Instagram, YouTube campaigns and syndication projects.</li>
-                <li><strong>The Mons Monday Podcast</strong> — Episodes, video teaser and launch marketing.</li>
-                <li><strong>Freelance writing</strong> — Forte Magazine, Flow Mountain Bike.</li>
-                <li><strong>Animation</strong> — Brain (short form / experimental).</li>
-              </ul>
-
-              {/* Notable Small GIF */}
-              <div className="text-center my-6">
+              {/* Notable Projects Section with GIF floated right */}
+              <div className="relative">
+                {/* GIF floated to right */}
                 <img 
                   alt="Sid Caulfield — small animated clip" 
                   src={notableSmallGif} 
                   decoding="async" 
-                  width="180" 
-                  height="100" 
-                  className="mw-file-element inline-block"
+                  className="mw-file-element float-right ml-4 mb-2"
+                  style={{ width: '200px', height: 'auto' }}
                 />
+                
+                <h2 id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+                  Notable Projects
+                </h2>
+
+                <ul className="list-disc ml-6 mb-4 leading-relaxed">
+                  <li><strong>Flow Mountain Bike</strong> — Facebook, Instagram, YouTube campaigns and syndication projects.</li>
+                  <li><strong>The Mons Monday Podcast</strong> — Episodes, video teaser and launch marketing.</li>
+                  <li><strong>Freelance writing</strong> — Forte Magazine, Flow Mountain Bike.</li>
+                  <li><strong>Animation</strong> — Brain (short form / experimental).</li>
+                </ul>
+                <div className="clear-both"></div>
               </div>
 
               {/* Early Life and Education Section */}
@@ -122,20 +122,26 @@ const Index = () => {
               <h2 id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Skills and Areas of Expertise
               </h2>
-              <ul className="list-disc ml-6 mb-4 leading-relaxed">
-                <li>Journalism</li>
-                <li>Multimedia production</li>
-                <li>Podcast production</li>
-                <li>Audio editing and post-production</li>
-                <li>Social media content and syndication</li>
-                <li>Digital content strategy</li>
-                <li>Feature writing</li>
-                <li>Copywriting and editing</li>
-                <li>Email marketing (eDM) production</li>
-                <li>Audience development and analytics</li>
-                <li>Project coordination and workflow design</li>
-                <li>Research and interview techniques</li>
-              </ul>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {[
+                  "Journalism",
+                  "Multimedia production",
+                  "Podcast production",
+                  "Audio editing and post-production",
+                  "Social media content and syndication",
+                  "Digital content strategy",
+                  "Feature writing",
+                  "Copywriting and editing",
+                  "Email marketing (eDM) production",
+                  "Audience development and analytics",
+                  "Project coordination and workflow design",
+                  "Research and interview techniques"
+                ].map((skill) => (
+                  <span key={skill} className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded">
+                    {skill}
+                  </span>
+                ))}
+              </div>
 
               {/* References Section */}
               <h2 id="references" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
@@ -240,29 +246,6 @@ const Index = () => {
                 </table>
               </div>
 
-              {/* Categories */}
-              <div className="mt-4 text-sm">
-                <div className="border-t border-[#a2a9b1] pt-2">
-                  <strong>Categories:</strong>
-                  <div className="mt-1">
-                    <a href="#" className="text-[#0645ad] hover:underline">
-                      Australian journalists
-                    </a>{" "}
-                    |{" "}
-                    <a href="#" className="text-[#0645ad] hover:underline">
-                      Podcast producers
-                    </a>{" "}
-                    |{" "}
-                    <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
-                      RMIT University alumni
-                    </a>{" "}
-                    |{" "}
-                    <a href="#" className="text-[#0645ad] hover:underline">
-                      Content creators
-                    </a>
-                  </div>
-                </div>
-              </div>
             </aside>
           </div>
         </div>
