@@ -1,0 +1,35 @@
+name: Deploy Vite site to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repo
+      - uses: actions/checkout@v4
+
+      # Step 2: Setup Node
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # Step 3: Install dependencies
+      - run: npm install
+
+      # Step 4: Build site
+      - run: npm run build
+
+      # Step 5: Deploy the dist folder to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v7
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          user_name: 'github-actions'
+          user_email: 'github-actions@github.com'
