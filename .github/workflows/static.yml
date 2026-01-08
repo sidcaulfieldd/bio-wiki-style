@@ -1,0 +1,44 @@
+name: Deploy Vite site to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: checkout repository
+      - uses: actions/checkout@v4
+
+      # Step 2: setup Node
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # Step 3: install dependencies
+      - run: npm install
+
+      # Step 4: build the site
+      - run: npm run build
+
+      # Step 5: upload dist folder
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./dist
+
+      # Step 6: deploy
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
