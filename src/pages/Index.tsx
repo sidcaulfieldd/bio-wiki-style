@@ -80,28 +80,28 @@ const Index = () => {
                 Alongside his staff role, Caulfield undertakes freelance projects across journalism, content strategy and digital media. His work includes feature writing, interview-based storytelling, social media management and campaign support for publications and organisations. He has contributed to outlets including Forte Magazine and Flow Mountain Bike, and regularly works with brands and community partners on content development and distribution.
               </p>
 
-              {/* Notable Projects Section with GIF floated right */}
-              <div className="relative">
-                {/* GIF floated to right */}
-                <img 
-                  alt="Sid Caulfield — small animated clip" 
-                  src={notableSmallGif} 
-                  decoding="async" 
-                  className="mw-file-element float-right ml-4 mb-2"
-                  style={{ width: '200px', height: 'auto' }}
-                />
-                
-                <h2 id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                  Notable Projects
-                </h2>
-
-                <ul className="list-disc ml-6 mb-4 leading-relaxed">
+              {/* Notable Projects Section with GIF */}
+              <h2 id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+                Notable Projects
+              </h2>
+              
+              <div className="flex gap-4 mb-4">
+                <ul className="list-disc ml-6 leading-relaxed flex-1">
                   <li><strong>Flow Mountain Bike</strong> — Facebook, Instagram, YouTube campaigns and syndication projects.</li>
                   <li><strong>The Mons Monday Podcast</strong> — Episodes, video teaser and launch marketing.</li>
                   <li><strong>Freelance writing</strong> — Forte Magazine, Flow Mountain Bike.</li>
                   <li><strong>Animation</strong> — Brain (short form / experimental).</li>
                 </ul>
-                <div className="clear-both"></div>
+                
+                {/* GIF sized to match section height */}
+                <div className="flex-shrink-0 border border-[#a2a9b1] bg-[#f8f9fa] p-1">
+                  <img 
+                    alt="Sid Caulfield — small animated clip" 
+                    src={notableSmallGif} 
+                    decoding="async" 
+                    className="mw-file-element h-[100px] w-auto object-contain"
+                  />
+                </div>
               </div>
 
               {/* Early Life and Education Section */}
@@ -137,7 +137,7 @@ const Index = () => {
                   "Project coordination and workflow design",
                   "Research and interview techniques"
                 ].map((skill) => (
-                  <span key={skill} className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded">
+                  <span key={skill} className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded cursor-pointer hover:bg-[#c8ccd1] hover:border-[#72777d] transition-colors duration-150">
                     {skill}
                   </span>
                 ))}
@@ -239,6 +239,16 @@ const Index = () => {
                         <br />
                         <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/sidcaulfield/">
                           Instagram
+                        </a>
+                      </td>
+                    </tr>
+                    <tr className="border-t border-[#a2a9b1]">
+                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
+                        Resume
+                      </th>
+                      <td className="py-2 px-2">
+                        <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="#">
+                          View Resume (PDF)
                         </a>
                       </td>
                     </tr>
