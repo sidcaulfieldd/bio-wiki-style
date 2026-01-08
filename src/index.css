@@ -3,12 +3,8 @@
 @tailwind utilities;
 
 /* Custom cursor using mouse.png from public folder */
-html, body {
-  cursor: url('/mouse.png') 16 16, auto !important;
-}
-
-* {
-  cursor: inherit;
+html, body, * {
+  cursor: url('/mouse.png'), auto !important;
 }
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
