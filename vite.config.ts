@@ -4,8 +4,9 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
+// Use root path for Lovable preview and custom domain, subpath for GitHub Pages
 export default defineConfig(({ mode }) => ({
-  base: '/bio-wiki-style/',
+  base: '/',
   server: {
     host: "::",
     port: 8080,

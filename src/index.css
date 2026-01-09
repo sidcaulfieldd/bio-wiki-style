@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom cursor using mouse.png from public folder */
+/* Custom cursor using mouse.png from public folder - displayed at 40x40 */
 html, body, * {
-  cursor: url('/mouse.png'), auto !important;
+  cursor: url('/mouse.png') 0 0, auto !important;
 }
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 

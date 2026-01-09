@@ -1,24 +1,43 @@
+import { useState } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import notableSmallGif from "@/assets/notable-small.gif";
 
 const Index = () => {
-  return <div className="min-h-screen bg-[#f6f6f6]">
+  const [mobileInfoOpen, setMobileInfoOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
       <header className="bg-white border-b border-[#a7d7f9]">
-        
       </header>
 
       {/* Main Content */}
       <main className="max-w-[1000px] mx-auto px-4 py-6">
+        {/* Mobile Info Toggle */}
+        <div className="md:hidden mb-4">
+          <button
+            onClick={() => setMobileInfoOpen(!mobileInfoOpen)}
+            className="w-full bg-[#eaecf0] border border-[#a2a9b1] rounded px-3 py-2 text-left font-bold"
+          >
+            {mobileInfoOpen ? "Hide Info" : "Show Info"}
+          </button>
+
+          {mobileInfoOpen && (
+            <div className="mt-2 border border-[#a2a9b1] bg-[#f8f9fa]">
+              <SidebarContent />
+            </div>
+          )}
+        </div>
+
         <div className="bg-white border border-[#a7d7f9] p-6">
           {/* Title */}
           <h1 className="text-3xl font-serif border-b border-[#a2a9b1] pb-2 mb-4">
             Sid Caulfield
           </h1>
 
-          <div className="flex gap-6">
+          <div className="flex flex-col md:flex-row gap-6">
             {/* Main Content Column */}
-            <div className="flex-1">
+            <div className="flex-1 order-2 md:order-1">
               {/* Table of Contents */}
               <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 mb-6 inline-block">
                 <div className="font-bold mb-2">Contents</div>
@@ -85,23 +104,21 @@ const Index = () => {
                 Notable Projects
               </h2>
               
-              <div className="flex gap-4 mb-4">
-                <ul className="list-disc ml-6 leading-relaxed flex-1">
-                  <li><strong>Flow Mountain Bike</strong> — Facebook, Instagram, YouTube campaigns and syndication projects.</li>
-                  <li><strong>The Mons Monday Podcast</strong> — Episodes, video teaser and launch marketing.</li>
-                  <li><strong>Freelance writing</strong> — Forte Magazine, Flow Mountain Bike.</li>
-                  <li><strong>Animation</strong> — Brain (short form / experimental).</li>
-                </ul>
-                
-                {/* GIF sized to match section height */}
-                <div className="flex-shrink-0 border border-[#a2a9b1] bg-[#f8f9fa] p-1">
-                  <img 
-                    alt="Sid Caulfield — small animated clip" 
-                    src={notableSmallGif} 
-                    decoding="async" 
-                    className="mw-file-element h-[100px] w-auto object-contain"
-                  />
-                </div>
+              <ul className="list-disc ml-6 leading-relaxed mb-4">
+                <li><strong>Flow Mountain Bike</strong> — Facebook, Instagram, YouTube campaigns and syndication projects.</li>
+                <li><strong>The Mons Monday Podcast</strong> — Episodes, video teaser and launch marketing.</li>
+                <li><strong>Freelance writing</strong> — Forte Magazine, Flow Mountain Bike.</li>
+                <li><strong>Animation</strong> — Brain (short form / experimental).</li>
+              </ul>
+              
+              {/* GIF centered between sections */}
+              <div className="flex justify-center my-6">
+                <img 
+                  alt="Sid Caulfield — small animated clip" 
+                  src={notableSmallGif} 
+                  decoding="async" 
+                  className="mw-file-element h-[230px] w-auto object-contain"
+                />
               </div>
 
               {/* Early Life and Education Section */}
@@ -124,18 +141,18 @@ const Index = () => {
               </h2>
               <div className="flex flex-wrap gap-2 mb-4">
                 {[
-                  "Journalism",
-                  "Multimedia production",
-                  "Podcast production",
-                  "Audio editing and post-production",
-                  "Social media content and syndication",
-                  "Digital content strategy",
-                  "Feature writing",
+                  "Adobe Creative Suite",
+                  "Content strategy and scheduling",
+                  "Cross-platform syndication",
+                  "Tailored vertical content distribution",
+                  "SEO and metadata optimisation",
                   "Copywriting and editing",
-                  "Email marketing (eDM) production",
-                  "Audience development and analytics",
-                  "Project coordination and workflow design",
-                  "Research and interview techniques"
+                  "eDM planning, delivery and performance analysis",
+                  "Audience profiling and insights",
+                  "Integrated publishing and analytics tools",
+                  "Asana and workflow design",
+                  "Sprout Social",
+                  "Canva (team templates and system design)"
                 ].map((skill) => (
                   <span key={skill} className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded cursor-pointer hover:bg-[#c8ccd1] hover:border-[#72777d] transition-colors duration-150">
                     {skill}
@@ -152,110 +169,11 @@ const Index = () => {
               </p>
             </div>
 
-            {/* Infobox Sidebar */}
-            <aside className="w-[300px] flex-shrink-0">
+            {/* Desktop Sidebar */}
+            <aside className="hidden md:block w-[300px] flex-shrink-0 order-1 md:order-2">
               <div className="border border-[#a2a9b1] bg-[#f8f9fa]">
-                {/* Infobox title */}
-                <div className="bg-[#eaecf0] text-center font-bold text-[125%] py-2 border-b border-[#a2a9b1]">
-                  Sid Caulfield
-                </div>
-
-                {/* Infobox image */}
-                <div className="text-center p-3 pb-0">
-                  <div className="relative w-full aspect-square bg-[#FF69B4]">
-                    <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover" />
-                  </div>
-                  <div className="text-xs text-[#54595d] mt-1 mb-3">
-                    Caulfield in 2025
-                  </div>
-                  {/* Spotify Embed with autoplay attempt */}
-                  <iframe className="mb-3" style={{
-                  borderRadius: '12px'
-                }} src="https://open.spotify.com/embed/track/4YACgyR9xdAcyJMBV8H6oX?utm_source=generator&theme=0&autoplay=1" width="100%" height="80" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" />
-                </div>
-
-                <table className="w-full text-sm">
-                  <tbody>
-                    <tr className="border-t border-[#a2a9b1]">
-                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
-                        Born
-                      </th>
-                      <td className="py-2 px-2">Sidney Joseph Caulfield <br />
-                        July 27, 2003 (age 21)
-                        <br />
-                        East Melbourne, Victoria, AUS
-                      </td>
-                    </tr>
-                    <tr className="border-t border-[#a2a9b1]">
-                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
-                        Occupation
-                      </th>
-                      <td className="py-2 px-2">
-                        Freelance Journalist
-                        <br />
-                        Content Syndication and Social Media Manager
-                        <br />
-                        Podcast Producer
-                      </td>
-                    </tr>
-                    <tr className="border-t border-[#a2a9b1]">
-                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
-                        Location
-                      </th>
-                      <td className="py-2 px-2">Greater Melbourne, Victoria, Australia</td>
-                    </tr>
-                    <tr className="border-t border-[#a2a9b1]">
-                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
-                        Years active
-                      </th>
-                      <td className="py-2 px-2">2025—present</td>
-                    </tr>
-                    <tr className="border-t border-[#a2a9b1]">
-                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
-                        Education
-                      </th>
-                      <td className="py-2 px-2">
-                        <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
-                          RMIT University
-                        </a>
-                      </td>
-                    </tr>
-                    <tr className="border-t border-[#a2a9b1]">
-                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
-                        Contact
-                      </th>
-                      <td className="py-2 px-2">
-                        <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">caulfieldsid@gmail.com</a>
-                      </td>
-                    </tr>
-                    <tr className="border-t border-[#a2a9b1]">
-                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
-                        Social
-                      </th>
-                      <td className="py-2 px-2">
-                        <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/sid-caulfield-27b838356/">
-                          LinkedIn
-                        </a>
-                        <br />
-                        <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/sidcaulfield/">
-                          Instagram
-                        </a>
-                      </td>
-                    </tr>
-                    <tr className="border-t border-[#a2a9b1]">
-                      <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">
-                        Resume
-                      </th>
-                      <td className="py-2 px-2">
-                        <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="#">
-                          View Resume (PDF)
-                        </a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <SidebarContent />
               </div>
-
             </aside>
           </div>
         </div>
@@ -267,16 +185,133 @@ const Index = () => {
           <p>
             This page was last edited on{" "}
             {new Date().toLocaleDateString("en-US", {
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-          })}
+              day: "numeric",
+              month: "long",
+              year: "numeric"
+            })}
           </p>
           <p className="mt-2">
             Content is available under CC BY-SA 4.0 unless otherwise noted.
           </p>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
+// Sidebar content extracted into a reusable component
+const SidebarContent = () => (
+  <>
+    {/* Infobox title */}
+    <div className="bg-[#eaecf0] text-center font-bold text-[125%] py-2 border-b border-[#a2a9b1]">
+      Sid Caulfield
+    </div>
+
+    {/* Infobox image */}
+    <div className="text-center p-3 pb-0">
+      <div className="relative w-full aspect-square bg-[#FF69B4]">
+        <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover" />
+      </div>
+      <div className="text-xs text-[#54595d] mt-1 mb-3">
+        Caulfield in 2025
+      </div>
+      {/* Spotify Embed with autoplay attempt */}
+      <iframe
+        className="mb-3"
+        style={{ borderRadius: '12px' }}
+        src="https://open.spotify.com/embed/track/4YACgyR9xdAcyJMBV8H6oX?utm_source=generator&theme=0&autoplay=1"
+        width="100%"
+        height="80"
+        frameBorder="0"
+        allowFullScreen
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy"
+      />
+    </div>
+
+    <table className="w-full text-sm">
+      <tbody>
+        <tr className="border-t border-[#a2a9b1]">
+          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Born</th>
+          <td className="py-2 px-2">
+            Sidney Joseph Caulfield <br />
+            July 27, 2003 (age 21)
+            <br />
+            East Melbourne, Victoria, AUS
+          </td>
+        </tr>
+        <tr className="border-t border-[#a2a9b1]">
+          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Occupation</th>
+          <td className="py-2 px-2">
+            Freelance Journalist
+            <br />
+            Content Syndication and Social Media Manager
+            <br />
+            Podcast Producer
+          </td>
+        </tr>
+        <tr className="border-t border-[#a2a9b1]">
+          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Location</th>
+          <td className="py-2 px-2">Greater Melbourne, Victoria, Australia</td>
+        </tr>
+        <tr className="border-t border-[#a2a9b1]">
+          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Years active</th>
+          <td className="py-2 px-2">2025—present</td>
+        </tr>
+        <tr className="border-t border-[#a2a9b1]">
+          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Education</th>
+          <td className="py-2 px-2">
+            <a
+              href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology"
+              className="text-[#0645ad] hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              RMIT University
+            </a>
+          </td>
+        </tr>
+        <tr className="border-t border-[#a2a9b1]">
+          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Contact</th>
+          <td className="py-2 px-2">
+            <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">
+              caulfieldsid@gmail.com
+            </a>
+          </td>
+        </tr>
+        <tr className="border-t border-[#a2a9b1]">
+          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Social</th>
+          <td className="py-2 px-2">
+            <a
+              className="text-[#0645ad] hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://www.linkedin.com/in/sid-caulfield-27b838356/"
+            >
+              LinkedIn
+            </a>
+            <br />
+            <a
+              className="text-[#0645ad] hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://www.instagram.com/sidcaulfield/"
+            >
+              Instagram
+            </a>
+          </td>
+        </tr>
+        <tr className="border-t border-[#a2a9b1]">
+          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Resume</th>
+          <td className="py-2 px-2">
+            <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="#">
+              View Resume (PDF)
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </>
+);
+
 export default Index;
