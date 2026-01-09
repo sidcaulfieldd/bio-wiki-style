@@ -1,10 +1,7 @@
-import { useState } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import notableSmallGif from "@/assets/notable-small.gif";
 
 const Index = () => {
-  const [mobileInfoOpen, setMobileInfoOpen] = useState(false);
-
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
@@ -13,20 +10,11 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="max-w-[1000px] mx-auto px-4 py-6">
-        {/* Mobile Info Toggle */}
+        {/* Mobile Sidebar - always visible on mobile */}
         <div className="md:hidden mb-4">
-          <button
-            onClick={() => setMobileInfoOpen(!mobileInfoOpen)}
-            className="w-full bg-[#eaecf0] border border-[#a2a9b1] rounded px-3 py-2 text-left font-bold"
-          >
-            {mobileInfoOpen ? "Hide Info" : "Show Info"}
-          </button>
-
-          {mobileInfoOpen && (
-            <div className="mt-2 border border-[#a2a9b1] bg-[#f8f9fa]">
-              <SidebarContent />
-            </div>
-          )}
+          <div className="border border-[#a2a9b1] bg-[#f8f9fa]">
+            <SidebarContent />
+          </div>
         </div>
 
         <div className="bg-white border border-[#a7d7f9] p-6">
@@ -58,7 +46,7 @@ const Index = () => {
 
               {/* Lead Section */}
               <p className="mb-4 leading-relaxed">
-                <strong>Sid Caulfield</strong> is an Australian content and comms professional based in Melbourne, Victoria. His work spans podcast production, digital journalism and social media strategy. Caulfield is known for his ability to tap into the cultural zeitgeist, synthesising and merging it with ideas of contemporary Australian life and community storytelling. Projects slated for 2026 include <em>How to Pull Off the Most Profitable Bunnings Sausage Sizzle of All Time</em>, <em>How to Ride Your Bike to the Pub/Club</em> and <em>Why the F*ck Does My Beer Cost 18 Bucks?</em> He is currently a freelance journalist and the content syndication and social media manager at Flow Mountain Bike.
+                <strong>Sid Caulfield</strong> is an Australian content and comms professional based in Melbourne, Victoria. His work spans podcast production, digital journalism and social media strategy. Caulfield is known for his ability to tap into the cultural zeitgeist, synthesising and merging it with ideas of contemporary Australian life and community storytelling. Projects slated for 2026 include <em>How to Pull Off the Most Profitable Bunnings Sausage Sizzle of All Time</em>, <em>How to Ride Your Bike to the Pub/Club</em> and <em>Why the F*ck Does My Beer Cost 18 Bucks?</em> He is currently a freelance journalist and the content syndication and social media manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.
               </p>
 
               {/* Career Overview Section */}
@@ -74,7 +62,7 @@ const Index = () => {
                 Flow Mountain Bike
               </h3>
               <p className="mb-2 leading-relaxed">
-                In 2025, Caulfield joined Flow Mountain Bike as Content Syndication and Social Media Manager. In this role, he oversees the publication's social media presence and cross-platform content distribution, reaching a cumulative audience of more than 360,000.
+                In 2025, Caulfield joined <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a> as Content Syndication and Social Media Manager. In this role, he oversees the publication's social media presence and cross-platform content distribution, reaching a cumulative audience of more than 360,000.
               </p>
               <p className="mb-4 leading-relaxed">
                 He redesigned Flow's syndication systems and introduced new workflow tools, including Canva and Sprout Social, to improve efficiency and brand consistency. His work involves repurposing long-form editorial content for multiple platforms, coordinating campaign launches, managing email marketing to a subscriber base of approximately 30,000, and analysing audience performance data to guide editorial strategy. Caulfield also collaborates with commercial partners on campaigns, events and giveaways, and contributes freelance writing to the publication.
@@ -85,7 +73,7 @@ const Index = () => {
                 The Mons Monday Podcast
               </h3>
               <p className="mb-2 leading-relaxed">
-                Caulfield is the producer of The Mons Monday Podcast, a profile-based interview series launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy.
+                Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based interview series launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy.
               </p>
               <p className="mb-4 leading-relaxed">
                 He manages end-to-end production, including research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with LBDO and Krush Organics. Caulfield also created and edited video promotional material to support the launch and ongoing audience growth.
@@ -96,7 +84,7 @@ const Index = () => {
                 Freelance Work
               </h3>
               <p className="mb-4 leading-relaxed">
-                Alongside his staff role, Caulfield undertakes freelance projects across journalism, content strategy and digital media. His work includes feature writing, interview-based storytelling, social media management and campaign support for publications and organisations. He has contributed to outlets including Forte Magazine and Flow Mountain Bike, and regularly works with brands and community partners on content development and distribution.
+                Alongside his staff role, Caulfield undertakes freelance projects across journalism, content strategy and digital media. His work includes feature writing, interview-based storytelling, social media management and campaign support for publications and organisations. He has contributed to outlets including <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a> and <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, and regularly works with brands and community partners on content development and distribution.
               </p>
 
               {/* Notable Projects Section with GIF */}
@@ -105,9 +93,9 @@ const Index = () => {
               </h2>
               
               <ul className="list-disc ml-6 leading-relaxed mb-4">
-                <li><strong>Flow Mountain Bike</strong> — Facebook, Instagram, YouTube campaigns and syndication projects.</li>
-                <li><strong>The Mons Monday Podcast</strong> — Episodes, video teaser and launch marketing.</li>
-                <li><strong>Freelance writing</strong> — Forte Magazine, Flow Mountain Bike.</li>
+                <li><strong><a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a></strong> — Facebook, Instagram, YouTube.</li>
+                <li><strong><a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a></strong> — Episodes, video teaser and launch marketing.</li>
+                <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
                 <li><strong>Animation</strong> — Brain (short form / experimental).</li>
               </ul>
               
@@ -165,7 +153,7 @@ const Index = () => {
                 References
               </h2>
               <p className="mb-4 leading-relaxed">
-                — Available upon request
+                — Available upon request!!
               </p>
             </div>
 
@@ -235,7 +223,7 @@ const SidebarContent = () => (
           <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Born</th>
           <td className="py-2 px-2">
             Sidney Joseph Caulfield <br />
-            July 27, 2003 (age 21)
+            July 27, 2003 (age 22)
             <br />
             East Melbourne, Victoria, AUS
           </td>
@@ -304,8 +292,8 @@ const SidebarContent = () => (
         <tr className="border-t border-[#a2a9b1]">
           <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Resume</th>
           <td className="py-2 px-2">
-            <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="#">
-              View Resume (PDF)
+            <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1T26aUBmdWnSU0To83Md1-1DvCs1Ft6yt/view?usp=sharing">
+              View PDF
             </a>
           </td>
         </tr>
