@@ -2,19 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom cursor using mouse.png from public folder - displayed at ~20x20, hotspot centered */
+/* Custom cursor using mouse.png from public folder - displayed at 64x64, hotspot centered */
 html, body, * {
-  cursor: url('/mouse.png') 10 10, auto !important;
+  cursor: url('/mouse.png') 32 32, auto !important;
 }
 
 /* Force cursor to persist after right-click context menu */
 html:focus, body:focus, *:focus {
-  cursor: url('/mouse.png') 10 10, auto !important;
+  cursor: url('/mouse.png') 32 32, auto !important;
 }
 
 /* Ensure cursor stays on context menu close */
 html::before, body::before {
-  cursor: url('/mouse.png') 10 10, auto !important;
+  cursor: url('/mouse.png') 32 32, auto !important;
 }
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
