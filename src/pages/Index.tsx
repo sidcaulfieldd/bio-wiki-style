@@ -46,7 +46,7 @@ const Index = () => {
 
               {/* Lead Section */}
               <p className="mb-4 leading-relaxed">
-                <strong>Sid Caulfield</strong> is an Australian content and comms professional based in Melbourne, Victoria. His work spans podcast production, digital journalism and social media strategy. Caulfield is known for his ability to tap into the cultural zeitgeist, synthesising and merging it with ideas of contemporary Australian life and community storytelling. Projects slated for 2026 include <em>How to Pull Off the Most Profitable Bunnings Sausage Sizzle of All Time</em>, <em>How to Ride Your Bike to the Pub/Club</em> and <em>Why the F*ck Does My Beer Cost 18 Bucks?</em> He is currently a freelance journalist and the content syndication and social media manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.
+                <strong>Sid Caulfield</strong> is an Australian content and comms professional based in Melbourne, Victoria. His work spans podcast production, digital journalism and social media strategy. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. Projects slated for 2026 include <em>How to Pull Off the Most Profitable Bunnings Sausage Sizzle of All Time</em>, <em>How to Ride Your Bike to the Pub/Club</em> and <em>Why the F*ck Does My Beer Cost 18 Bucks?</em> He is currently a freelance journalist and the content syndication and social media manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a> and New Zealand's largest digital mountain bike publication.
               </p>
 
               {/* Career Overview Section */}
@@ -62,10 +62,10 @@ const Index = () => {
                 Flow Mountain Bike
               </h3>
               <p className="mb-2 leading-relaxed">
-                In 2025, Caulfield joined <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a> as Content Syndication and Social Media Manager. In this role, he oversees the publication's social media presence and cross-platform content distribution, reaching a cumulative audience of more than 360,000.
+                In 2025, Caulfield joined <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a> as Content Syndication and Social Media Manager. In this role, he oversees the publication's social media presence and cross-platform content distribution, reaching a cumulative audience of ~360,000.
               </p>
               <p className="mb-4 leading-relaxed">
-                He redesigned Flow's syndication systems and introduced new workflow tools, including Canva and Sprout Social, to improve efficiency and brand consistency. His work involves repurposing long-form editorial content for multiple platforms, coordinating campaign launches, managing email marketing to a subscriber base of approximately 30,000, and analysing audience performance data to guide editorial strategy. Caulfield also collaborates with commercial partners on campaigns, events and giveaways, and contributes freelance writing to the publication.
+                He redesigned Flow's syndication systems and introduced new workflow tools, including <a href="https://en.wikipedia.org/wiki/Canva" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Canva</a> and <a href="https://en.wikipedia.org/wiki/Sprout_Social" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Sprout Social</a>, to improve efficiency and brand consistency. His work involves repurposing long-form editorial content for multiple platforms, coordinating campaign launches, managing email marketing to a subscriber base of ~30,000 and analysing audience performance data to guide editorial strategy. Caulfield also collaborates with commercial partners on campaigns, events and giveaways, and contributes freelance writing to the publication.
               </p>
 
               {/* The Mons Monday Podcast */}
@@ -73,10 +73,10 @@ const Index = () => {
                 The Mons Monday Podcast
               </h3>
               <p className="mb-2 leading-relaxed">
-                Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based interview series launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy.
+                Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based podcast launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy.
               </p>
               <p className="mb-4 leading-relaxed">
-                He manages end-to-end production, including research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with LBDO and Krush Organics. Caulfield also created and edited video promotional material to support the launch and ongoing audience growth.
+                He manages end-to-end production, including research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with <a href="https://www.lbdo.com/collections/all-products?gad_source=1&gad_campaignid=14826148030&gbraid=0AAAAABSqxZj_P5N44ioeWjMXbmD8E1HzK&gclid=Cj0KCQiAsY3LBhCwARIsAF6O6XhjFMB4m2JTkrRLBdgIY8Us7hSLQOuoitgvvYl-0BgYuKkWok4dEYoaAm5fEALw_wcB" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LBDO</a> and <a href="https://krushorganics.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Krush Organics</a>. Caulfield also created and edited video promotional material to support the launch and ongoing audience growth.
               </p>
 
               {/* Freelance Work */}
@@ -93,10 +93,10 @@ const Index = () => {
               </h2>
               
               <ul className="list-disc ml-6 leading-relaxed mb-4">
-                <li><strong><a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a></strong> — Facebook, Instagram, YouTube.</li>
-                <li><strong><a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a></strong> — Episodes, video teaser and launch marketing.</li>
+                <li><strong><a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a></strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
+                <li><strong><a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a></strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video teaser/launch</a>.</li>
                 <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
-                <li><strong>Animation</strong> — Brain (short form / experimental).</li>
+                <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
               </ul>
               
               {/* GIF centered between sections */}
@@ -114,10 +114,10 @@ const Index = () => {
                 Early Life and Education
               </h2>
               <p className="mb-4 leading-relaxed">
-                Sidney Joseph Caulfield was born on July 27, 2003, in East Melbourne, Victoria, Australia.
+                Sidney Joseph Caulfield was born on July 27, 2003, in <a href="https://en.wikipedia.org/wiki/East_Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">East Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a>.
               </p>
               <p className="mb-4 leading-relaxed">
-                Caulfield completed his secondary education at Belmont High School in Geelong, where he studied Media, Linguistics and Indonesian.
+                Caulfield completed his secondary education at <a href="https://en.wikipedia.org/wiki/Belmont_High_School_(Victoria)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Belmont High School</a> in <a href="https://en.wikipedia.org/wiki/Geelong" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Geelong</a>, where he studied Media, Linguistics and Indonesian.
               </p>
               <p className="mb-4 leading-relaxed">
                 He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a> and will graduate with a Bachelor of Communication (Journalism) in 2026.
