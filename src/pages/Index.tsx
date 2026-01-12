@@ -54,7 +54,7 @@ const Index = () => {
                 Career Overview
               </h2>
               <p className="mb-4 leading-relaxed">
-                Whether it's bringing a group of 30 strangers together for an arvo on the bike or helping influencers lay down some dating lore on the mic, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the highlights.
+                Whether it's bringing a group of 30 strangers together for an arvo on the bike or helping influencers lay down some dating lore on the mic, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the highlights!!
               </p>
 
               {/* Flow Mountain Bike */}
