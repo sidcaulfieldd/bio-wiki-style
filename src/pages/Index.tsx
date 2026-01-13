@@ -231,11 +231,7 @@ const SidebarContent = () => (
         <tr className="border-t border-[#a2a9b1]">
           <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Occupation</th>
           <td className="py-2 px-2">
-            Freelance Journalist
-            <br />
-            Content Syndication and Social Media Manager
-            <br />
-            Podcast Producer
+            Freelance Journalist, Content Syndication and Social Media Manager, Podcast Producer
           </td>
         </tr>
         <tr className="border-t border-[#a2a9b1]">
