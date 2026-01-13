@@ -11,37 +11,37 @@ const CursorTrail = () => {
   const lastPositionRef = useRef<{ x: number; y: number } | null>(null);
   const lastScrollRef = useRef<number>(0);
   const totalDistanceRef = useRef(0);
+  const scrollDistanceRef = useRef(0);
   const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
   const currentMousePosRef = useRef<{ x: number; y: number } | null>(null);
   
   const maxTrailRects = 6;
   const minDistance = 64;
   
-  // Updated color palette with one additional color
+  // Updated color palette
   const colors = [
     '#b0fb90', // green
-    '#f7dc9f', // yellow
-    '#b27558', // orange
-    '#0059ff', // blue
-    '#241f21', // black
-    '#a0a0a0', // grey
-    '#FF69B4'  // hot pink (new color)
+    '#FF69B4', // hot pink
+    '#FFFFFF', // white
+    '#0745AD', // blue
+    '#F8F9FA', // light gray
+    '#020817', // dark blue/black
+    '#EBECF0'  // light blue gray
   ];
   
   const randomColor = () => colors[Math.floor(Math.random() * colors.length)];
   const randomSize = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
   const randomBool = () => Math.random() > 0.5;
   
-  const createTrailRect = useCallback((x: number, y: number) => {
+  const createTrailRect = useCallback((x: number, y: number, isScrollCreated: boolean = false) => {
     const rect = document.createElement('div');
     rect.className = 'cursor-trail-rect';
-    rect.style.position = 'fixed';
-    rect.style.pointerEvents = 'none';
     rect.style.transition = 'opacity 0.4s ease-out';
-    // Lower z-index to ensure it stays behind text
-    rect.style.zIndex = '1';
+    // Higher z-index to appear in front of headings, images, and other content
+    // but behind modals/dropdowns (which typically use z-index 1000+)
+    rect.style.zIndex = '100';
     rect.style.borderRadius = '2px';
-    rect.style.opacity = '0.8';
+    rect.style.pointerEvents = 'none';
     
     const isHorizontal = randomBool();
     let width: number, height: number;
@@ -58,12 +58,22 @@ const CursorTrail = () => {
     rect.style.height = height + 'px';
     rect.style.backgroundColor = randomColor();
     
-    // Position at cursor
-    const finalX = x - width / 2;
-    const finalY = y - height / 2;
-    
-    rect.style.left = finalX + 'px';
-    rect.style.top = finalY + 'px';
+    // Position based on whether it's scroll-created or mouse-created
+    if (isScrollCreated) {
+      // For scroll: use absolute positioning so it stays with page content
+      rect.style.position = 'absolute';
+      const finalX = x - width / 2;
+      const finalY = y + window.scrollY - height / 2;
+      rect.style.left = finalX + 'px';
+      rect.style.top = finalY + 'px';
+    } else {
+      // For mouse movement: use fixed positioning
+      rect.style.position = 'fixed';
+      const finalX = x - width / 2;
+      const finalY = y - height / 2;
+      rect.style.left = finalX + 'px';
+      rect.style.top = finalY + 'px';
+    }
     
     return { element: rect, x, y };
   }, []);
@@ -92,8 +102,8 @@ const CursorTrail = () => {
     }, 300);
   }, [fadeOutOldRects]);
   
-  const addNewRect = useCallback((x: number, y: number) => {
-    const newRect = createTrailRect(x, y);
+  const addNewRect = useCallback((x: number, y: number, isScrollCreated: boolean = false) => {
+    const newRect = createTrailRect(x, y, isScrollCreated);
     document.body.appendChild(newRect.element);
     trailRectsRef.current.push(newRect);
     
@@ -133,20 +143,22 @@ const CursorTrail = () => {
   
   const handleScroll = useCallback(() => {
     const currentScroll = window.scrollY;
-    const scrollDelta = currentScroll - lastScrollRef.current;
+    const scrollDelta = Math.abs(currentScroll - lastScrollRef.current);
     const mousePos = currentMousePosRef.current;
     
-    // Create trail on scroll if mouse position exists
-    if (mousePos && Math.abs(scrollDelta) >= 15) {
-      // As you scroll down (positive delta), place rectangles above cursor
-      // As you scroll up (negative delta), place rectangles below cursor
-      // This creates the "trailing" effect
-      const trailY = mousePos.y - (scrollDelta * 0.5);
-      
-      addNewRect(mousePos.x, trailY);
-      lastScrollRef.current = currentScroll;
+    // Accumulate scroll distance
+    scrollDistanceRef.current += scrollDelta;
+    
+    // Create a rectangle every 64 pixels of scrolling
+    if (mousePos && scrollDistanceRef.current >= minDistance) {
+      // Create rectangle at current mouse position with absolute positioning
+      // so it stays on the page while the mouse scrolls away from it
+      addNewRect(mousePos.x, mousePos.y, true);
+      scrollDistanceRef.current = 0;
       startIdleTimer();
     }
+    
+    lastScrollRef.current = currentScroll;
   }, [addNewRect, startIdleTimer]);
   
   const handleMouseLeave = useCallback(() => {
@@ -189,11 +201,7 @@ const CursorTrail = () => {
     return () => document.removeEventListener('mousemove', checkMouseLeave);
   }, [handleMouseLeave]);
   
-  return (
-    <div 
-      className="fixed top-0 left-0 w-full h-full pointer-events-none"
-    />
-  );
+  return null;
 };
 
 export default CursorTrail;
