@@ -16,16 +16,16 @@ const CursorTrail = () => {
   
   const maxTrailRects = 6;
   const minDistance = 64;
-  const trackingAreaHeight = 300;
   
-  // Color palette from original code
+  // Updated color palette with one additional color
   const colors = [
     '#b0fb90', // green
     '#f7dc9f', // yellow
     '#b27558', // orange
     '#0059ff', // blue
     '#241f21', // black
-    '#a0a0a0'  // grey
+    '#a0a0a0', // grey
+    '#FF69B4'  // hot pink (new color)
   ];
   
   const randomColor = () => colors[Math.floor(Math.random() * colors.length)];
@@ -38,9 +38,10 @@ const CursorTrail = () => {
     rect.style.position = 'fixed';
     rect.style.pointerEvents = 'none';
     rect.style.transition = 'opacity 0.4s ease-out';
-    // z-index 5: behind text (z-index 10+) but in front of images/lines
-    rect.style.zIndex = '5';
+    // Lower z-index to ensure it stays behind text
+    rect.style.zIndex = '1';
     rect.style.borderRadius = '2px';
+    rect.style.opacity = '0.8';
     
     const isHorizontal = randomBool();
     let width: number, height: number;
@@ -91,10 +92,6 @@ const CursorTrail = () => {
     }, 300);
   }, [fadeOutOldRects]);
   
-  const isInTrackingArea = useCallback((y: number) => {
-    return y >= 0 && y <= trackingAreaHeight;
-  }, []);
-  
   const addNewRect = useCallback((x: number, y: number) => {
     const newRect = createTrailRect(x, y);
     document.body.appendChild(newRect.element);
@@ -112,12 +109,6 @@ const CursorTrail = () => {
   const handleMouseMove = useCallback((e: MouseEvent) => {
     startIdleTimer();
     currentMousePosRef.current = { x: e.clientX, y: e.clientY };
-    
-    if (!isInTrackingArea(e.clientY)) {
-      lastPositionRef.current = null;
-      totalDistanceRef.current = 0;
-      return;
-    }
     
     const lastPos = lastPositionRef.current;
     
@@ -138,20 +129,25 @@ const CursorTrail = () => {
     }
     
     lastPositionRef.current = { x: e.clientX, y: e.clientY };
-  }, [addNewRect, isInTrackingArea, startIdleTimer]);
+  }, [addNewRect, startIdleTimer]);
   
   const handleScroll = useCallback(() => {
     const currentScroll = window.scrollY;
-    const scrollDelta = Math.abs(currentScroll - lastScrollRef.current);
+    const scrollDelta = currentScroll - lastScrollRef.current;
     const mousePos = currentMousePosRef.current;
     
-    // Only create trail if mouse is in tracking area and we have a position
-    if (mousePos && isInTrackingArea(mousePos.y) && scrollDelta >= minDistance) {
-      addNewRect(mousePos.x, mousePos.y);
+    // Create trail on scroll if mouse position exists
+    if (mousePos && Math.abs(scrollDelta) >= 15) {
+      // As you scroll down (positive delta), place rectangles above cursor
+      // As you scroll up (negative delta), place rectangles below cursor
+      // This creates the "trailing" effect
+      const trailY = mousePos.y - (scrollDelta * 0.5);
+      
+      addNewRect(mousePos.x, trailY);
       lastScrollRef.current = currentScroll;
       startIdleTimer();
     }
-  }, [addNewRect, isInTrackingArea, startIdleTimer]);
+  }, [addNewRect, startIdleTimer]);
   
   const handleMouseLeave = useCallback(() => {
     fadeOutOldRects(2);
@@ -163,7 +159,7 @@ const CursorTrail = () => {
     lastScrollRef.current = window.scrollY;
     
     document.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
@@ -179,20 +175,23 @@ const CursorTrail = () => {
   }, [handleMouseMove, handleScroll]);
   
   useEffect(() => {
-    const checkTrackingArea = (e: MouseEvent) => {
-      if (!isInTrackingArea(e.clientY) && trailRectsRef.current.length > 2) {
-        handleMouseLeave();
+    const checkMouseLeave = (e: MouseEvent) => {
+      // Fade out if mouse leaves the window
+      if (e.clientY < 0 || e.clientY > window.innerHeight || 
+          e.clientX < 0 || e.clientX > window.innerWidth) {
+        if (trailRectsRef.current.length > 2) {
+          handleMouseLeave();
+        }
       }
     };
     
-    document.addEventListener('mousemove', checkTrackingArea);
-    return () => document.removeEventListener('mousemove', checkTrackingArea);
-  }, [isInTrackingArea, handleMouseLeave]);
+    document.addEventListener('mousemove', checkMouseLeave);
+    return () => document.removeEventListener('mousemove', checkMouseLeave);
+  }, [handleMouseLeave]);
   
   return (
     <div 
-      className="fixed top-0 left-0 w-full pointer-events-none"
-      style={{ height: trackingAreaHeight }}
+      className="fixed top-0 left-0 w-full h-full pointer-events-none"
     />
   );
 };
