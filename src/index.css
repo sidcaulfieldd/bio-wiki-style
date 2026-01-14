@@ -7,6 +7,14 @@ html, body, * {
   cursor: none !important;
 }
 
+/* Pixelated image rendering for scroll effect */
+.pixelated-image {
+  image-rendering: pixelated !important;
+  image-rendering: -moz-crisp-edges !important;
+  -webkit-image-rendering: pixelated !important;
+  object-fit: fill !important;
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
