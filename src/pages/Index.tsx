@@ -197,31 +197,37 @@ const SidebarContent = () => (
 
     {/* Infobox image */}
     <div className="text-center p-3 pb-0">
-      <div className="relative w-full aspect-square bg-[#FF69B4] z-10">
-        <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover" />
+      <div className="relative w-full aspect-square bg-[#FF69B4] z-[2]">
+        <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover relative z-10" />
       </div>
       <div className="text-xs text-[#54595d] mt-1 mb-3">
         Caulfield in 2025
       </div>
-      {/* Spotify Embed with autoplay attempt */}
-      <iframe
-        className="mb-3"
-        style={{ borderRadius: '12px' }}
-        src="https://open.spotify.com/embed/track/4YACgyR9xdAcyJMBV8H6oX?utm_source=generator&theme=0&autoplay=1"
-        width="100%"
-        height="80"
-        frameBorder="0"
-        allowFullScreen
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy"
-      />
+      {/* Spotify Embed with autoplay attempt - wrapped for cursor fix */}
+      <div className="relative mb-3">
+        <iframe
+          style={{ borderRadius: '12px', position: 'relative', zIndex: 1 }}
+          src="https://open.spotify.com/embed/track/4YACgyR9xdAcyJMBV8H6oX?utm_source=generator&theme=0&autoplay=1"
+          width="100%"
+          height="80"
+          frameBorder="0"
+          allowFullScreen
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        />
+        {/* Transparent overlay to maintain custom cursor over iframe */}
+        <div 
+          className="absolute inset-0 z-10"
+          style={{ pointerEvents: 'none' }}
+        />
+      </div>
     </div>
 
-    <table className="w-full text-sm">
+    <table className="w-full text-sm relative z-10">
       <tbody>
         <tr className="border-t border-[#a2a9b1]">
           <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Born</th>
-          <td className="py-2 px-2">
+          <td className="py-2 px-2 relative z-10">
             Sidney Joseph Caulfield <br />
             July 27, 2003 (age 22)
             <br />
@@ -230,21 +236,21 @@ const SidebarContent = () => (
         </tr>
         <tr className="border-t border-[#a2a9b1]">
           <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Occupation</th>
-          <td className="py-2 px-2">
+          <td className="py-2 px-2 relative z-10">
             Freelance Journalist, Content Syndication and Social Media Manager, Podcast Producer
           </td>
         </tr>
         <tr className="border-t border-[#a2a9b1]">
           <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Location</th>
-          <td className="py-2 px-2">Greater Melbourne, Victoria, Australia</td>
+          <td className="py-2 px-2 relative z-10">Greater Melbourne, Victoria, Australia</td>
         </tr>
         <tr className="border-t border-[#a2a9b1]">
           <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Years active</th>
-          <td className="py-2 px-2">2025—present</td>
+          <td className="py-2 px-2 relative z-10">2025—present</td>
         </tr>
         <tr className="border-t border-[#a2a9b1]">
           <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Education</th>
-          <td className="py-2 px-2">
+          <td className="py-2 px-2 relative z-10">
             <a
               href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology"
               className="text-[#0645ad] hover:underline"
@@ -257,7 +263,7 @@ const SidebarContent = () => (
         </tr>
         <tr className="border-t border-[#a2a9b1]">
           <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Contact</th>
-          <td className="py-2 px-2">
+          <td className="py-2 px-2 relative z-10">
             <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">
               caulfieldsid@gmail.com
             </a>
@@ -265,7 +271,7 @@ const SidebarContent = () => (
         </tr>
         <tr className="border-t border-[#a2a9b1]">
           <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Social</th>
-          <td className="py-2 px-2">
+          <td className="py-2 px-2 relative z-10">
             <a
               className="text-[#0645ad] hover:underline"
               target="_blank"
@@ -287,7 +293,7 @@ const SidebarContent = () => (
         </tr>
         <tr className="border-t border-[#a2a9b1]">
           <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Resume</th>
-          <td className="py-2 px-2">
+          <td className="py-2 px-2 relative z-10">
             <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1T26aUBmdWnSU0To83Md1-1DvCs1Ft6yt/view?usp=sharing">
               View PDF
             </a>
