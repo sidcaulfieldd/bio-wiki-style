@@ -12,10 +12,9 @@ const CursorTrail = () => {
   const lastScrollRef = useRef<number>(0);
   const totalDistanceRef = useRef(0);
   const scrollDistanceRef = useRef(0);
-  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
   const currentMousePosRef = useRef<{ x: number; y: number } | null>(null);
   
-  const maxTrailRects = 6;
+  const maxTrailRects = 7;
   const minDistance = 64;
   
   // Updated color palette
@@ -32,14 +31,13 @@ const CursorTrail = () => {
   const randomColor = () => colors[Math.floor(Math.random() * colors.length)];
   const randomSize = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
   const randomBool = () => Math.random() > 0.5;
+  const randomOffset = (range: number) => (Math.random() - 0.5) * range;
   
   const createTrailRect = useCallback((x: number, y: number, isScrollCreated: boolean = false) => {
     const rect = document.createElement('div');
     rect.className = 'cursor-trail-rect';
-    rect.style.transition = 'opacity 0.4s ease-out';
-    // Higher z-index to appear in front of headings, images, and other content
-    // but behind modals/dropdowns (which typically use z-index 1000+)
-    rect.style.zIndex = '100';
+    // z-index 5: behind body text (z-10) and profile pic (z-10), but in front of headings/images
+    rect.style.zIndex = '5';
     rect.style.borderRadius = '2px';
     rect.style.pointerEvents = 'none';
     
@@ -60,47 +58,27 @@ const CursorTrail = () => {
     
     // Position based on whether it's scroll-created or mouse-created
     if (isScrollCreated) {
-      // For scroll: use absolute positioning so it stays with page content
+      // For scroll: use absolute positioning with random offset (128x64 area)
       rect.style.position = 'absolute';
-      const finalX = x - width / 2;
-      const finalY = y + window.scrollY - height / 2;
+      const offsetX = randomOffset(128); // ±64 pixels horizontally
+      const offsetY = randomOffset(64);  // ±32 pixels vertically
+      const finalX = x + offsetX - width / 2;
+      const finalY = y + window.scrollY + offsetY - height / 2;
       rect.style.left = finalX + 'px';
       rect.style.top = finalY + 'px';
     } else {
-      // For mouse movement: use fixed positioning
+      // For mouse movement: use fixed positioning with random offset (64x64 area)
       rect.style.position = 'fixed';
-      const finalX = x - width / 2;
-      const finalY = y - height / 2;
+      const offsetX = randomOffset(64); // ±32 pixels horizontally
+      const offsetY = randomOffset(64); // ±32 pixels vertically
+      const finalX = x + offsetX - width / 2;
+      const finalY = y + offsetY - height / 2;
       rect.style.left = finalX + 'px';
       rect.style.top = finalY + 'px';
     }
     
     return { element: rect, x, y };
   }, []);
-  
-  const fadeOutOldRects = useCallback((keepCount: number) => {
-    const rectsToRemove = trailRectsRef.current.length - keepCount;
-    
-    if (rectsToRemove > 0) {
-      for (let i = 0; i < rectsToRemove; i++) {
-        const oldRect = trailRectsRef.current.shift();
-        if (oldRect) {
-          oldRect.element.style.opacity = '0';
-          setTimeout(() => oldRect.element.remove(), 400);
-        }
-      }
-    }
-  }, []);
-  
-  const startIdleTimer = useCallback(() => {
-    if (idleTimerRef.current) {
-      clearTimeout(idleTimerRef.current);
-    }
-    
-    idleTimerRef.current = setTimeout(() => {
-      fadeOutOldRects(2);
-    }, 300);
-  }, [fadeOutOldRects]);
   
   const addNewRect = useCallback((x: number, y: number, isScrollCreated: boolean = false) => {
     const newRect = createTrailRect(x, y, isScrollCreated);
@@ -110,14 +88,12 @@ const CursorTrail = () => {
     if (trailRectsRef.current.length > maxTrailRects) {
       const oldestRect = trailRectsRef.current.shift();
       if (oldestRect) {
-        oldestRect.element.style.opacity = '0';
-        setTimeout(() => oldestRect.element.remove(), 400);
+        oldestRect.element.remove();
       }
     }
   }, [createTrailRect]);
   
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    startIdleTimer();
     currentMousePosRef.current = { x: e.clientX, y: e.clientY };
     
     const lastPos = lastPositionRef.current;
@@ -139,7 +115,7 @@ const CursorTrail = () => {
     }
     
     lastPositionRef.current = { x: e.clientX, y: e.clientY };
-  }, [addNewRect, startIdleTimer]);
+  }, [addNewRect]);
   
   const handleScroll = useCallback(() => {
     const currentScroll = window.scrollY;
@@ -155,17 +131,15 @@ const CursorTrail = () => {
       // so it stays on the page while the mouse scrolls away from it
       addNewRect(mousePos.x, mousePos.y, true);
       scrollDistanceRef.current = 0;
-      startIdleTimer();
     }
     
     lastScrollRef.current = currentScroll;
-  }, [addNewRect, startIdleTimer]);
+  }, [addNewRect]);
   
   const handleMouseLeave = useCallback(() => {
-    fadeOutOldRects(2);
     lastPositionRef.current = null;
     totalDistanceRef.current = 0;
-  }, [fadeOutOldRects]);
+  }, []);
   
   useEffect(() => {
     lastScrollRef.current = window.scrollY;
@@ -179,21 +153,15 @@ const CursorTrail = () => {
       
       trailRectsRef.current.forEach(rect => rect.element.remove());
       trailRectsRef.current = [];
-      
-      if (idleTimerRef.current) {
-        clearTimeout(idleTimerRef.current);
-      }
     };
   }, [handleMouseMove, handleScroll]);
   
   useEffect(() => {
     const checkMouseLeave = (e: MouseEvent) => {
-      // Fade out if mouse leaves the window
+      // Only reset position tracking if mouse leaves the window
       if (e.clientY < 0 || e.clientY > window.innerHeight || 
           e.clientX < 0 || e.clientX > window.innerWidth) {
-        if (trailRectsRef.current.length > 2) {
-          handleMouseLeave();
-        }
+        handleMouseLeave();
       }
     };
     

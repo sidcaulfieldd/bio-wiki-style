@@ -1,5 +1,6 @@
 import profilePic from "@/assets/profile_pic.gif";
 import notableSmallGif from "@/assets/notable-small.gif";
+import PixelatedImage from "@/components/PixelatedImage";
 
 const Index = () => {
   return (
@@ -45,7 +46,7 @@ const Index = () => {
               </div>
 
               {/* Lead Section */}
-              <p className="mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed relative z-10">
                 <strong>Sid Caulfield</strong> is an Australian content and comms professional based in <a href="https://en.wikipedia.org/wiki/Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>. His work spans podcast production, digital journalism and social media strategy. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. Projects slated for 2026 include <em>How to Pull Off the Most Profitable Bunnings Sausage Sizzle of All Time</em>, <em>How to Ride Your Bike to the Pub/Club</em> and <em>Why the F*ck Does My Beer Cost 18 Bucks?</em> He is currently a freelance journalist and the content syndication and social media manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a> and <a href="https://en.wikipedia.org/wiki/New_Zealand" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">New Zealand</a>'s largest digital mountain bike publication.
               </p>
 
@@ -53,7 +54,7 @@ const Index = () => {
               <h2 id="career-overview" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Career Overview
               </h2>
-              <p className="mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed relative z-10">
                 Whether it's bringing a group of 30 strangers together for an arvo on the bike or helping influencers lay down some dating lore on the mic, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the highlights!!
               </p>
 
@@ -61,10 +62,10 @@ const Index = () => {
               <h3 id="flow-mountain-bike" className="text-xl font-serif mt-4 mb-2">
                 Flow Mountain Bike
               </h3>
-              <p className="mb-2 leading-relaxed">
+              <p className="mb-2 leading-relaxed relative z-10">
                 In 2025, Caulfield joined <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a> as Content Syndication and Social Media Manager. In this role, he oversees the publication's social media presence and cross-platform content distribution, reaching a cumulative audience of ~360,000.
               </p>
-              <p className="mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed relative z-10">
                 He redesigned Flow's syndication systems and introduced new workflow tools, including <a href="https://en.wikipedia.org/wiki/Canva" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Canva</a> and <a href="https://en.wikipedia.org/wiki/Sprout_Social" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Sprout Social</a>, to improve efficiency and brand consistency. His work involves repurposing long-form editorial content for multiple platforms, coordinating campaign launches, managing email marketing to a subscriber base of ~30,000 and analysing audience performance data to guide editorial strategy. Caulfield also collaborates with commercial partners on campaigns, events and giveaways, and contributes freelance writing to the publication.
               </p>
 
@@ -72,10 +73,10 @@ const Index = () => {
               <h3 id="mons-monday-podcast" className="text-xl font-serif mt-4 mb-2">
                 The Mons Monday Podcast
               </h3>
-              <p className="mb-2 leading-relaxed">
+              <p className="mb-2 leading-relaxed relative z-10">
                 Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based podcast launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy.
               </p>
-              <p className="mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed relative z-10">
                 He manages end-to-end production, including research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with <a href="https://www.lbdo.com/collections/all-products?gad_source=1&gad_campaignid=14826148030&gbraid=0AAAAABSqxZj_P5N44ioeWjMXbmD8E1HzK&gclid=Cj0KCQiAsY3LBhCwARIsAF6O6XhjFMB4m2JTkrRLBdgIY8Us7hSLQOuoitgvvYl-0BgYuKkWok4dEYoaAm5fEALw_wcB" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LBDO</a> and <a href="https://krushorganics.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Krush Organics</a>. Caulfield also created and edited video promotional material to support the launch and ongoing audience growth.
               </p>
 
@@ -83,7 +84,7 @@ const Index = () => {
               <h3 id="freelance-work" className="text-xl font-serif mt-4 mb-2">
                 Freelance Work
               </h3>
-              <p className="mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed relative z-10">
                 Alongside his staff role, Caulfield undertakes freelance projects across journalism, content strategy and digital media. His work includes feature writing, interview-based storytelling, social media management and campaign support for publications and organisations. He has contributed to outlets including <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a> and <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, and regularly works with brands and community partners on content development and distribution.
               </p>
 
@@ -92,20 +93,19 @@ const Index = () => {
                 Notable Projects
               </h2>
               
-              <ul className="list-disc ml-6 leading-relaxed mb-4">
+              <ul className="list-disc ml-6 leading-relaxed mb-4 relative z-10">
                 <li><strong><a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a></strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
                 <li><strong><a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a></strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video teaser/launch</a>.</li>
                 <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
                 <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
               </ul>
               
-              {/* GIF centered between sections */}
+              {/* GIF centered between sections with pixelation effect */}
               <div className="flex justify-center my-6">
-                <img 
-                  alt="Sid Caulfield — small animated clip" 
-                  src={notableSmallGif} 
-                  decoding="async" 
-                  className="mw-file-element h-[230px] w-auto object-contain"
+                <PixelatedImage
+                  src={notableSmallGif}
+                  alt="Sid Caulfield — small animated clip"
+                  displayHeight={230}
                 />
               </div>
 
@@ -113,13 +113,13 @@ const Index = () => {
               <h2 id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Early Life and Education
               </h2>
-              <p className="mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed relative z-10">
                 Sidney Joseph Caulfield was born on July 27, 2003, in <a href="https://en.wikipedia.org/wiki/East_Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">East Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a>.
               </p>
-              <p className="mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed relative z-10">
                 Caulfield completed his secondary education at <a href="https://en.wikipedia.org/wiki/Belmont_High_School_(Victoria)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Belmont High School</a> in <a href="https://en.wikipedia.org/wiki/Geelong" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Geelong</a>, where he studied Media, Linguistics and Indonesian.
               </p>
-              <p className="mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed relative z-10">
                 He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a> and will graduate with a Bachelor of Communication (Journalism) in 2026.
               </p>
 
@@ -152,7 +152,7 @@ const Index = () => {
               <h2 id="references" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 References
               </h2>
-              <p className="mb-4 leading-relaxed">
+              <p className="mb-4 leading-relaxed relative z-10">
                 — Available upon request!!
               </p>
             </div>
@@ -197,7 +197,7 @@ const SidebarContent = () => (
 
     {/* Infobox image */}
     <div className="text-center p-3 pb-0">
-      <div className="relative w-full aspect-square bg-[#FF69B4]">
+      <div className="relative w-full aspect-square bg-[#FF69B4] z-10">
         <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover" />
       </div>
       <div className="text-xs text-[#54595d] mt-1 mb-3">
