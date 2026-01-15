@@ -1,6 +1,6 @@
+import { useRef } from "react";
 import profilePic from "@/assets/profile_pic.gif";
-import notableSmallGif from "@/assets/notable-small.gif";
-import PixelatedImage from "@/components/PixelatedImage";
+import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 
 const Index = () => {
   return (
@@ -100,13 +100,9 @@ const Index = () => {
                 <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
               </ul>
               
-              {/* GIF centered between sections with pixelation effect */}
+              {/* GIF centered between sections with canvas pixelation effect */}
               <div className="flex justify-center my-6">
-                <PixelatedImage
-                  src={notableSmallGif}
-                  alt="Sid Caulfield — small animated clip"
-                  displayHeight={230}
-                />
+                <NotableProjectsPixelation />
               </div>
 
               {/* Early Life and Education Section */}
@@ -188,120 +184,124 @@ const Index = () => {
 };
 
 // Sidebar content extracted into a reusable component
-const SidebarContent = () => (
-  <>
-    {/* Infobox title */}
-    <div className="bg-[#eaecf0] text-center font-bold text-[125%] py-2 border-b border-[#a2a9b1]">
-      Sid Caulfield
-    </div>
+const SidebarContent = () => {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  
+  return (
+    <>
+      {/* Infobox title */}
+      <div className="bg-[#eaecf0] text-center font-bold text-[125%] py-2 border-b border-[#a2a9b1]">
+        Sid Caulfield
+      </div>
 
-    {/* Infobox image */}
-    <div className="text-center p-3 pb-0">
-      <div className="relative w-full aspect-square bg-[#FF69B4] z-[2]">
-        <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover relative z-10" />
+      {/* Infobox image */}
+      <div className="text-center p-3 pb-0">
+        {/* Pink background with z-[2] - behind tracker */}
+        <div className="relative w-full aspect-square bg-[#FF69B4] z-[2]">
+          {/* GIF with z-[10] - above tracker */}
+          <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover z-[10]" />
+        </div>
+        <div className="text-xs text-[#54595d] mt-1 mb-3">
+          Caulfield in 2025
+        </div>
+        {/* Spotify Embed */}
+        <div className="relative mb-3">
+          <iframe
+            ref={iframeRef}
+            style={{ borderRadius: '12px', position: 'relative', zIndex: 1 }}
+            src="https://open.spotify.com/embed/track/4YACgyR9xdAcyJMBV8H6oX?utm_source=generator&theme=0&autoplay=1"
+            width="100%"
+            height="80"
+            frameBorder="0"
+            allowFullScreen
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          />
+        </div>
       </div>
-      <div className="text-xs text-[#54595d] mt-1 mb-3">
-        Caulfield in 2025
-      </div>
-      {/* Spotify Embed with autoplay attempt - wrapped for cursor fix */}
-      <div className="relative mb-3">
-        <iframe
-          style={{ borderRadius: '12px', position: 'relative', zIndex: 1 }}
-          src="https://open.spotify.com/embed/track/4YACgyR9xdAcyJMBV8H6oX?utm_source=generator&theme=0&autoplay=1"
-          width="100%"
-          height="80"
-          frameBorder="0"
-          allowFullScreen
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
-        />
-        {/* Transparent overlay to maintain custom cursor over iframe */}
-        <div 
-          className="absolute inset-0 z-10"
-          style={{ pointerEvents: 'none' }}
-        />
-      </div>
-    </div>
 
-    <table className="w-full text-sm relative z-10">
-      <tbody>
-        <tr className="border-t border-[#a2a9b1]">
-          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Born</th>
-          <td className="py-2 px-2 relative z-10">
-            Sidney Joseph Caulfield <br />
-            July 27, 2003 (age 22)
-            <br />
-            East Melbourne, Victoria, AUS
-          </td>
-        </tr>
-        <tr className="border-t border-[#a2a9b1]">
-          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Occupation</th>
-          <td className="py-2 px-2 relative z-10">
-            Freelance Journalist, Content Syndication and Social Media Manager, Podcast Producer
-          </td>
-        </tr>
-        <tr className="border-t border-[#a2a9b1]">
-          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Location</th>
-          <td className="py-2 px-2 relative z-10">Greater Melbourne, Victoria, Australia</td>
-        </tr>
-        <tr className="border-t border-[#a2a9b1]">
-          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Years active</th>
-          <td className="py-2 px-2 relative z-10">2025—present</td>
-        </tr>
-        <tr className="border-t border-[#a2a9b1]">
-          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Education</th>
-          <td className="py-2 px-2 relative z-10">
-            <a
-              href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology"
-              className="text-[#0645ad] hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              RMIT University
-            </a>
-          </td>
-        </tr>
-        <tr className="border-t border-[#a2a9b1]">
-          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Contact</th>
-          <td className="py-2 px-2 relative z-10">
-            <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">
-              caulfieldsid@gmail.com
-            </a>
-          </td>
-        </tr>
-        <tr className="border-t border-[#a2a9b1]">
-          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Social</th>
-          <td className="py-2 px-2 relative z-10">
-            <a
-              className="text-[#0645ad] hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://www.linkedin.com/in/sid-caulfield-27b838356/"
-            >
-              LinkedIn
-            </a>
-            <br />
-            <a
-              className="text-[#0645ad] hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://www.instagram.com/sidcaulfield/"
-            >
-              Instagram
-            </a>
-          </td>
-        </tr>
-        <tr className="border-t border-[#a2a9b1]">
-          <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2">Resume</th>
-          <td className="py-2 px-2 relative z-10">
-            <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1T26aUBmdWnSU0To83Md1-1DvCs1Ft6yt/view?usp=sharing">
-              View PDF
-            </a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </>
-);
+      <table className="w-full text-sm">
+        <tbody>
+          <tr className="border-t border-[#a2a9b1]">
+            {/* Left column (th) - z-[1], below tracker */}
+            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Born</th>
+            {/* Right column (td) - z-10, above tracker */}
+            <td className="py-2 px-2 relative z-10">
+              Sidney Joseph Caulfield <br />
+              July 27, 2003 (age 22)
+              <br />
+              East Melbourne, Victoria, AUS
+            </td>
+          </tr>
+          <tr className="border-t border-[#a2a9b1]">
+            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Occupation</th>
+            <td className="py-2 px-2 relative z-10">
+              Freelance Journalist, Content Syndication and Social Media Manager, Podcast Producer
+            </td>
+          </tr>
+          <tr className="border-t border-[#a2a9b1]">
+            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Location</th>
+            <td className="py-2 px-2 relative z-10">Greater Melbourne, Victoria, Australia</td>
+          </tr>
+          <tr className="border-t border-[#a2a9b1]">
+            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Years active</th>
+            <td className="py-2 px-2 relative z-10">2025—present</td>
+          </tr>
+          <tr className="border-t border-[#a2a9b1]">
+            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Education</th>
+            <td className="py-2 px-2 relative z-10">
+              <a
+                href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology"
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                RMIT University
+              </a>
+            </td>
+          </tr>
+          <tr className="border-t border-[#a2a9b1]">
+            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Contact</th>
+            <td className="py-2 px-2 relative z-10">
+              <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">
+                caulfieldsid@gmail.com
+              </a>
+            </td>
+          </tr>
+          <tr className="border-t border-[#a2a9b1]">
+            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Social</th>
+            <td className="py-2 px-2 relative z-10">
+              <a
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://www.linkedin.com/in/sid-caulfield-27b838356/"
+              >
+                LinkedIn
+              </a>
+              <br />
+              <a
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://www.instagram.com/sidcaulfield/"
+              >
+                Instagram
+              </a>
+            </td>
+          </tr>
+          <tr className="border-t border-[#a2a9b1]">
+            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Resume</th>
+            <td className="py-2 px-2 relative z-10">
+              <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1T26aUBmdWnSU0To83Md1-1DvCs1Ft6yt/view?usp=sharing">
+                View PDF
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </>
+  );
+};
 
 export default Index;

@@ -6,16 +6,63 @@ interface TrailRect {
   y: number;
 }
 
-const CursorTrail = () => {
+interface CursorTrailProps {
+  isPlaying?: boolean;
+}
+
+const CursorTrail = ({ isPlaying = false }: CursorTrailProps) => {
   const trailRectsRef = useRef<TrailRect[]>([]);
   const lastPositionRef = useRef<{ x: number; y: number } | null>(null);
   const lastScrollRef = useRef<number>(0);
   const totalDistanceRef = useRef(0);
   const scrollDistanceRef = useRef(0);
   const currentMousePosRef = useRef<{ x: number; y: number } | null>(null);
+  const rhythmIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const isPlayingRef = useRef(isPlaying);
   
   const maxTrailRects = 7;
   const minDistance = 64;
+  const bpm = 120;
+  const beatInterval = 60000 / bpm;
+  
+  // Sync isPlaying ref
+  useEffect(() => { isPlayingRef.current = isPlaying; }, [isPlaying]);
+  
+  // Rhythm mode effect
+  useEffect(() => {
+    if (isPlaying) {
+      rhythmIntervalRef.current = setInterval(() => {
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        // We'll add rect via DOM manipulation
+        const rect = document.createElement('div');
+        rect.className = 'cursor-trail-rect';
+        rect.style.zIndex = '5';
+        rect.style.borderRadius = '2px';
+        rect.style.pointerEvents = 'none';
+        rect.style.position = 'fixed';
+        const colors = ['#b0fb90', '#FF69B4', '#FFFFFF', '#0745AD', '#F8F9FA', '#020817', '#EBECF0'];
+        const isHorizontal = Math.random() > 0.5;
+        const width = isHorizontal ? Math.floor(Math.random() * 81) + 40 : Math.floor(Math.random() * 18) + 8;
+        const height = isHorizontal ? Math.floor(Math.random() * 18) + 8 : Math.floor(Math.random() * 81) + 40;
+        rect.style.width = width + 'px';
+        rect.style.height = height + 'px';
+        rect.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        rect.style.left = (x - width / 2) + 'px';
+        rect.style.top = (y - height / 2) + 'px';
+        document.body.appendChild(rect);
+        trailRectsRef.current.push({ element: rect, x, y });
+        if (trailRectsRef.current.length > maxTrailRects) {
+          const oldest = trailRectsRef.current.shift();
+          oldest?.element.remove();
+        }
+      }, beatInterval);
+    } else if (rhythmIntervalRef.current) {
+      clearInterval(rhythmIntervalRef.current);
+      rhythmIntervalRef.current = null;
+    }
+    return () => { if (rhythmIntervalRef.current) clearInterval(rhythmIntervalRef.current); };
+  }, [isPlaying]);
   
   // Updated color palette
   const colors = [
