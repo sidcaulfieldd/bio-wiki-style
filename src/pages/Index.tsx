@@ -196,10 +196,10 @@ const SidebarContent = () => {
 
       {/* Infobox image */}
       <div className="text-center p-3 pb-0">
-        {/* Pink background with z-[2] - behind tracker */}
-        <div className="relative w-full aspect-square bg-[#FF69B4] z-[2]">
-          {/* GIF with z-[10] - above tracker */}
-          <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover z-[10]" />
+        {/* Pink background with z-[2] - behind tracker (tracker is z-5) */}
+        <div className="relative w-full aspect-square bg-[#FF69B4]" style={{ zIndex: 2 }}>
+          {/* GIF with z-20 - above tracker (tracker is z-5) */}
+          <img src={profilePic} alt="Sid Caulfield" className="absolute inset-0 w-full h-full object-cover" style={{ zIndex: 20, position: 'relative' }} />
         </div>
         <div className="text-xs text-[#54595d] mt-1 mb-3">
           Caulfield in 2025
