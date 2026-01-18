@@ -1,89 +1,92 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import notableSmallGif from "@/assets/notable-small.gif";
 
 const NotableProjectsPixelation = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const imgRef = useRef<HTMLImageElement | null>(null);
-
-  // 0 = full res, 1 = max pixelated
-  const [pixelation, setPixelation] = useState(1);
-  const pixelationRef = useRef(1);
-
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const sourceImgRef = useRef<HTMLImageElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const requestRunningRef = useRef(false);
 
-  // Fixed 9:16 display size (DO NOT CHANGE)
+  // Fixed 9:16 display size
   const displayWidth = 270;
   const displayHeight = 480;
 
-  // Load image
+  const pixelate = (pixelSize: number) => {
+    const canvas = canvasRef.current;
+    const img = sourceImgRef.current;
+
+    if (!canvas || !img || !img.complete || img.naturalWidth === 0) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const w = canvas.width;
+    const h = canvas.height;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, w, h);
+
+    // If pixel size is 1 or less, no pixelation needed (fully transparent overlay)
+    if (pixelSize <= 1) {
+      return;
+    }
+
+    // Create temp canvas for scaled-down version
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
+    if (!tempCtx) return;
+
+    const scaledW = Math.ceil(w / pixelSize);
+    const scaledH = Math.ceil(h / pixelSize);
+
+    tempCanvas.width = scaledW;
+    tempCanvas.height = scaledH;
+
+    // Draw image to temp canvas at reduced size
+    tempCtx.drawImage(img, 0, 0, scaledW, scaledH);
+
+    // Disable image smoothing for pixelated effect
+    ctx.imageSmoothingEnabled = false;
+
+    // Draw the small image back to main canvas, scaled up
+    ctx.drawImage(tempCanvas, 0, 0, scaledW, scaledH, 0, 0, w, h);
+  };
+
+  const getDistanceFromCenter = () => {
+    if (!containerRef.current) return Infinity;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const elementCenter = rect.top + rect.height / 2;
+    const screenCenter = window.innerHeight / 2;
+    return Math.abs(elementCenter - screenCenter);
+  };
+
+  const updatePixelation = () => {
+    const distance = getDistanceFromCenter();
+    const focusZone = 100; // pixels from center where it's fully focused
+
+    let pixelSize: number;
+    if (distance <= focusZone) {
+      // Fully in focus
+      pixelSize = 1;
+    } else {
+      // Calculate pixel size based on distance
+      // Max pixel size is 200, achieved when far from center
+      const maxDistance = window.innerHeight;
+      const normalizedDistance = Math.min(
+        (distance - focusZone) / (maxDistance - focusZone),
+        1
+      );
+      pixelSize = 1 + normalizedDistance * 199; // 1 to 200
+    }
+
+    pixelate(pixelSize);
+  };
+
+  // Animation loop to keep GIF frames updating
   useEffect(() => {
-    const img = new Image();
-    imgRef.current = img;
-
-    img.onload = () => {
-      setImageLoaded(true);
-    };
-
-    img.onerror = () => {
-      console.error("Failed to load notable-small.gif");
-      setImageLoaded(true);
-    };
-
-    img.src = notableSmallGif;
-  }, []);
-
-  // Scroll handler (rAF-wrapped) -> updates pixelationRef
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!containerRef.current || requestRunningRef.current) return;
-
-      requestRunningRef.current = true;
-      requestAnimationFrame(() => {
-        if (!containerRef.current) {
-          requestRunningRef.current = false;
-          return;
-        }
-
-        const rect = containerRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const elementCenter = rect.top + rect.height / 2;
-        const screenCenter = windowHeight / 2;
-
-        const distanceFromCenter = Math.abs(elementCenter - screenCenter);
-
-        // Full resolution within ±100px of viewport center
-        const buffer = 100;
-
-        // Normalise out to the edges of the screen (keeps the "never change size" feel)
-        const maxDistance = windowHeight / 2 + rect.height / 2;
-
-        const effectiveDistance = Math.max(0, distanceFromCenter - buffer);
-        const normalizedDistance = Math.min(
-          effectiveDistance / Math.max(1, maxDistance - buffer),
-          1
-        );
-
-        pixelationRef.current = normalizedDistance;
-        setPixelation(normalizedDistance);
-        requestRunningRef.current = false;
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Animation loop for GIF (runs continuously; reads pixelationRef so it never "breaks" on scroll)
-  useEffect(() => {
-    if (!imageLoaded) return;
-
     const animate = () => {
-      drawPixelated();
+      updatePixelation();
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
@@ -94,82 +97,30 @@ const NotableProjectsPixelation = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [imageLoaded]);
+  }, []);
 
-  const drawPixelated = () => {
-    const canvas = canvasRef.current;
-    const img = imgRef.current;
+  // Scroll listener
+  useEffect(() => {
+    let ticking = false;
 
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    canvas.width = displayWidth;
-    canvas.height = displayHeight;
-
-    // Cell size: 1px (full res) to 200px (max pixelated)
-    const maxCellSize = 200;
-    const minCellSize = 1;
-    const cellSize =
-      minCellSize + (maxCellSize - minCellSize) * pixelationRef.current;
-
-    if (!img || !img.complete || img.naturalWidth === 0) {
-      // Fallback gradient if image doesn't load
-      const gradient = ctx.createLinearGradient(0, 0, displayWidth, displayHeight);
-      gradient.addColorStop(0, "#667eea");
-      gradient.addColorStop(0.5, "#764ba2");
-      gradient.addColorStop(1, "#f093fb");
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, displayWidth, displayHeight);
-
-      const cols = Math.ceil(displayWidth / cellSize);
-      const rows = Math.ceil(displayHeight / cellSize);
-      const imageData = ctx.getImageData(0, 0, displayWidth, displayHeight);
-
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-          const px = Math.floor((x + 0.5) * cellSize);
-          const py = Math.floor((y + 0.5) * cellSize);
-
-          if (px < displayWidth && py < displayHeight) {
-            const index = (py * displayWidth + px) * 4;
-            const r = imageData.data[index];
-            const g = imageData.data[index + 1];
-            const b = imageData.data[index + 2];
-
-            ctx.fillStyle = `rgb(${r},${g},${b})`;
-            ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-          }
-        }
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updatePixelation();
+          ticking = false;
+        });
+        ticking = true;
       }
-      return;
-    }
+    };
 
-    const cols = Math.ceil(displayWidth / cellSize);
-    const rows = Math.ceil(displayHeight / cellSize);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Initial update
+    updatePixelation();
 
-    ctx.imageSmoothingEnabled = false;
-
-    const imgW = img.naturalWidth || img.width;
-    const imgH = img.naturalHeight || img.height;
-
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < cols; x++) {
-        const sx = (x / cols) * imgW;
-        const sy = (y / rows) * imgH;
-        const sw = imgW / cols;
-        const sh = imgH / rows;
-
-        const dx = x * cellSize;
-        const dy = y * cellSize;
-        const dw = cellSize;
-        const dh = cellSize;
-
-        ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
-      }
-    }
-  };
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <div
@@ -180,8 +131,20 @@ const NotableProjectsPixelation = () => {
         height: `${displayHeight}px`,
       }}
     >
+      {/* Source GIF - always visible underneath */}
+      <img
+        ref={sourceImgRef}
+        src={notableSmallGif}
+        alt="Notable project"
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ imageRendering: "auto" }}
+      />
+      {/* Pixelation overlay canvas */}
       <canvas
         ref={canvasRef}
+        width={displayWidth}
+        height={displayHeight}
+        className="absolute inset-0 pointer-events-none"
         style={{
           width: `${displayWidth}px`,
           height: `${displayHeight}px`,

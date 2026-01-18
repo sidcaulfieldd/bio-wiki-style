@@ -28,9 +28,9 @@ const Index = () => {
             {/* Main Content Column */}
             <div className="flex-1 order-2 md:order-1">
               {/* Table of Contents */}
-              <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 mb-6 inline-block">
-                <div className="font-bold mb-2">Contents</div>
-                <ol className="list-decimal ml-6 text-sm text-[#0645ad]">
+              <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 mb-6 inline-block relative">
+                <div className="font-bold mb-2 relative z-10">Contents</div>
+                <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
                   <li><a href="#career-overview" className="hover:underline">Career Overview</a>
                     <ol className="list-decimal ml-4 text-[#0645ad]">
                       <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
