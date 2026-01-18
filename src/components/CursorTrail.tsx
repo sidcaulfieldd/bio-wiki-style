@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface TrailRect {
   element: HTMLDivElement;
@@ -6,20 +6,16 @@ interface TrailRect {
   y: number;
 }
 
-export const CursorTrail = ({ isPlaying }: { isPlaying: boolean }) => {
+export const CursorTrail = () => {
   const trailRectsRef = useRef<TrailRect[]>([]);
   const lastPositionRef = useRef<{ x: number; y: number } | null>(null);
   const lastScrollRef = useRef<number>(0);
   const totalDistanceRef = useRef(0);
   const scrollDistanceRef = useRef(0);
   const currentMousePosRef = useRef<{ x: number; y: number } | null>(null);
-  const rhythmIntervalRef = useRef<number | null>(null);
-  const isPlayingRef = useRef(isPlaying);
 
   const maxTrailRects = 7;
   const minDistance = 64;
-  const bpm = 119;
-  const beatInterval = 60000 / bpm; // ~504ms
 
   const colors = [
     "#b0fb90",
@@ -37,14 +33,9 @@ export const CursorTrail = ({ isPlaying }: { isPlaying: boolean }) => {
   const randomBool = () => Math.random() > 0.5;
   const randomOffset = (range: number) => (Math.random() - 0.5) * range;
 
-  useEffect(() => {
-    isPlayingRef.current = isPlaying;
-  }, [isPlaying]);
-
   const createTrailRect = (
     x: number,
     y: number,
-    isRhythmMode: boolean = false,
     isScrollCreated: boolean = false
   ) => {
     const rect = document.createElement("div");
@@ -76,19 +67,12 @@ export const CursorTrail = ({ isPlaying }: { isPlaying: boolean }) => {
       rect.style.left = finalX + "px";
       rect.style.top = finalY + "px";
     } else {
-      // Mouse + rhythm: stick to viewport
+      // Mouse mode: stick to viewport
       rect.style.position = "fixed";
-
-      if (isRhythmMode) {
-        finalX = x - width / 2;
-        finalY = y - height / 2;
-      } else {
-        const offsetX = randomOffset(64);
-        const offsetY = randomOffset(64);
-        finalX = x + offsetX - width / 2;
-        finalY = y + offsetY - height / 2;
-      }
-
+      const offsetX = randomOffset(64);
+      const offsetY = randomOffset(64);
+      finalX = x + offsetX - width / 2;
+      finalY = y + offsetY - height / 2;
       rect.style.left = finalX + "px";
       rect.style.top = finalY + "px";
     }
@@ -99,10 +83,9 @@ export const CursorTrail = ({ isPlaying }: { isPlaying: boolean }) => {
   const addNewRect = (
     x: number,
     y: number,
-    isRhythmMode: boolean = false,
     isScrollCreated: boolean = false
   ) => {
-    const newRect = createTrailRect(x, y, isRhythmMode, isScrollCreated);
+    const newRect = createTrailRect(x, y, isScrollCreated);
     document.body.appendChild(newRect.element);
     trailRectsRef.current.push(newRect);
 
@@ -113,46 +96,11 @@ export const CursorTrail = ({ isPlaying }: { isPlaying: boolean }) => {
     }
   };
 
-  const createRandomRect = () => {
-    const x = Math.random() * window.innerWidth;
-    const y = Math.random() * window.innerHeight;
-    addNewRect(x, y, true);
-  };
-
-  // Rhythm mode interval: starts/stops with isPlaying, but NEVER clears existing rects.
-  useEffect(() => {
-    if (rhythmIntervalRef.current) {
-      window.clearInterval(rhythmIntervalRef.current);
-      rhythmIntervalRef.current = null;
-    }
-
-    if (isPlaying) {
-      rhythmIntervalRef.current = window.setInterval(() => {
-        createRandomRect();
-      }, beatInterval);
-    }
-
-    return () => {
-      if (rhythmIntervalRef.current) {
-        window.clearInterval(rhythmIntervalRef.current);
-        rhythmIntervalRef.current = null;
-      }
-    };
-  }, [isPlaying, beatInterval]);
-
-  // Mouse + scroll tracking stays mounted; it just gates on isPlayingRef.current.
-  // IMPORTANT: cleanup only happens on unmount (so switching modes doesn't delete all rects).
   useEffect(() => {
     lastScrollRef.current = window.scrollY;
 
     const handleMouseMove = (e: MouseEvent) => {
       currentMousePosRef.current = { x: e.clientX, y: e.clientY };
-
-      // When Spotify is playing, mouse tracking is OFF.
-      if (isPlayingRef.current) {
-        lastPositionRef.current = { x: e.clientX, y: e.clientY };
-        return;
-      }
 
       const lastPos = lastPositionRef.current;
 
@@ -176,9 +124,6 @@ export const CursorTrail = ({ isPlaying }: { isPlaying: boolean }) => {
     };
 
     const handleScroll = () => {
-      // When Spotify is playing, scroll tracking is OFF.
-      if (isPlayingRef.current) return;
-
       const currentScroll = window.scrollY;
       const scrollDelta = Math.abs(currentScroll - lastScrollRef.current);
       const mousePos = currentMousePosRef.current;
@@ -186,7 +131,7 @@ export const CursorTrail = ({ isPlaying }: { isPlaying: boolean }) => {
       scrollDistanceRef.current += scrollDelta;
 
       if (mousePos && scrollDistanceRef.current >= minDistance) {
-        addNewRect(mousePos.x, mousePos.y, false, true);
+        addNewRect(mousePos.x, mousePos.y, true);
         scrollDistanceRef.current = 0;
       }
 
@@ -200,10 +145,8 @@ export const CursorTrail = ({ isPlaying }: { isPlaying: boolean }) => {
         e.clientX < 0 ||
         e.clientX > window.innerWidth
       ) {
-        if (!isPlayingRef.current) {
-          lastPositionRef.current = null;
-          totalDistanceRef.current = 0;
-        }
+        lastPositionRef.current = null;
+        totalDistanceRef.current = 0;
       }
     };
 
@@ -222,26 +165,6 @@ export const CursorTrail = ({ isPlaying }: { isPlaying: boolean }) => {
   }, []);
 
   return null;
-};
-
-// Hook to detect Spotify embed clicks (not used in App currently)
-export const useSpotifyPlayDetection = (
-  iframeRef: React.RefObject<HTMLIFrameElement>
-) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  useEffect(() => {
-    const handleBlur = () => {
-      if (document.activeElement === iframeRef.current) {
-        setIsPlaying((prev) => !prev);
-      }
-    };
-
-    window.addEventListener("blur", handleBlur);
-    return () => window.removeEventListener("blur", handleBlur);
-  }, [iframeRef]);
-
-  return isPlaying;
 };
 
 export default CursorTrail;
