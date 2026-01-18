@@ -13,9 +13,7 @@ export const CursorTrail = ({ isPlaying }: { isPlaying: boolean }) => {
   const totalDistanceRef = useRef(0);
   const scrollDistanceRef = useRef(0);
   const currentMousePosRef = useRef<{ x: number; y: number } | null>(null);
-  const rhythmIntervalRef = useRef<ReturnType<typeof window.setInterval> | null>(
-    null
-  );
+  const rhythmIntervalRef = useRef<number | null>(null);
   const isPlayingRef = useRef(isPlaying);
 
   const maxTrailRects = 7;
