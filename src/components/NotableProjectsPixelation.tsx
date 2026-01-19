@@ -4,7 +4,6 @@ import notableSmallGif from "@/assets/notable-small.gif";
 const NotableProjectsPixelation = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
-  const sourceCanvasRef = useRef<HTMLCanvasElement>(null);
   const pixelCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
 
@@ -12,23 +11,10 @@ const NotableProjectsPixelation = () => {
   const displayWidth = 270;
   const displayHeight = 480;
 
-  // Draw the current GIF frame to the source canvas
-  const drawImageToSourceCanvas = () => {
-    const img = imgRef.current;
-    const sourceCanvas = sourceCanvasRef.current;
-    if (!img || !sourceCanvas || !img.complete || img.naturalWidth === 0) return;
-
-    const sourceCtx = sourceCanvas.getContext("2d");
-    if (!sourceCtx) return;
-
-    // Draw the GIF at full size to source canvas
-    sourceCtx.drawImage(img, 0, 0, displayWidth, displayHeight);
-  };
-
   const pixelate = (pixelSize: number) => {
     const pixelCanvas = pixelCanvasRef.current;
-    const sourceCanvas = sourceCanvasRef.current;
-    if (!pixelCanvas || !sourceCanvas) return;
+    const img = imgRef.current;
+    if (!pixelCanvas || !img || !img.complete || img.naturalWidth === 0) return;
 
     const ctx = pixelCanvas.getContext("2d");
     if (!ctx) return;
@@ -36,11 +22,13 @@ const NotableProjectsPixelation = () => {
     const w = displayWidth;
     const h = displayHeight;
 
-    // Clear the pixelation canvas
+    // Clear the canvas
     ctx.clearRect(0, 0, w, h);
 
-    // If pixel size is 1 or less, no pixelation needed (show original)
+    // If pixel size is 1 or less, draw the image directly (no pixelation)
     if (pixelSize <= 1) {
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(img, 0, 0, w, h);
       return;
     }
 
@@ -55,8 +43,8 @@ const NotableProjectsPixelation = () => {
     tempCanvas.width = scaledW;
     tempCanvas.height = scaledH;
 
-    // Draw SOURCE CANVAS (not the img directly) to temp canvas at reduced size
-    tempCtx.drawImage(sourceCanvas, 0, 0, scaledW, scaledH);
+    // Draw the img to temp canvas at reduced size
+    tempCtx.drawImage(img, 0, 0, scaledW, scaledH);
 
     // Disable image smoothing for pixelated effect
     ctx.imageSmoothingEnabled = false;
@@ -75,9 +63,6 @@ const NotableProjectsPixelation = () => {
   };
 
   const updatePixelation = () => {
-    // First, draw current GIF frame to source canvas
-    drawImageToSourceCanvas();
-
     const distance = getDistanceFromCenter();
     const focusZone = 100; // pixels from center where it's fully focused
 
@@ -106,7 +91,15 @@ const NotableProjectsPixelation = () => {
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    // Wait for image to load before starting animation
+    const img = imgRef.current;
+    if (img) {
+      if (img.complete) {
+        animate();
+      } else {
+        img.onload = () => animate();
+      }
+    }
 
     return () => {
       if (animationFrameRef.current) {
@@ -150,22 +143,10 @@ const NotableProjectsPixelation = () => {
         ref={imgRef}
         src={notableSmallGif}
         alt="Notable project"
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ imageRendering: "auto" }}
+        className="absolute inset-0 w-full h-full object-cover opacity-0"
         crossOrigin="anonymous"
       />
-      {/* Hidden source canvas - captures GIF frames */}
-      <canvas
-        ref={sourceCanvasRef}
-        width={displayWidth}
-        height={displayHeight}
-        className="absolute inset-0 pointer-events-none opacity-0"
-        style={{
-          width: `${displayWidth}px`,
-          height: `${displayHeight}px`,
-        }}
-      />
-      {/* Visible pixelation overlay canvas */}
+      {/* Visible pixelation canvas - shows the pixelated GIF */}
       <canvas
         ref={pixelCanvasRef}
         width={displayWidth}
