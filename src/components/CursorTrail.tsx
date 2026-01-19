@@ -54,28 +54,28 @@ export const CursorTrail = () => {
     rect.style.height = height + "px";
     rect.style.backgroundColor = randomColor();
 
+    // ALL rectangles use absolute positioning to stick to the page
+    rect.style.position = "absolute";
+    
     let finalX: number;
     let finalY: number;
 
     if (isScrollCreated) {
-      // Scroll mode: stick to the page
-      rect.style.position = "absolute";
+      // Scroll mode: wider horizontal scatter
       const offsetX = randomOffset(128);
       const offsetY = randomOffset(64);
       finalX = x + offsetX - width / 2;
       finalY = y + window.scrollY + offsetY - height / 2;
-      rect.style.left = finalX + "px";
-      rect.style.top = finalY + "px";
     } else {
-      // Mouse mode: stick to viewport
-      rect.style.position = "fixed";
+      // Mouse mode: tighter scatter, but still absolute (sticks to page)
       const offsetX = randomOffset(64);
       const offsetY = randomOffset(64);
       finalX = x + offsetX - width / 2;
-      finalY = y + offsetY - height / 2;
-      rect.style.left = finalX + "px";
-      rect.style.top = finalY + "px";
+      finalY = y + window.scrollY + offsetY - height / 2;
     }
+    
+    rect.style.left = finalX + "px";
+    rect.style.top = finalY + "px";
 
     return { element: rect, x, y };
   };

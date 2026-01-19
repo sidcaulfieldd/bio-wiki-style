@@ -7,7 +7,7 @@ const NotableProjectsPixelation = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
 
-  // Fixed 9:16 display size
+  // Fixed 9:16 display size - matches the GIF exactly
   const displayWidth = 270;
   const displayHeight = 480;
 
@@ -20,8 +20,9 @@ const NotableProjectsPixelation = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const w = canvas.width;
-    const h = canvas.height;
+    // Use display dimensions for canvas
+    const w = displayWidth;
+    const h = displayHeight;
 
     // Clear canvas
     ctx.clearRect(0, 0, w, h);
@@ -42,13 +43,13 @@ const NotableProjectsPixelation = () => {
     tempCanvas.width = scaledW;
     tempCanvas.height = scaledH;
 
-    // Draw image to temp canvas at reduced size
+    // Draw image to temp canvas at reduced size (use full image dimensions)
     tempCtx.drawImage(img, 0, 0, scaledW, scaledH);
 
     // Disable image smoothing for pixelated effect
     ctx.imageSmoothingEnabled = false;
 
-    // Draw the small image back to main canvas, scaled up
+    // Draw the small image back to main canvas, scaled up to fill entire canvas
     ctx.drawImage(tempCanvas, 0, 0, scaledW, scaledH, 0, 0, w, h);
   };
 
@@ -71,13 +72,13 @@ const NotableProjectsPixelation = () => {
       pixelSize = 1;
     } else {
       // Calculate pixel size based on distance
-      // Max pixel size is 200, achieved when far from center
+      // Max pixel size is 150, achieved when far from center
       const maxDistance = window.innerHeight;
       const normalizedDistance = Math.min(
         (distance - focusZone) / (maxDistance - focusZone),
         1
       );
-      pixelSize = 1 + normalizedDistance * 199; // 1 to 200
+      pixelSize = 1 + normalizedDistance * 149; // 1 to 150
     }
 
     pixelate(pixelSize);
@@ -139,12 +140,12 @@ const NotableProjectsPixelation = () => {
         className="absolute inset-0 w-full h-full object-cover"
         style={{ imageRendering: "auto" }}
       />
-      {/* Pixelation overlay canvas */}
+      {/* Pixelation overlay canvas - matches GIF exactly */}
       <canvas
         ref={canvasRef}
         width={displayWidth}
         height={displayHeight}
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none rounded-lg"
         style={{
           width: `${displayWidth}px`,
           height: `${displayHeight}px`,
