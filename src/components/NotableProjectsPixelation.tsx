@@ -7,7 +7,6 @@ const NotableProjectsPixelation = () => {
   const pixelCanvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
 
-  // Fixed dimensions matching the GIF
   const displayWidth = 270;
   const displayHeight = 480;
 
@@ -22,17 +21,14 @@ const NotableProjectsPixelation = () => {
     const w = displayWidth;
     const h = displayHeight;
 
-    // Clear the canvas
     ctx.clearRect(0, 0, w, h);
 
-    // If pixel size is 1 or less, draw the image directly (no pixelation)
     if (pixelSize <= 1) {
       ctx.imageSmoothingEnabled = true;
       ctx.drawImage(img, 0, 0, w, h);
       return;
     }
 
-    // Create temp canvas for scaled-down version
     const tempCanvas = document.createElement("canvas");
     const tempCtx = tempCanvas.getContext("2d");
     if (!tempCtx) return;
@@ -43,13 +39,9 @@ const NotableProjectsPixelation = () => {
     tempCanvas.width = scaledW;
     tempCanvas.height = scaledH;
 
-    // Draw the img to temp canvas at reduced size
     tempCtx.drawImage(img, 0, 0, scaledW, scaledH);
 
-    // Disable image smoothing for pixelated effect
     ctx.imageSmoothingEnabled = false;
-
-    // Draw the small image back to pixel canvas, scaled up
     ctx.drawImage(tempCanvas, 0, 0, scaledW, scaledH, 0, 0, w, h);
   };
 
@@ -64,34 +56,29 @@ const NotableProjectsPixelation = () => {
 
   const updatePixelation = () => {
     const distance = getDistanceFromCenter();
-    const focusZone = 100; // pixels from center where it's fully focused
+    const focusZone = 100;
 
     let pixelSize: number;
     if (distance <= focusZone) {
-      // Fully in focus
       pixelSize = 1;
     } else {
-      // Calculate pixel size based on distance
-      // Max pixel size is 150, achieved when far from center
       const maxDistance = window.innerHeight;
       const normalizedDistance = Math.min(
         (distance - focusZone) / (maxDistance - focusZone),
         1
       );
-      pixelSize = 1 + normalizedDistance * 149; // 1 to 150
+      pixelSize = 1 + normalizedDistance * 99;
     }
 
     pixelate(pixelSize);
   };
 
-  // Animation loop to continuously update GIF frames and pixelation
   useEffect(() => {
     const animate = () => {
       updatePixelation();
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    // Wait for image to load before starting animation
     const img = imgRef.current;
     if (img) {
       if (img.complete) {
@@ -108,7 +95,6 @@ const NotableProjectsPixelation = () => {
     };
   }, []);
 
-  // Scroll listener for more responsive updates
   useEffect(() => {
     let ticking = false;
 
@@ -138,7 +124,6 @@ const NotableProjectsPixelation = () => {
         height: `${displayHeight}px`,
       }}
     >
-      {/* Hidden source image - the actual GIF */}
       <img
         ref={imgRef}
         src={notableSmallGif}
@@ -146,7 +131,6 @@ const NotableProjectsPixelation = () => {
         className="absolute inset-0 w-full h-full object-cover opacity-0"
         crossOrigin="anonymous"
       />
-      {/* Visible pixelation canvas - shows the pixelated GIF */}
       <canvas
         ref={pixelCanvasRef}
         width={displayWidth}
