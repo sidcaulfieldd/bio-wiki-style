@@ -188,7 +188,7 @@ const NotableProjectsPixelation = () => {
       className="relative overflow-hidden rounded-lg"
       style={{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }}
     >
-      {/* Keep this *slightly* visible so browsers keep advancing GIF frames */}
+      {/* Keep fully visible but behind the canvas so browsers keep animating GIF frames */}
       <img
         ref={imgRef}
         src={notableSmallGif}
@@ -197,15 +197,15 @@ const NotableProjectsPixelation = () => {
         height={DISPLAY_HEIGHT}
         decoding="async"
         loading="eager"
-        className="absolute inset-0"
-        style={{ opacity: 0.001, pointerEvents: "none" }}
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ zIndex: 0, pointerEvents: "none" }}
         aria-hidden="true"
       />
 
       <canvas
         ref={pixelCanvasRef}
         className="absolute inset-0 pointer-events-none rounded-lg"
-        style={{ imageRendering: "pixelated" }}
+        style={{ imageRendering: "pixelated", zIndex: 1 }}
       />
     </div>
   );
