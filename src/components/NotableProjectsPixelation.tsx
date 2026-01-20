@@ -183,31 +183,44 @@ const NotableProjectsPixelation = () => {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative overflow-hidden rounded-lg"
-      style={{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }}
-    >
-      {/* Keep fully visible but behind the canvas so browsers keep animating GIF frames */}
+    <>
+      {/* 
+        Position the GIF off-screen but fully visible so browsers keep animating it.
+        Using position:fixed ensures it's always rendered (not clipped by overflow:hidden).
+      */}
       <img
         ref={imgRef}
         src={notableSmallGif}
-        alt="Notable project"
+        alt=""
         width={DISPLAY_WIDTH}
         height={DISPLAY_HEIGHT}
         decoding="async"
         loading="eager"
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ zIndex: 0, pointerEvents: "none" }}
         aria-hidden="true"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: -9999,
+          width: DISPLAY_WIDTH,
+          height: DISPLAY_HEIGHT,
+          pointerEvents: "none",
+          visibility: "visible",
+          opacity: 1,
+        }}
       />
 
-      <canvas
-        ref={pixelCanvasRef}
-        className="absolute inset-0 pointer-events-none rounded-lg"
-        style={{ imageRendering: "pixelated", zIndex: 1 }}
-      />
-    </div>
+      <div
+        ref={containerRef}
+        className="relative overflow-hidden rounded-lg"
+        style={{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }}
+      >
+        <canvas
+          ref={pixelCanvasRef}
+          className="absolute inset-0 pointer-events-none rounded-lg"
+          style={{ imageRendering: "pixelated" }}
+        />
+      </div>
+    </>
   );
 };
 
