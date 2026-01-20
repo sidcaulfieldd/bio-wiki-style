@@ -1,146 +1,211 @@
 import { useEffect, useRef } from "react";
 import notableSmallGif from "@/assets/notable-small.gif";
 
+const DISPLAY_WIDTH = 270;
+const DISPLAY_HEIGHT = 480;
+
+const FOCUS_ZONE_PX = 100;
+const MAX_PIXEL_SIZE = 100; // cells up to 100px
+
+function drawImageCover(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  destW: number,
+  destH: number
+) {
+  const srcW = img.naturalWidth;
+  const srcH = img.naturalHeight;
+  if (!srcW || !srcH) return;
+
+  const srcAspect = srcW / srcH;
+  const destAspect = destW / destH;
+
+  let sx = 0;
+  let sy = 0;
+  let sWidth = srcW;
+  let sHeight = srcH;
+
+  // Crop source to match destination aspect ratio (cover)
+  if (srcAspect > destAspect) {
+    sWidth = srcH * destAspect;
+    sx = (srcW - sWidth) / 2;
+  } else {
+    sHeight = srcW / destAspect;
+    sy = (srcH - sHeight) / 2;
+  }
+
+  ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, destW, destH);
+}
+
 const NotableProjectsPixelation = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const pixelCanvasRef = useRef<HTMLCanvasElement>(null);
+  const tempCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
 
-  const displayWidth = 270;
-  const displayHeight = 480;
+  const setupCanvasForDpr = () => {
+    const canvas = pixelCanvasRef.current;
+    if (!canvas) return;
 
-  const pixelate = (pixelSize: number) => {
-    const pixelCanvas = pixelCanvasRef.current;
-    const img = imgRef.current;
-    if (!pixelCanvas || !img || !img.complete || img.naturalWidth === 0) return;
+    const dpr = window.devicePixelRatio || 1;
 
-    const ctx = pixelCanvas.getContext("2d");
+    canvas.width = Math.round(DISPLAY_WIDTH * dpr);
+    canvas.height = Math.round(DISPLAY_HEIGHT * dpr);
+    canvas.style.width = `${DISPLAY_WIDTH}px`;
+    canvas.style.height = `${DISPLAY_HEIGHT}px`;
+
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const w = displayWidth;
-    const h = displayHeight;
-
-    ctx.clearRect(0, 0, w, h);
-
-    if (pixelSize <= 1) {
-      ctx.imageSmoothingEnabled = true;
-      ctx.drawImage(img, 0, 0, w, h);
-      return;
-    }
-
-    const tempCanvas = document.createElement("canvas");
-    const tempCtx = tempCanvas.getContext("2d");
-    if (!tempCtx) return;
-
-    const scaledW = Math.ceil(w / pixelSize);
-    const scaledH = Math.ceil(h / pixelSize);
-
-    tempCanvas.width = scaledW;
-    tempCanvas.height = scaledH;
-
-    tempCtx.drawImage(img, 0, 0, scaledW, scaledH);
-
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(tempCanvas, 0, 0, scaledW, scaledH, 0, 0, w, h);
+    // Work in CSS pixels; map to backing store with DPR.
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   };
 
   const getDistanceFromCenter = () => {
     if (!containerRef.current) return Infinity;
-
     const rect = containerRef.current.getBoundingClientRect();
     const elementCenter = rect.top + rect.height / 2;
     const screenCenter = window.innerHeight / 2;
     return Math.abs(elementCenter - screenCenter);
   };
 
+  const pixelate = (pixelSize: number) => {
+    const canvas = pixelCanvasRef.current;
+    const img = imgRef.current;
+    if (!canvas || !img || !img.complete || img.naturalWidth === 0) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Clear (in CSS-pixel coordinate space)
+    ctx.clearRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+
+    // No pixelation
+    if (pixelSize <= 1) {
+      ctx.imageSmoothingEnabled = true;
+      drawImageCover(ctx, img, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+      return;
+    }
+
+    // Reuse a single temp canvas for performance
+    if (!tempCanvasRef.current) tempCanvasRef.current = document.createElement("canvas");
+    const tempCanvas = tempCanvasRef.current;
+
+    const scaledW = Math.max(1, Math.ceil(DISPLAY_WIDTH / pixelSize));
+    const scaledH = Math.max(1, Math.ceil(DISPLAY_HEIGHT / pixelSize));
+
+    tempCanvas.width = scaledW;
+    tempCanvas.height = scaledH;
+
+    const tempCtx = tempCanvas.getContext("2d");
+    if (!tempCtx) return;
+
+    tempCtx.clearRect(0, 0, scaledW, scaledH);
+    tempCtx.imageSmoothingEnabled = true;
+    drawImageCover(tempCtx, img, scaledW, scaledH);
+
+    // Pixelated upscale
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(tempCanvas, 0, 0, scaledW, scaledH, 0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+  };
+
   const updatePixelation = () => {
     const distance = getDistanceFromCenter();
-    const focusZone = 100;
 
-    let pixelSize: number;
-    if (distance <= focusZone) {
-      pixelSize = 1;
-    } else {
-      const maxDistance = window.innerHeight;
-      const normalizedDistance = Math.min(
-        (distance - focusZone) / (maxDistance - focusZone),
+    let pixelSize = 1;
+    if (distance > FOCUS_ZONE_PX) {
+      const maxDistance = Math.max(window.innerHeight, FOCUS_ZONE_PX + 1);
+      const normalized = Math.min(
+        (distance - FOCUS_ZONE_PX) / (maxDistance - FOCUS_ZONE_PX),
         1
       );
-      pixelSize = 1 + normalizedDistance * 99;
+      pixelSize = 1 + normalized * (MAX_PIXEL_SIZE - 1);
     }
 
     pixelate(pixelSize);
   };
 
   useEffect(() => {
-    const animate = () => {
+    setupCanvasForDpr();
+
+    const onResize = () => {
+      setupCanvasForDpr();
       updatePixelation();
-      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener("resize", onResize, { passive: true });
+    return () => window.removeEventListener("resize", onResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Animation loop: continuously redraw so the GIF keeps playing
+  useEffect(() => {
+    const start = () => {
+      const animate = () => {
+        updatePixelation();
+        animationFrameRef.current = requestAnimationFrame(animate);
+      };
+      animate();
     };
 
     const img = imgRef.current;
-    if (img) {
-      if (img.complete) {
-        animate();
-      } else {
-        img.onload = () => animate();
-      }
+    if (!img) return;
+
+    if (img.complete && img.naturalWidth > 0) {
+      start();
+    } else {
+      img.onload = () => start();
     }
 
     return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Scroll listener for responsiveness (rAF loop does the work; this just avoids any "paused" feel)
   useEffect(() => {
     let ticking = false;
 
     const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          updatePixelation();
-          ticking = false;
-        });
-        ticking = true;
-      }
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        updatePixelation();
+        ticking = false;
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div
       ref={containerRef}
       className="relative overflow-hidden rounded-lg"
-      style={{
-        width: `${displayWidth}px`,
-        height: `${displayHeight}px`,
-      }}
+      style={{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }}
     >
+      {/* Keep this *slightly* visible so browsers keep advancing GIF frames */}
       <img
         ref={imgRef}
         src={notableSmallGif}
         alt="Notable project"
-        className="absolute inset-0 w-full h-full object-cover opacity-0"
-        crossOrigin="anonymous"
+        width={DISPLAY_WIDTH}
+        height={DISPLAY_HEIGHT}
+        decoding="async"
+        loading="eager"
+        className="absolute inset-0"
+        style={{ opacity: 0.001, pointerEvents: "none" }}
+        aria-hidden="true"
       />
+
       <canvas
         ref={pixelCanvasRef}
-        width={displayWidth}
-        height={displayHeight}
         className="absolute inset-0 pointer-events-none rounded-lg"
-        style={{
-          width: `${displayWidth}px`,
-          height: `${displayHeight}px`,
-          imageRendering: "pixelated",
-        }}
+        style={{ imageRendering: "pixelated" }}
       />
     </div>
   );
