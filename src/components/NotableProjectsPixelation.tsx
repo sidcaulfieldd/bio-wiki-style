@@ -10,8 +10,8 @@ const NotableProjectsPixelation = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const tempCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isInFocus, setIsInFocus] = useState(false);
-  const [currentPixelSize, setCurrentPixelSize] = useState(MAX_PIXEL_SIZE);
 
   const getPixelSize = () => {
     if (!containerRef.current) return MAX_PIXEL_SIZE;
@@ -44,62 +44,44 @@ const NotableProjectsPixelation = () => {
     ctx.clearRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
     if (pixelSize <= 1) {
-      // Just draw normally if somehow we're at pixel size 1
-      ctx.imageSmoothingEnabled = true;
-      ctx.drawImage(img, 0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-      return;
+      return; // Don't draw to canvas when in focus, let img show
     }
 
-    // Calculate cover crop (same aspect ratio logic)
-    const srcW = img.naturalWidth;
-    const srcH = img.naturalHeight;
-    const srcAspect = srcW / srcH;
-    const destAspect = DISPLAY_WIDTH / DISPLAY_HEIGHT;
+    // Round pixel size for consistent blocks
+    const roundedPixelSize = Math.round(pixelSize);
+    const scaledW = Math.max(1, Math.ceil(DISPLAY_WIDTH / roundedPixelSize));
+    const scaledH = Math.max(1, Math.ceil(DISPLAY_HEIGHT / roundedPixelSize));
+
+    // Create temp canvas if it doesn't exist
+    if (!tempCanvasRef.current) {
+      tempCanvasRef.current = document.createElement('canvas');
+    }
+    const tempCanvas = tempCanvasRef.current;
     
-    let sx = 0, sy = 0, sWidth = srcW, sHeight = srcH;
-    
-    if (srcAspect > destAspect) {
-      sWidth = srcH * destAspect;
-      sx = (srcW - sWidth) / 2;
-    } else {
-      sHeight = srcW / destAspect;
-      sy = (srcH - sHeight) / 2;
+    // Only resize if needed
+    if (tempCanvas.width !== scaledW || tempCanvas.height !== scaledH) {
+      tempCanvas.width = scaledW;
+      tempCanvas.height = scaledH;
     }
 
-    // Create pixelation effect
-    const scaledW = Math.max(1, Math.ceil(DISPLAY_WIDTH / pixelSize));
-    const scaledH = Math.max(1, Math.ceil(DISPLAY_HEIGHT / pixelSize));
-
-    // Draw small then scale up for pixelation
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(
-      img,
-      sx, sy, sWidth, sHeight,
-      0, 0, scaledW, scaledH
-    );
-
-    // Scale back up with no smoothing for pixelated effect
-    const imageData = ctx.getImageData(0, 0, scaledW, scaledH);
-    ctx.imageSmoothingEnabled = false;
-    
-    // Use a temporary canvas to avoid artifacts
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = scaledW;
-    tempCanvas.height = scaledH;
     const tempCtx = tempCanvas.getContext('2d');
-    
-    if (tempCtx) {
-      tempCtx.putImageData(imageData, 0, 0);
-      ctx.drawImage(tempCanvas, 0, 0, scaledW, scaledH, 0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-    }
+    if (!tempCtx) return;
+
+    // Draw img scaled down to temp canvas (this creates the pixelation)
+    tempCtx.imageSmoothingEnabled = true;
+    tempCtx.clearRect(0, 0, scaledW, scaledH);
+    tempCtx.drawImage(img, 0, 0, scaledW, scaledH);
+
+    // Draw temp canvas scaled up to main canvas (pixelated effect)
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(tempCanvas, 0, 0, scaledW, scaledH, 0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
   };
 
   const updateView = () => {
     const pixelSize = getPixelSize();
-    const shouldBeInFocus = pixelSize <= 1.5; // Small threshold for floating point
+    const shouldBeInFocus = pixelSize <= 1.5;
     
     setIsInFocus(shouldBeInFocus);
-    setCurrentPixelSize(pixelSize);
 
     // Update canvas when out of focus
     if (!shouldBeInFocus) {
@@ -178,8 +160,9 @@ const NotableProjectsPixelation = () => {
         ref={imgRef}
         src={notableSmallGif}
         alt="Notable project"
-        className="absolute inset-0 w-full h-full object-cover rounded-lg transition-opacity duration-300"
+        className="absolute inset-0 w-full h-full rounded-lg transition-opacity duration-300"
         style={{
+          objectFit: 'cover',
           opacity: isInFocus ? 1 : 0,
           pointerEvents: isInFocus ? 'auto' : 'none',
         }}
