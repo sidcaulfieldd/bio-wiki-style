@@ -236,20 +236,28 @@ const NotableProjectsPixelation = () => {
       
       // Only animate the GIF when fully in focus (pixelSize === 1).
       if (isInFocus && frames.length) {
-        const currentFrame = frames[gifFrameIndexRef.current];
-        
-        // Get delay in milliseconds (convert centiseconds to ms)
-        const delayCs = typeof currentFrame?.delay === 'number' ? currentFrame.delay : 10;
-        const delayMs = delayCs * 10 || 100; // Use native timing
-        
         const elapsed = now - gifLastFrameTimeRef.current;
         
-        if (elapsed >= delayMs) {
-          const nextIndex = (gifFrameIndexRef.current + 1) % frames.length;
-          renderGifFrame(nextIndex);
-          gifFrameIndexRef.current = nextIndex;
-          gifLastFrameTimeRef.current = now;
-          frameAdvanced = true;
+        // Advance multiple frames if needed to catch up
+        let shouldContinue = true;
+        let safetyCounter = 0;
+        const MAX_FRAMES_PER_TICK = 10; // Prevent infinite loops
+        
+        while (shouldContinue && safetyCounter < MAX_FRAMES_PER_TICK) {
+          const currentFrame = frames[gifFrameIndexRef.current];
+          const delayCs = typeof currentFrame?.delay === 'number' ? currentFrame.delay : 10;
+          const delayMs = delayCs * 10 || 100;
+          
+          if (elapsed >= delayMs) {
+            const nextIndex = (gifFrameIndexRef.current + 1) % frames.length;
+            renderGifFrame(nextIndex);
+            gifFrameIndexRef.current = nextIndex;
+            gifLastFrameTimeRef.current += delayMs; // Accumulate properly
+            frameAdvanced = true;
+            safetyCounter++;
+          } else {
+            shouldContinue = false;
+          }
         }
       }
 
