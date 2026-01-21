@@ -25,7 +25,6 @@ const NotableProjectsPixelation = () => {
   const dprRef = useRef<number>(1);
 
   // Simple playback state
-  const isPlayingRef = useRef(false);
   const gifFrameIndexRef = useRef(0);
   const gifIntervalRef = useRef<number | null>(null);
 
@@ -158,28 +157,21 @@ const NotableProjectsPixelation = () => {
   };
 
   const startGifPlayback = () => {
-    if (isPlayingRef.current || gifIntervalRef.current) return;
+    if (gifIntervalRef.current) return;
     
     const frames = gifFramesRef.current;
     if (!frames.length) return;
 
-    isPlayingRef.current = true;
-
     const playNextFrame = () => {
-      if (!isPlayingRef.current) return;
-
       const currentFrame = frames[gifFrameIndexRef.current];
-      // The delay is already in milliseconds from gifuct-js
       const delayMs = currentFrame?.delay ?? 50;
-
-      // Debug logging - remove this after testing
-      if (gifFrameIndexRef.current === 0) {
-        console.log('Frame delay (ms):', delayMs);
-      }
 
       gifFrameIndexRef.current = (gifFrameIndexRef.current + 1) % frames.length;
       renderGifFrame(gifFrameIndexRef.current);
-      drawToCanvas(1); // Always draw at full resolution when playing
+      
+      // Draw with current pixel size
+      const pixelSize = getPixelSize();
+      drawToCanvas(pixelSize);
 
       gifIntervalRef.current = window.setTimeout(playNextFrame, delayMs);
     };
@@ -188,19 +180,10 @@ const NotableProjectsPixelation = () => {
   };
 
   const stopGifPlayback = () => {
-    isPlayingRef.current = false;
     if (gifIntervalRef.current) {
       clearTimeout(gifIntervalRef.current);
       gifIntervalRef.current = null;
     }
-  };
-
-  const resetToFirstFrame = () => {
-    stopGifPlayback();
-    gifFrameIndexRef.current = 0;
-    gifPrevFrameRef.current = null;
-    gifRestoreRef.current = null;
-    renderGifFrame(0);
   };
 
   useEffect(() => {
@@ -248,6 +231,9 @@ const NotableProjectsPixelation = () => {
         // Start on first frame
         renderGifFrame(0);
         drawToCanvas(getPixelSize());
+        
+        // Start playing immediately
+        startGifPlayback();
       } catch (e) {
         console.error("Failed to decode notable-small.gif", e);
       }
@@ -263,23 +249,11 @@ const NotableProjectsPixelation = () => {
   useEffect(() => {
     const animate = () => {
       const pixelSize = getPixelSize();
-      const isInFocus = pixelSize <= 1;
-
       const pixelBucket = Math.max(1, Math.round(pixelSize));
       const pixelBucketChanged = pixelBucket !== lastPixelSizeRef.current;
 
-      // Start/stop GIF based on focus
-      if (isInFocus && !isPlayingRef.current) {
-        startGifPlayback();
-      } else if (!isInFocus && isPlayingRef.current) {
-        resetToFirstFrame();
-      }
-
-      // Only redraw when out of focus and pixel size changes
-      if (!isInFocus && pixelBucketChanged) {
-        drawToCanvas(pixelSize);
-        lastPixelSizeRef.current = pixelBucket;
-      } else if (isInFocus && pixelBucketChanged) {
+      // Redraw when pixel size changes (GIF keeps playing regardless)
+      if (pixelBucketChanged) {
         lastPixelSizeRef.current = pixelBucket;
       }
 
