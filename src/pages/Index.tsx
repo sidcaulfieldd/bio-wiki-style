@@ -101,8 +101,10 @@ const Index = () => {
               </ul>
               
              {/* GIF centered between sections with canvas pixelation effect */}
-<div className="flex justify-center my-6">
-  <NotableProjectsPixelation />
+<div className="my-6">
+  <div className="flex justify-center md:translate-x-[150px]">
+    <NotableProjectsPixelation />
+  </div>
 </div>
 
               {/* Early Life and Education Section */}
