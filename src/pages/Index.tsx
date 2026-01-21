@@ -101,7 +101,7 @@ const Index = () => {
               </ul>
               
              {/* GIF centered between sections with canvas pixelation effect */}
-<div className="my-6 md:relative md:left-1/2 md:-translate-x-1/2 md:w-screen md:flex md:justify-center">
+<div className="my-6 -mx-4 md:-mx-[calc((100vw-1000px)/2+1.5rem)] flex justify-center">
   <NotableProjectsPixelation />
 </div>
 
