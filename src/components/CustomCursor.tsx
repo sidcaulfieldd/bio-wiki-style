@@ -3,10 +3,16 @@ import { useEffect, useState, useCallback } from 'react';
 const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
+  const [isOverIframe, setIsOverIframe] = useState(false);
 
   const updatePosition = useCallback((e: MouseEvent) => {
     setPosition({ x: e.clientX, y: e.clientY });
     setIsVisible(true);
+    
+    // Check if mouse is over any iframe (Spotify embed, etc.)
+    const element = document.elementFromPoint(e.clientX, e.clientY);
+    const isIframe = element?.tagName === 'IFRAME' || element?.closest('iframe') !== null;
+    setIsOverIframe(isIframe);
   }, []);
 
   const handleMouseLeave = useCallback(() => setIsVisible(false), []);
@@ -14,20 +20,17 @@ const CustomCursor = () => {
 
   // Force re-apply cursor:none after context menu closes
   const handleContextMenu = useCallback(() => {
-    // The context menu briefly shows native cursor, so we ensure our styles persist
     const reapplyCursor = () => {
       document.documentElement.style.cursor = 'none';
       document.body.style.cursor = 'none';
     };
     
-    // Apply immediately and after small delays to catch context menu close
     reapplyCursor();
     setTimeout(reapplyCursor, 10);
     setTimeout(reapplyCursor, 100);
     setTimeout(reapplyCursor, 300);
   }, []);
 
-  // Handle when context menu closes (click anywhere or escape)
   const handleClick = useCallback(() => {
     document.documentElement.style.cursor = 'none';
     document.body.style.cursor = 'none';
@@ -58,7 +61,8 @@ const CustomCursor = () => {
     };
   }, [updatePosition, handleMouseLeave, handleMouseEnter, handleContextMenu, handleClick, handleKeyDown]);
 
-  if (!isVisible) return null;
+  // Hide cursor when over iframe or mouse left window
+  if (!isVisible || isOverIframe) return null;
 
   return (
     <div
