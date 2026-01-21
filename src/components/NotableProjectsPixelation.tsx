@@ -32,6 +32,10 @@ const NotableProjectsPixelation = () => {
   const tempCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const dprRef = useRef<number>(1);
 
+  // Playback control
+  const wasInFocusRef = useRef(false);
+  const hasEverFocusedRef = useRef(false);
+
   const setupCanvasForDpr = () => {
     const canvas = pixelCanvasRef.current;
     if (!canvas) return;
@@ -162,7 +166,11 @@ const NotableProjectsPixelation = () => {
 
   useEffect(() => {
     setupCanvasForDpr();
-    const onResize = () => setupCanvasForDpr();
+    const onResize = () => {
+      setupCanvasForDpr();
+      // Force a redraw after DPR/layout changes.
+      lastPixelSizeRef.current = -1;
+    };
     window.addEventListener("resize", onResize, { passive: true });
     return () => window.removeEventListener("resize", onResize);
   }, []);
@@ -214,20 +222,53 @@ const NotableProjectsPixelation = () => {
   useEffect(() => {
     const animate = (now: number) => {
       const frames = gifFramesRef.current;
-      
-      // Advance GIF frame if needed
-      if (frames.length && now >= gifNextFrameAtRef.current) {
+
+      // Calculate pixel size (controls both pixelation + whether playback is allowed)
+      const pixelSize = getPixelSize();
+      const isInFocus = pixelSize <= 1;
+
+      const pixelBucket = Math.max(1, Math.round(pixelSize));
+      const pixelBucketChanged = pixelBucket !== lastPixelSizeRef.current;
+
+      const justEnteredFocus = isInFocus && !wasInFocusRef.current;
+      const justLeftFocus = !isInFocus && wasInFocusRef.current;
+
+      if (justEnteredFocus) {
+        hasEverFocusedRef.current = true;
+        // Resume at native timing from the current frame (avoid "catching up").
+        const currentFrame = frames[gifFrameIndexRef.current] ?? frames[0];
+        if (currentFrame) {
+          gifNextFrameAtRef.current = now + getDelayMs(currentFrame);
+        }
+      }
+
+      let frameAdvanced = false;
+      // Only animate the GIF when fully in focus (pixelSize === 1).
+      if (isInFocus && frames.length && now >= gifNextFrameAtRef.current) {
         const currentIndex = gifFrameIndexRef.current;
         const nextIndex = (currentIndex + 1) % frames.length;
         renderGifFrame(nextIndex);
         gifFrameIndexRef.current = nextIndex;
         gifNextFrameAtRef.current = now + getDelayMs(frames[nextIndex]);
+        frameAdvanced = true;
       }
 
-      // Calculate pixel size and redraw
-      const pixelSize = getPixelSize();
-      drawToCanvas(pixelSize);
-      lastPixelSizeRef.current = pixelSize;
+      // Before the GIF has ever been focused, keep it parked on frame 0 while pixelated.
+      if (!hasEverFocusedRef.current && !isInFocus && gifFrameIndexRef.current !== 0 && frames.length) {
+        gifFrameIndexRef.current = 0;
+        gifPrevFrameRef.current = null;
+        gifRestoreRef.current = null;
+        renderGifFrame(0);
+        frameAdvanced = true;
+      }
+
+      // Redraw only when something visible changed.
+      if (pixelBucketChanged || frameAdvanced || justEnteredFocus || justLeftFocus) {
+        drawToCanvas(pixelSize);
+        lastPixelSizeRef.current = pixelBucket;
+      }
+
+      wasInFocusRef.current = isInFocus;
 
       animationFrameRef.current = requestAnimationFrame(animate);
     };
@@ -241,7 +282,7 @@ const NotableProjectsPixelation = () => {
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden rounded-lg"
+      className="relative overflow-hidden rounded-lg mx-auto"
       style={{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }}
     >
       <canvas
