@@ -169,14 +169,12 @@ const NotableProjectsPixelation = () => {
       if (!isPlayingRef.current) return;
 
       const currentFrame = frames[gifFrameIndexRef.current];
-      // GIF delay is in centiseconds (1/100th of a second)
-      // For 20fps, delay should be 5 centiseconds = 50ms
-      const delayCs = currentFrame?.delay ?? 5;
-      const delayMs = delayCs * 10;
+      // The delay is already in milliseconds from gifuct-js
+      const delayMs = currentFrame?.delay ?? 50;
 
       // Debug logging - remove this after testing
       if (gifFrameIndexRef.current === 0) {
-        console.log('Frame delay (cs):', delayCs, 'Frame delay (ms):', delayMs);
+        console.log('Frame delay (ms):', delayMs);
       }
 
       gifFrameIndexRef.current = (gifFrameIndexRef.current + 1) % frames.length;
@@ -241,6 +239,11 @@ const NotableProjectsPixelation = () => {
         gifSourceCanvasRef.current = sourceCanvas;
         gifSourceCtxRef.current = sourceCtx;
         gifFramesRef.current = frames;
+
+        // Debug: Log first few frames to see the structure
+        console.log('GIF loaded:', frames.length, 'frames');
+        console.log('First frame:', frames[0]);
+        console.log('Frame delays:', frames.slice(0, 5).map(f => ({ delay: f.delay, delayMs: f.delay * 10 })));
 
         // Start on first frame
         renderGifFrame(0);
