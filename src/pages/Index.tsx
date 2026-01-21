@@ -100,10 +100,10 @@ const Index = () => {
                 <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
               </ul>
               
-              {/* GIF centered between sections with canvas pixelation effect */}
-              <div className="flex justify-center my-6">
-                <NotableProjectsPixelation />
-              </div>
+             {/* GIF centered between sections with canvas pixelation effect */}
+<div className="my-6 md:relative md:left-1/2 md:-translate-x-1/2 md:w-screen md:flex md:justify-center">
+  <NotableProjectsPixelation />
+</div>
 
               {/* Early Life and Education Section */}
               <h2 id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
