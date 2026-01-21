@@ -268,16 +268,18 @@ const NotableProjectsPixelation = () => {
   }, []);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative overflow-hidden rounded-lg mx-auto"
-      style={{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }}
-    >
-      <canvas
-        ref={pixelCanvasRef}
-        className="absolute inset-0 pointer-events-none rounded-lg"
-        style={{ imageRendering: "pixelated" }}
-      />
+    <div className="flex items-center justify-center min-h-screen">
+      <div
+        ref={containerRef}
+        className="relative overflow-hidden rounded-lg"
+        style={{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }}
+      >
+        <canvas
+          ref={pixelCanvasRef}
+          className="absolute inset-0 pointer-events-none rounded-lg"
+          style={{ imageRendering: "pixelated" }}
+        />
+      </div>
     </div>
   );
 };
