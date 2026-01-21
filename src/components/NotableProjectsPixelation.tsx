@@ -169,8 +169,15 @@ const NotableProjectsPixelation = () => {
       if (!isPlayingRef.current) return;
 
       const currentFrame = frames[gifFrameIndexRef.current];
-      const delayCs = typeof currentFrame?.delay === 'number' ? currentFrame.delay : 10;
-      const delayMs = delayCs * 10 || 100;
+      // GIF delay is in centiseconds (1/100th of a second)
+      // For 20fps, delay should be 5 centiseconds = 50ms
+      const delayCs = currentFrame?.delay ?? 5;
+      const delayMs = delayCs * 10;
+
+      // Debug logging - remove this after testing
+      if (gifFrameIndexRef.current === 0) {
+        console.log('Frame delay (cs):', delayCs, 'Frame delay (ms):', delayMs);
+      }
 
       gifFrameIndexRef.current = (gifFrameIndexRef.current + 1) % frames.length;
       renderGifFrame(gifFrameIndexRef.current);
