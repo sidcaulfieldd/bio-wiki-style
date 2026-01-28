@@ -10,7 +10,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="icon" type="image/x-icon" sizes="192x192" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="shortcut icon" type="image/png" href="/favicon-48.png" />
@@ -40,8 +40,24 @@
     <!-- MS Tile for Windows -->
     <meta name="msapplication-TileImage" content="/favicon.png" />
     <meta name="msapplication-TileColor" content="#ffffff" />
+    
+    <!-- Schema.org Person Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Sid Caulfield",
+      "url": "https://sidcaulfield.com",
+      "image": "https://sidcaulfield.com/favicon.png",
+      "jobTitle": "Journalist, Podcast Producer and Content Creator",
+      "description": "Australian journalist, podcast producer and content creator",
+      "nationality": "Australian",
+      "sameAs": [
+        "https://www.linkedin.com/in/sidcaulfield"
+      ]
+    }
+    </script>
   </head>
-
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
