@@ -39,7 +39,7 @@ export function ScrollTypeHeading({
             height: "1em",
             background: "currentColor",
             marginLeft: "2px",
-            verticalAlign: "baseline",
+            verticalAlign: "-0.1em",
             animation: "scrollTypeBlink 0.85s step-end infinite",
           }}
         />
