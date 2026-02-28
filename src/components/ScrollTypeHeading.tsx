@@ -26,7 +26,6 @@ export function ScrollTypeHeading({
     <h2
       id={id}
       className={className}
-      // useScrollType returns a generic ref — cast is safe here
       ref={ref as React.RefObject<HTMLHeadingElement>}
     >
       {displayed}
@@ -35,13 +34,13 @@ export function ScrollTypeHeading({
         <span
           aria-hidden="true"
           style={{
-          display: "inline-block",
-  width: "2px",
-  height: "1em",
-  background: "currentColor",
-  marginLeft: "2px",
-  verticalAlign: "text-bottom",   // ← was "middle"
-  animation: "scrollTypeBlink 0.85s step-end infinite",
+            display: "inline-block",
+            width: "2px",
+            height: "1em",
+            background: "currentColor",
+            marginLeft: "2px",
+            verticalAlign: "baseline",
+            animation: "scrollTypeBlink 0.85s step-end infinite",
           }}
         />
       )}
