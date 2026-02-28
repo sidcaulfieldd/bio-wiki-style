@@ -35,13 +35,13 @@ export function ScrollTypeHeading({
         <span
           aria-hidden="true"
           style={{
-            display: "inline-block",
-            width: "2px",
-            height: "0.85em",
-            background: "currentColor",
-            marginLeft: "2px",
-            verticalAlign: "middle",
-            animation: "scrollTypeBlink 0.85s step-end infinite",
+          display: "inline-block",
+  width: "2px",
+  height: "1em",
+  background: "currentColor",
+  marginLeft: "2px",
+  verticalAlign: "text-bottom",   // ← was "middle"
+  animation: "scrollTypeBlink 0.85s step-end infinite",
           }}
         />
       )}
