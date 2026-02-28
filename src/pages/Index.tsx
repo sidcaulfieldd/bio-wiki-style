@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
+import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 
 const Index = () => {
   return (
@@ -51,9 +52,9 @@ const Index = () => {
               </p>
 
               {/* Career Overview Section */}
-              <h2 id="career-overview" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+              <ScrollTypeHeading id="career-overview" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Career Overview
-              </h2>
+              </ScrollTypeHeading>
               <p className="mb-4 leading-relaxed relative z-10">
                 Whether it's bringing a group of 30 strangers together for an arvo on the bike or helping influencers lay down some dating lore on the mic, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the highlights!!
               </p>
@@ -89,9 +90,9 @@ const Index = () => {
               </p>
 
               {/* Notable Projects Section with GIF */}
-              <h2 id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+              <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Notable Projects
-              </h2>
+              </ScrollTypeHeading>
               
               <ul className="list-disc ml-6 leading-relaxed mb-4 relative z-10">
                 <li><strong>Flow Mountain Bike</strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
@@ -100,17 +101,17 @@ const Index = () => {
                 <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
               </ul>
               
-             {/* GIF centered between sections with canvas pixelation effect */}
-<div className="my-6">
-  <div className="flex justify-center md:translate-x-[150px]">
-    <NotableProjectsPixelation />
-  </div>
-</div>
+              {/* GIF centered between sections with canvas pixelation effect */}
+              <div className="my-6">
+                <div className="flex justify-center md:translate-x-[150px]">
+                  <NotableProjectsPixelation />
+                </div>
+              </div>
 
               {/* Early Life and Education Section */}
-              <h2 id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+              <ScrollTypeHeading id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Early Life and Education
-              </h2>
+              </ScrollTypeHeading>
               <p className="mb-4 leading-relaxed relative z-10">
                 Sidney Joseph Caulfield was born on July 27, 2003, in <a href="https://en.wikipedia.org/wiki/East_Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">East Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a>.
               </p>
@@ -122,9 +123,9 @@ const Index = () => {
               </p>
 
               {/* Skills and Areas of Expertise Section */}
-              <h2 id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+              <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Skills and Areas of Expertise
-              </h2>
+              </ScrollTypeHeading>
               <div className="flex flex-wrap gap-2 mb-4">
                 {[
                   "Adobe Creative Suite",
@@ -147,9 +148,9 @@ const Index = () => {
               </div>
 
               {/* References Section */}
-              <h2 id="references" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+              <ScrollTypeHeading id="references" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 References
-              </h2>
+              </ScrollTypeHeading>
               <p className="mb-4 leading-relaxed relative z-10">
                 — Available upon request!!
               </p>
@@ -230,9 +231,7 @@ const SidebarContent = () => {
       <table className="w-full text-sm">
         <tbody>
           <tr className="border-t border-[#a2a9b1]">
-            {/* Left column (th) - z-[1], below tracker */}
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Born</th>
-            {/* Right column (td) - z-10, above tracker */}
             <td className="py-2 px-2 relative z-10">
               Sidney Joseph Caulfield <br />
               July 27, 2003 (age 22)
