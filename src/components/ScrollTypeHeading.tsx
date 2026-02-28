@@ -36,10 +36,10 @@ export function ScrollTypeHeading({
           style={{
             display: "inline-block",
             width: "2px",
-            height: "1em",
+            height: "0.8em",
             background: "currentColor",
             marginLeft: "2px",
-            verticalAlign: "-0.1em",
+            verticalAlign: "-0.15em",
             animation: "scrollTypeBlink 0.85s step-end infinite",
           }}
         />
