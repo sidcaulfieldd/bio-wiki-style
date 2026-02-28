@@ -36,7 +36,7 @@ export function ScrollTypeHeading({
           style={{
             display: "inline-block",
             width: "2px",
-            height: "0.8em",
+            height: "0.98em",
             background: "currentColor",
             marginLeft: "2px",
             verticalAlign: "-0.15em",
