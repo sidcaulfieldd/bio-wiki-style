@@ -2,36 +2,13 @@ import { useEffect, useRef, useState, CSSProperties } from "react";
 import { useScrollFlipWord } from "@/hooks/useScrollFlipWord";
 
 interface ScrollFlipWordProps {
-  /** The word that locks in when scrolled to — defines the fixed pill width */
   heroWord: string;
-  /** Full list of words to cycle through on scroll */
   list: string[];
-  /** Font family string — must match the surrounding paragraph exactly */
   fontFamily?: string;
-  /** Font size in px — if omitted, inherits from parent */
   fontSize?: number;
-  /** Extra class names on the wrapper span */
   className?: string;
 }
 
-/**
- * ScrollFlipWord
- *
- * Inline word that flips through a list as you scroll toward it,
- * locks to the hero word when it hits the centre of the viewport,
- * and stays locked as you continue scrolling past.
- *
- * The pill width is fixed to the hero word's rendered pixel width,
- * and each flip word's font-size is scaled to fill that exact width.
- *
- * Usage:
- *   <ScrollFlipWord
- *     heroWord="strangers"
- *     list={STRANGERS_LIST}
- *     fontFamily="Georgia, serif"
- *     fontSize={18}
- *   />
- */
 export function ScrollFlipWord({
   heroWord,
   list,
@@ -41,9 +18,8 @@ export function ScrollFlipWord({
 }: ScrollFlipWordProps) {
   const { ref, currentWord, isHero } = useScrollFlipWord(list, heroWord);
 
-  // ── measure hero word width once fonts are ready ──────────────────────────
-  const [heroWidth, setHeroWidth]   = useState<number | null>(null);
-  const [fontSizes, setFontSizes]   = useState<Record<string, number>>({});
+  const [heroWidth, setHeroWidth] = useState<number | null>(null);
+  const [fontSizes, setFontSizes] = useState<Record<string, number>>({});
   const rulerRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -54,14 +30,13 @@ export function ScrollFlipWord({
       const fs = fontSize ?? parseFloat(getComputedStyle(ruler).fontSize);
       ruler.style.fontSize   = fs + "px";
       ruler.style.fontFamily = fontFamily;
-      ruler.style.fontStyle  = "italic";
+      ruler.style.fontStyle  = "normal";
+      ruler.style.fontWeight = "normal";
 
-      // Measure hero word
       ruler.textContent = heroWord;
       const heroW = ruler.offsetWidth;
       setHeroWidth(heroW);
 
-      // Binary-search the font-size that makes each word hit heroW px wide
       function fitSize(word: string): number {
         let lo = 4, hi = fs * 3;
         for (let i = 0; i < 24; i++) {
@@ -86,42 +61,30 @@ export function ScrollFlipWord({
     }
   }, [heroWord, list, fontFamily, fontSize]);
 
-  // ── styles ─────────────────────────────────────────────────────────────────
   const wrapperStyle: CSSProperties = {
     display: "inline-block",
     verticalAlign: "baseline",
     width: heroWidth ? heroWidth + "px" : "auto",
     position: "relative",
-  };
-
-  const pillStyle: CSSProperties = {
-    display: "flex",
-    alignItems: "baseline",
-    justifyContent: "center",
-    width: "100%",
-    height: "1.18em",
-    background: isHero ? "#c8441a" : "#1a1a1a",
-    color: isHero ? "#fff" : "#f5f0e8",
-    borderRadius: "3px",
-    fontStyle: "italic",
-    overflow: "hidden",
-    verticalAlign: "baseline",
-    position: "relative",
-    top: "0.05em",
-    transition: "background 0.1s, color 0.1s",
+    textAlign: "center",
   };
 
   const innerStyle: CSSProperties = {
     display: "inline-block",
     whiteSpace: "nowrap",
-    lineHeight: 1,
+    lineHeight: "inherit",
     fontFamily,
+    fontStyle: "normal",
+    fontWeight: "normal",
+    // Flip words are muted, hero word snaps to full text colour
+    color: isHero ? "inherit" : "#9a9a9a",
     fontSize: fontSizes[currentWord] ? fontSizes[currentWord] + "px" : "inherit",
+    transition: "color 0.15s",
   };
 
   return (
     <>
-      {/* Hidden ruler for measurements — invisible, zero-size */}
+      {/* Hidden ruler */}
       <span
         ref={rulerRef}
         style={{
@@ -140,9 +103,7 @@ export function ScrollFlipWord({
         style={wrapperStyle}
         aria-label={heroWord}
       >
-        <span style={pillStyle}>
-          <span style={innerStyle}>{currentWord}</span>
-        </span>
+        <span style={innerStyle}>{currentWord}</span>
       </span>
     </>
   );
