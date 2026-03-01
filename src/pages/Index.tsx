@@ -57,28 +57,12 @@ const Index = () => {
               </p>
 
               {/* Career Overview Section */}
-              <ScrollTypeHeading id="career-overview" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Career Overview
-              </ScrollTypeHeading>
-              <p className="mb-4 leading-relaxed relative z-10">
-                Whether it's bringing a group of 30{" "}
-                <ScrollFlipWord
-                  heroWord="strangers"
-                  list={STRANGERS}
-                  fontFamily="Georgia, 'Times New Roman', serif"
-                />{" "}
-                together for an arvo on the bike or helping influencers lay down some dating lore on the{" "}
-                <ScrollFlipWord
-                  heroWord="mic"
-                  list={MIC}
-                  fontFamily="Georgia, 'Times New Roman', serif"
-                />, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the{" "}
-                <ScrollFlipWord
-                  heroWord="highlights"
-                  list={HIGHLIGHTS}
-                  fontFamily="Georgia, 'Times New Roman', serif"
-                />!!
-              </p>
+<ScrollTypeHeading id="career-overview" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+  Career Overview
+</ScrollTypeHeading>
+<p className="mb-4 leading-relaxed relative z-10">
+  Whether it's bringing a group of 30 strangers together for an arvo on the bike or helping influencers lay down some dating lore on the mic, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the highlights!!
+</p>
 
               {/* Flow Mountain Bike */}
               <h3 id="flow-mountain-bike" className="text-xl font-serif mt-4 mb-2">
