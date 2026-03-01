@@ -2,6 +2,11 @@ import { useRef } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
+import { ScrollFlipWord } from "@/components/ScrollFlipWord";
+
+const STRANGERS = ["neighbors","newcomers","observers","travellers","passersby","backpackers","adventurers","volunteers","creatives","explorers","founders","designers","builders","teachers","planners","thinkers","dreamers","runners","riders","surfers","skaters","painters","writers","readers","dancers","singers","coders","gamers","traders","brokers","dealers","editors","bloggers","vloggers","leaders","workers","artists","drivers","campers","climbers","hikers","paddlers","cyclists","joggers","sailors","rafters","brewers","bakers","farmers","doctors"];
+const MIC       = ["map","man","men","mop","mug","pod","cam","pen","cap","pan","tap","set","net","web","app","air","hub","box","lab","den","bay","bar","pub","gym","jet","pit","mat","bed","sun","van","rod","bin","tub","can","tin","lid","key","log","rug","hat","fig","jam","wax","arc","dam","keg","owl","ant","ram","bug"];
+const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbreaks","backyards","skateparks","houseplants","aftershocks","storybeats","timepieces","showpieces","soundwaves","blueprints","footprints","goldmines","nightfalls","rainstorms","shipwrecks","storefronts","boardrooms","campfires","flashdrives","doorframes","landmasses","starbursts","bookcases","motorways","skylights","newsbreaks","postcards","sandcastles","wildfires","turntables","drumrolls","backflips","hatchbacks","headlines","paintbrushes","storytales","afterhours","longreads","sidequests","breakthroughs","launches","projects","ventures","chapters","episodes","showcases"];
 
 const Index = () => {
   return (
@@ -56,7 +61,23 @@ const Index = () => {
                 Career Overview
               </ScrollTypeHeading>
               <p className="mb-4 leading-relaxed relative z-10">
-                Whether it's bringing a group of 30 strangers together for an arvo on the bike or helping influencers lay down some dating lore on the mic, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the highlights!!
+                Whether it's bringing a group of 30{" "}
+                <ScrollFlipWord
+                  heroWord="strangers"
+                  list={STRANGERS}
+                  fontFamily="Georgia, 'Times New Roman', serif"
+                />{" "}
+                together for an arvo on the bike or helping influencers lay down some dating lore on the{" "}
+                <ScrollFlipWord
+                  heroWord="mic"
+                  list={MIC}
+                  fontFamily="Georgia, 'Times New Roman', serif"
+                />, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the{" "}
+                <ScrollFlipWord
+                  heroWord="highlights"
+                  list={HIGHLIGHTS}
+                  fontFamily="Georgia, 'Times New Roman', serif"
+                />!!
               </p>
 
               {/* Flow Mountain Bike */}
@@ -93,14 +114,14 @@ const Index = () => {
               <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Notable Projects
               </ScrollTypeHeading>
-              
+
               <ul className="list-disc ml-6 leading-relaxed mb-4 relative z-10">
                 <li><strong>Flow Mountain Bike</strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
                 <li><strong>The Mons Monday Podcast</strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video teaser/launch</a>.</li>
                 <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
                 <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
               </ul>
-              
+
               {/* GIF centered between sections with canvas pixelation effect */}
               <div className="my-6">
                 <div className="flex justify-center md:translate-x-[150px]">
@@ -186,10 +207,9 @@ const Index = () => {
   );
 };
 
-// Sidebar content extracted into a reusable component
 const SidebarContent = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  
+
   return (
     <>
       {/* Infobox title */}
@@ -199,7 +219,6 @@ const SidebarContent = () => {
 
       {/* Infobox image */}
       <div className="text-center p-3 pb-0">
-        {/* Pink background (below trail) + GIF (above trail) */}
         <div className="relative w-full aspect-square">
           <div className="absolute inset-0 bg-[#FF69B4]" style={{ zIndex: 2 }} />
           <img
