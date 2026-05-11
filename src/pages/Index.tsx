@@ -172,9 +172,9 @@ const Index = () => {
       </main>
 
       {/* Visual link in grey area */}
-      <div className="max-w-[1000px] mx-auto px-4 py-6 text-center">
+      <div className="text-center py-1">
         <a
-          href={"/" + encodeURI("LET'S GET VISUAL")}
+          href="/LETSGETVISUAL"
           className="text-[#0645ad] hover:underline text-base"
         >
           LET'S GET VISUAL
