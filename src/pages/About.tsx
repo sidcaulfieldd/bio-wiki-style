@@ -24,9 +24,9 @@ const About = () => {
       <Link
         to="/"
         style={sfPro}
-        className="fixed bottom-4 right-4 z-[9999] bg-white/90 hover:bg-white text-black text-sm font-medium px-3 py-1.5 rounded shadow-md transition-colors"
+        className="fixed bottom-4 right-4 z-[9999] text-white text-sm font-bold uppercase tracking-wider hover:opacity-80 transition-opacity"
       >
-        ← Back
+        BACK
       </Link>
     </div>
   );
