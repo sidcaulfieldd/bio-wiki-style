@@ -171,6 +171,16 @@ const Index = () => {
         </div>
       </main>
 
+      {/* Visual link in grey area */}
+      <div className="max-w-[1000px] mx-auto px-4 py-6 text-center">
+        <a
+          href={"/" + encodeURI("LET'S GET VISUAL")}
+          className="text-[#0645ad] hover:underline text-base"
+        >
+          LET'S GET VISUAL
+        </a>
+      </div>
+
       {/* Footer */}
       <footer className="bg-white border-t border-[#a7d7f9] mt-8 py-6">
         <div className="max-w-[1000px] mx-auto px-4 text-xs text-[#54595d]">
