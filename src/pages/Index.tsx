@@ -172,7 +172,7 @@ const Index = () => {
       </main>
 
       {/* Visual link in grey area */}
-      <div className="text-center py-1">
+      <div className="text-center py-0 leading-none">
         <a
           href="/LETSGETVISUAL"
           className="text-[#0645ad] hover:underline text-base"
