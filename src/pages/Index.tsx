@@ -172,7 +172,7 @@ const Index = () => {
       </main>
 
       {/* Visual link in grey area */}
-      <div className="text-center py-0 leading-none">
+      <div className="text-center leading-none -mt-4">
         <a
           href="/LETSGETVISUAL"
           className="text-[#0645ad] hover:underline text-base"
@@ -182,7 +182,7 @@ const Index = () => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-[#a7d7f9] mt-8 py-6">
+      <footer className="bg-white border-t border-[#a7d7f9] mt-2 py-6">
         <div className="max-w-[1000px] mx-auto px-4 text-xs text-[#54595d]">
           <p>
             This page was last edited on{" "}
