@@ -18,18 +18,20 @@ const About = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full bg-[#FF69B4] flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
+    <div className="relative w-full bg-[#FF69B4] px-4" style={{ minHeight: "200vh" }}>
       <h1
         style={sfPro}
-        className="text-4xl md:text-6xl font-bold text-white mb-8 text-center tracking-tight relative z-10"
+        className="fixed top-8 left-1/2 -translate-x-1/2 text-4xl md:text-6xl font-bold text-white text-center tracking-tight z-[9999] whitespace-nowrap"
       >
         LET'S GET VISUAL
       </h1>
-      <img
-        src={profilePic}
-        alt="Sid Caulfield"
-        className="max-w-full max-h-[70vh] object-contain relative z-10"
-      />
+      <div className="min-h-screen flex items-center justify-center pt-24">
+        <img
+          src={profilePic}
+          alt="Sid Caulfield"
+          className="max-w-full max-h-[70vh] object-contain relative z-10"
+        />
+      </div>
 
       {isIos && (
         <button
