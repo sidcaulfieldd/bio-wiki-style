@@ -1,10 +1,46 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import { Link } from "react-router-dom";
 
 const sfPro = {
   fontFamily:
     '"SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif',
+};
+
+type Pos = { x: number; y: number };
+
+const useDraggable = (initial: Pos) => {
+  const [pos, setPosState] = useState<Pos>(initial);
+  const setPos = setPosState;
+  const ref = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+  const offset = useRef<Pos>({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      if (!dragging.current) return;
+      e.preventDefault();
+      setPos({ x: e.clientX - offset.current.x, y: e.clientY - offset.current.y });
+    };
+    const onUp = () => {
+      dragging.current = false;
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, []);
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    offset.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    dragging.current = true;
+  };
+
+  return { ref, pos, setPos, onPointerDown };
 };
 
 const About = () => {
@@ -17,19 +53,56 @@ const About = () => {
     setIsIos(ios && !standalone);
   }, []);
 
+  // Initial centered positions (set after mount to use viewport)
+  const title = useDraggable({ x: 0, y: 32 });
+  const gif = useDraggable({ x: 0, y: 0 });
+  const [initialized, setInitialized] = useState(false);
+
+  useEffect(() => {
+    if (initialized) return;
+    const titleEl = title.ref.current;
+    const gifEl = gif.ref.current;
+    if (!titleEl || !gifEl) return;
+    const tw = titleEl.offsetWidth;
+    const gw = gifEl.offsetWidth;
+    const gh = gifEl.offsetHeight;
+    title.setPos({ x: (window.innerWidth - tw) / 2, y: 32 });
+    gif.setPos({ x: (window.innerWidth - gw) / 2, y: (window.innerHeight - gh) / 2 });
+    setInitialized(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <div className="relative w-full bg-[#FF69B4] px-4" style={{ minHeight: "200vh" }}>
-      <h1
-        style={sfPro}
-        className="fixed top-8 left-1/2 -translate-x-1/2 text-4xl md:text-6xl font-bold text-white text-center tracking-tight z-[6] whitespace-nowrap"
+    <div className="relative w-full bg-[#FF69B4] px-4 overflow-hidden" style={{ minHeight: "200vh" }}>
+      <div
+        ref={title.ref}
+        onPointerDown={title.onPointerDown}
+        style={{
+          ...sfPro,
+          left: title.pos.x,
+          top: title.pos.y,
+          touchAction: "none",
+        }}
+        className="fixed text-4xl md:text-6xl font-bold text-white tracking-tight z-[6] whitespace-nowrap cursor-grab active:cursor-grabbing select-none"
       >
         LET'S GET VISUAL
-      </h1>
-      <div className="min-h-screen flex items-center justify-center pt-24">
+      </div>
+
+      <div
+        ref={gif.ref}
+        onPointerDown={gif.onPointerDown}
+        style={{
+          left: gif.pos.x,
+          top: gif.pos.y,
+          touchAction: "none",
+        }}
+        className="fixed z-10 cursor-grab active:cursor-grabbing select-none"
+      >
         <img
           src={profilePic}
           alt="Sid Caulfield"
-          className="max-w-full max-h-[70vh] object-contain relative z-10"
+          draggable={false}
+          className="max-w-[80vw] max-h-[70vh] object-contain pointer-events-none"
         />
       </div>
 
