@@ -168,7 +168,7 @@ const About = () => {
           top: gif.pos.y,
           touchAction: "none",
         }}
-        className="fixed z-10 cursor-grab active:cursor-grabbing select-none"
+        className="fixed z-20 cursor-grab active:cursor-grabbing select-none"
       >
         <img
           src={profilePic}
