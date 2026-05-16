@@ -105,10 +105,35 @@ const About = () => {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const maxDim = Math.min(vw, vh) * 0.95;
-    const width = Math.round(30 + Math.random() * (maxDim - 30));
-    const x = Math.round(-width * 0.3 + Math.random() * (vw + width * 0.6 - width));
-    const y = Math.round(-width * 0.3 + Math.random() * (vh + width * 0.6 - width));
-    setExtraGifs((g) => [...g, { id: nextId.current++, x, y, width }]);
+    const minW = 30;
+    const sizeRange = maxDim - minW;
+    const diag = Math.hypot(vw, vh);
+    const minDist = diag * 0.35;
+    const minSizeDelta = sizeRange * 0.3;
+
+    setExtraGifs((g) => {
+      const prev = g[g.length - 1];
+      let best = { x: 0, y: 0, width: 0, score: -Infinity };
+      const attempts = 40;
+      for (let i = 0; i < attempts; i++) {
+        const width = Math.round(minW + Math.random() * sizeRange);
+        const x = Math.round(-width * 0.3 + Math.random() * (vw + width * 0.6 - width));
+        const y = Math.round(-width * 0.3 + Math.random() * (vh + width * 0.6 - width));
+        if (!prev) {
+          best = { x, y, width, score: 0 };
+          break;
+        }
+        const dist = Math.hypot(x - prev.x, y - prev.y);
+        const sizeDelta = Math.abs(width - prev.width);
+        if (dist >= minDist && sizeDelta >= minSizeDelta) {
+          best = { x, y, width, score: 0 };
+          break;
+        }
+        const score = dist / minDist + sizeDelta / minSizeDelta;
+        if (score > best.score) best = { x, y, width, score };
+      }
+      return [...g, { id: nextId.current++, x: best.x, y: best.y, width: best.width }];
+    });
   };
 
   return (
