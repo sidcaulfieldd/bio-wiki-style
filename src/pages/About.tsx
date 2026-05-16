@@ -47,21 +47,15 @@ type GifItem = {
   x: number;
   y: number;
   width: number;
-  rotation: number;
-  opacity: number;
 };
 
 const DraggableGif = ({
   initial,
   width,
-  rotation,
-  opacity,
   src,
 }: {
   initial: Pos;
   width: number;
-  rotation: number;
-  opacity: number;
   src: string;
 }) => {
   const d = useDraggable(initial);
@@ -73,8 +67,6 @@ const DraggableGif = ({
         left: d.pos.x,
         top: d.pos.y,
         width,
-        transform: `rotate(${rotation}deg)`,
-        opacity,
         touchAction: "none",
       }}
       className="fixed z-10 cursor-grab active:cursor-grabbing select-none"
@@ -140,21 +132,12 @@ const About = () => {
     const width = Math.round(minW + Math.random() * (maxW - minW));
 
     // Skewed position: tends toward edges and corners rather than centre
-    // Allow slight overhang off screen edges for chaos
-    const overhang = width * 0.5;
-    const x = Math.round(-overhang + skewedRandom() * (vw + overhang * 2 - width));
-    const y = Math.round(-overhang + skewedRandom() * (vh + overhang * 2 - width));
-
-    // Random rotation: mostly slight, occasionally wild
-    const rotationRange = Math.random() < 0.15 ? 180 : 25;
-    const rotation = (Math.random() - 0.5) * 2 * rotationRange;
-
-    // Slight opacity randomness
-    const opacity = 0.6 + Math.random() * 0.4;
+    const x = Math.round(skewedRandom() * (vw - width));
+    const y = Math.round(skewedRandom() * (vh - width));
 
     setExtraGifs((g) => [
       ...g,
-      { id: nextId.current++, x, y, width, rotation, opacity },
+      { id: nextId.current++, x, y, width },
     ]);
   };
 
@@ -200,8 +183,6 @@ const About = () => {
           key={g.id}
           initial={{ x: g.x, y: g.y }}
           width={g.width}
-          rotation={g.rotation}
-          opacity={g.opacity}
           src={profilePic}
         />
       ))}
