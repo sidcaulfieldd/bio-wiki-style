@@ -159,7 +159,7 @@ const About = () => {
         style={sfPro}
         className="fixed bottom-4 left-4 z-[9999] text-white text-sm font-bold uppercase tracking-wider hover:opacity-80 transition-opacity"
       >
-        ADD GIF
+        ADD
       </button>
 
       {isIos && (
