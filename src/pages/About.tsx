@@ -40,7 +40,7 @@ const useDraggable = (initial: Pos) => {
     dragging.current = true;
   };
 
-  return { ref, pos, onPointerDown };
+  return { ref, pos, setPos, onPointerDown };
 };
 
 const About = () => {
