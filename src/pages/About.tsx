@@ -10,8 +10,7 @@ const sfPro = {
 type Pos = { x: number; y: number };
 
 const useDraggable = (initial: Pos) => {
-  const [pos, setPosState] = useState<Pos>(initial);
-  const setPos = setPosState;
+  const [pos, setPos] = useState<Pos>(initial);
   const ref = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
   const offset = useRef<Pos>({ x: 0, y: 0 });
@@ -43,6 +42,35 @@ const useDraggable = (initial: Pos) => {
   return { ref, pos, setPos, onPointerDown };
 };
 
+type GifItem = { id: number; x: number; y: number; width: number };
+
+const DraggableGif = ({
+  initial,
+  width,
+  src,
+}: {
+  initial: Pos;
+  width: number;
+  src: string;
+}) => {
+  const d = useDraggable(initial);
+  return (
+    <div
+      ref={d.ref}
+      onPointerDown={d.onPointerDown}
+      style={{ left: d.pos.x, top: d.pos.y, width, touchAction: "none" }}
+      className="fixed z-10 cursor-grab active:cursor-grabbing select-none"
+    >
+      <img
+        src={src}
+        alt=""
+        draggable={false}
+        className="w-full h-auto object-contain pointer-events-none"
+      />
+    </div>
+  );
+};
+
 const About = () => {
   const [isIos, setIsIos] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
@@ -53,10 +81,11 @@ const About = () => {
     setIsIos(ios && !standalone);
   }, []);
 
-  // Initial centered positions (set after mount to use viewport)
   const title = useDraggable({ x: 0, y: 32 });
   const gif = useDraggable({ x: 0, y: 0 });
   const [initialized, setInitialized] = useState(false);
+  const [extraGifs, setExtraGifs] = useState<GifItem[]>([]);
+  const nextId = useRef(1);
 
   useEffect(() => {
     if (initialized) return;
@@ -71,6 +100,13 @@ const About = () => {
     setInitialized(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const addGif = () => {
+    const width = Math.round(80 + Math.random() * 320);
+    const x = Math.random() * Math.max(0, window.innerWidth - width);
+    const y = Math.random() * Math.max(0, window.innerHeight - width);
+    setExtraGifs((g) => [...g, { id: nextId.current++, x, y, width }]);
+  };
 
   return (
     <div className="relative w-full bg-[#FF69B4] px-4 overflow-hidden" style={{ minHeight: "200vh" }}>
@@ -106,11 +142,28 @@ const About = () => {
         />
       </div>
 
+      {extraGifs.map((g) => (
+        <DraggableGif
+          key={g.id}
+          initial={{ x: g.x, y: g.y }}
+          width={g.width}
+          src={profilePic}
+        />
+      ))}
+
+      <button
+        onClick={addGif}
+        style={sfPro}
+        className="fixed bottom-4 left-4 z-[9999] text-white text-sm font-bold uppercase tracking-wider hover:opacity-80 transition-opacity"
+      >
+        ADD GIF
+      </button>
+
       {isIos && (
         <button
           onClick={() => setShowPrompt(true)}
           style={sfPro}
-          className="fixed bottom-4 left-4 z-[9999] text-white text-sm font-bold uppercase tracking-wider hover:opacity-80 transition-opacity"
+          className="fixed bottom-12 left-4 z-[9999] text-white text-sm font-bold uppercase tracking-wider hover:opacity-80 transition-opacity"
         >
           ADD TO HOME SCREEN
         </button>
