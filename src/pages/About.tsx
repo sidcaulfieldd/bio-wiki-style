@@ -102,9 +102,12 @@ const About = () => {
   }, []);
 
   const addGif = () => {
-    const width = Math.round(80 + Math.random() * 320);
-    const x = Math.random() * Math.max(0, window.innerWidth - width);
-    const y = Math.random() * Math.max(0, window.innerHeight - width);
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const maxDim = Math.min(vw, vh) * 0.95;
+    const width = Math.round(30 + Math.random() * (maxDim - 30));
+    const x = Math.round(-width * 0.3 + Math.random() * (vw + width * 0.6 - width));
+    const y = Math.round(-width * 0.3 + Math.random() * (vh + width * 0.6 - width));
     setExtraGifs((g) => [...g, { id: nextId.current++, x, y, width }]);
   };
 
