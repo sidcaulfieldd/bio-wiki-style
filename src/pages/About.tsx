@@ -66,11 +66,8 @@ const About = () => {
     const tw = titleEl.offsetWidth;
     const gw = gifEl.offsetWidth;
     const gh = gifEl.offsetHeight;
-    title.pos.x = (window.innerWidth - tw) / 2;
-    gif.pos.x = (window.innerWidth - gw) / 2;
-    gif.pos.y = (window.innerHeight - gh) / 2;
-    // force a state update via setters
-    (title as any);
+    title.setPos({ x: (window.innerWidth - tw) / 2, y: 32 });
+    gif.setPos({ x: (window.innerWidth - gw) / 2, y: (window.innerHeight - gh) / 2 });
     setInitialized(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
