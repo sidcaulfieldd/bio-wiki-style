@@ -42,15 +42,26 @@ const useDraggable = (initial: Pos) => {
   return { ref, pos, setPos, onPointerDown };
 };
 
-type GifItem = { id: number; x: number; y: number; width: number };
+type GifItem = {
+  id: number;
+  x: number;
+  y: number;
+  width: number;
+  rotation: number;
+  opacity: number;
+};
 
 const DraggableGif = ({
   initial,
   width,
+  rotation,
+  opacity,
   src,
 }: {
   initial: Pos;
   width: number;
+  rotation: number;
+  opacity: number;
   src: string;
 }) => {
   const d = useDraggable(initial);
@@ -58,7 +69,14 @@ const DraggableGif = ({
     <div
       ref={d.ref}
       onPointerDown={d.onPointerDown}
-      style={{ left: d.pos.x, top: d.pos.y, width, touchAction: "none" }}
+      style={{
+        left: d.pos.x,
+        top: d.pos.y,
+        width,
+        transform: `rotate(${rotation}deg)`,
+        opacity,
+        touchAction: "none",
+      }}
       className="fixed z-10 cursor-grab active:cursor-grabbing select-none"
     >
       <img
@@ -69,6 +87,13 @@ const DraggableGif = ({
       />
     </div>
   );
+};
+
+// Skewed random: bias toward extremes rather than centre
+const skewedRandom = () => {
+  const r = Math.random();
+  // Power curve: pushes values toward 0 or 1
+  return Math.random() < 0.5 ? Math.pow(r, 0.3) : 1 - Math.pow(r, 0.3);
 };
 
 const About = () => {
@@ -104,40 +129,40 @@ const About = () => {
   const addGif = () => {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const maxDim = Math.min(vw, vh) * 0.95;
-    const minW = 30;
-    const sizeRange = maxDim - minW;
-    const diag = Math.hypot(vw, vh);
-    const minDist = diag * 0.35;
-    const minSizeDelta = sizeRange * 0.3;
 
-    setExtraGifs((g) => {
-      const prev = g[g.length - 1];
-      let best = { x: 0, y: 0, width: 0, score: -Infinity };
-      const attempts = 40;
-      for (let i = 0; i < attempts; i++) {
-        const width = Math.round(minW + Math.random() * sizeRange);
-        const x = Math.round(-width * 0.3 + Math.random() * (vw + width * 0.6 - width));
-        const y = Math.round(-width * 0.3 + Math.random() * (vh + width * 0.6 - width));
-        if (!prev) {
-          best = { x, y, width, score: 0 };
-          break;
-        }
-        const dist = Math.hypot(x - prev.x, y - prev.y);
-        const sizeDelta = Math.abs(width - prev.width);
-        if (dist >= minDist && sizeDelta >= minSizeDelta) {
-          best = { x, y, width, score: 0 };
-          break;
-        }
-        const score = dist / minDist + sizeDelta / minSizeDelta;
-        if (score > best.score) best = { x, y, width, score };
-      }
-      return [...g, { id: nextId.current++, x: best.x, y: best.y, width: best.width }];
-    });
+    // Max size capped at 75% of the original gif's rendered width
+    const originalGifEl = gif.ref.current;
+    const originalWidth = originalGifEl ? originalGifEl.offsetWidth : Math.min(vw, vh);
+    const maxW = originalWidth * 0.75;
+    const minW = 30;
+
+    // Fully random size — no relationship to previous gif
+    const width = Math.round(minW + Math.random() * (maxW - minW));
+
+    // Skewed position: tends toward edges and corners rather than centre
+    // Allow slight overhang off screen edges for chaos
+    const overhang = width * 0.5;
+    const x = Math.round(-overhang + skewedRandom() * (vw + overhang * 2 - width));
+    const y = Math.round(-overhang + skewedRandom() * (vh + overhang * 2 - width));
+
+    // Random rotation: mostly slight, occasionally wild
+    const rotationRange = Math.random() < 0.15 ? 180 : 25;
+    const rotation = (Math.random() - 0.5) * 2 * rotationRange;
+
+    // Slight opacity randomness
+    const opacity = 0.6 + Math.random() * 0.4;
+
+    setExtraGifs((g) => [
+      ...g,
+      { id: nextId.current++, x, y, width, rotation, opacity },
+    ]);
   };
 
   return (
-    <div className="relative w-full bg-[#FF69B4] px-4 overflow-hidden" style={{ minHeight: "200vh" }}>
+    <div
+      className="relative w-full bg-[#FF69B4] px-4 overflow-hidden"
+      style={{ minHeight: "200vh" }}
+    >
       <div
         ref={title.ref}
         onPointerDown={title.onPointerDown}
@@ -175,6 +200,8 @@ const About = () => {
           key={g.id}
           initial={{ x: g.x, y: g.y }}
           width={g.width}
+          rotation={g.rotation}
+          opacity={g.opacity}
           src={profilePic}
         />
       ))}
