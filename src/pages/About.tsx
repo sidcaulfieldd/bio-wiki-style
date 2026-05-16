@@ -10,7 +10,8 @@ const sfPro = {
 type Pos = { x: number; y: number };
 
 const useDraggable = (initial: Pos) => {
-  const [pos, setPos] = useState<Pos>(initial);
+  const [pos, setPosState] = useState<Pos>(initial);
+  const setPos = setPosState;
   const ref = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
   const offset = useRef<Pos>({ x: 0, y: 0 });
