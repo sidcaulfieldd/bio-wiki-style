@@ -195,7 +195,7 @@ const EPortfolio = () => {
             Hi! I'm Sid.
           </h1>
 
-          <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex flex-col md:flex-row gap-6 items-start">
             {/* Main Content Column */}
             <div className="flex-1 order-2 md:order-1">
               {/* Table of Contents */}
@@ -328,11 +328,16 @@ const EPortfolio = () => {
               <h3 id="hyde-and-seek" className="text-xl font-serif mt-4 mb-2">
                 Hyde &amp; Seek — PR &amp; Communications Intern
               </h3>
-              <div className="mb-4 flex flex-col md:flex-row gap-4">
-                <div className="w-full md:w-1/2">
+              {/* Fixed pixel widths, not percentages: the card is 1000px wide with 40px of
+                  padding (16px main + 24px card) on each side, so true center sits at 500px
+                  from the card's left edge — i.e. 460px from where this text starts. This
+                  intentionally overflows the narrower flex-1 column to its right, which is
+                  safe now that the sidebar no longer stretches to fill the whole page. */}
+              <div className="mb-4 flex flex-col md:flex-row gap-4" style={{ width: "920px", maxWidth: "100%" }}>
+                <div className="w-full" style={{ maxWidth: "460px" }}>
                   <HydeAndSeekText />
                 </div>
-                <div className="w-full md:w-1/2 flex-shrink-0 flex">
+                <div className="w-full flex-1 flex">
                   <div className="w-full max-w-[280px] ml-auto relative overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ maxHeight: "420px" }}>
                     <iframe
                       src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
