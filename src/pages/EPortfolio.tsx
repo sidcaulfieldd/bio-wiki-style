@@ -333,7 +333,7 @@ const EPortfolio = () => {
                   <HydeAndSeekText />
                 </div>
                 <div className="w-full md:w-1/2 flex-shrink-0 flex">
-                  <div className="w-full max-w-[280px] ml-auto relative overflow-hidden rounded-xl border border-[#a2a9b1]">
+                  <div className="w-full max-w-[280px] ml-auto relative overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ maxHeight: "420px" }}>
                     <iframe
                       src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
                       width="100%"
