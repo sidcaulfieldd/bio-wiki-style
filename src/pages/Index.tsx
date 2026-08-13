@@ -160,7 +160,6 @@ const Index = () => {
                 — Available upon request!!
               </p>
 
-              
             </div>
 
             {/* Desktop Sidebar */}
