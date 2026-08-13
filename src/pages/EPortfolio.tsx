@@ -329,14 +329,11 @@ const EPortfolio = () => {
                 Hyde &amp; Seek — PR &amp; Communications Intern
               </h3>
               <div className="mb-4 flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
+                <div className="w-full md:w-1/2">
                   <HydeAndSeekText />
                 </div>
-                <div className="w-full md:w-[180px] flex-shrink-0 flex md:justify-end">
-                  <div
-                    className="w-full md:w-[180px] relative overflow-hidden rounded-xl border border-[#a2a9b1]"
-                    style={{ height: "300px" }}
-                  >
+                <div className="w-full md:w-1/2 flex-shrink-0 flex">
+                  <div className="w-full max-w-[280px] ml-auto relative overflow-hidden rounded-xl border border-[#a2a9b1]">
                     <iframe
                       src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
                       width="100%"
