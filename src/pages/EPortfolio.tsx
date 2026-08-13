@@ -355,7 +355,7 @@ const EPortfolio = () => {
               card's true center at any screen size, with no fixed-pixel guesswork. */}
           <div className="mb-4 flex flex-col md:flex-row md:items-start gap-4">
             <div ref={hydeAndSeekTextRef} className="w-full md:w-1/2">
-              <h3 id="hyde-and-seek" className="text-xl font-serif mt-4 mb-2">
+              <h3 id="hyde-and-seek" className="text-xl font-serif mb-2">
                 Hyde &amp; Seek — PR &amp; Communications Intern
               </h3>
               <HydeAndSeekText />
