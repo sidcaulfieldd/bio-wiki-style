@@ -40,8 +40,6 @@ const WRITING_SAMPLES = [
 ];
 
 const SidebarContent = () => {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
   return (
     <>
       {/* Infobox title */}
@@ -61,20 +59,6 @@ const SidebarContent = () => {
           />
         </div>
         <div className="text-xs text-[#54595d] mt-1 mb-3">Caulfield in 2025</div>
-        {/* Spotify Embed */}
-        <div className="relative mb-3">
-          <iframe
-            ref={iframeRef}
-            style={{ borderRadius: "12px", position: "relative", zIndex: 1 }}
-            src="https://open.spotify.com/embed/track/4YACgyR9xdAcyJMBV8H6oX?utm_source=generator&theme=0&autoplay=1"
-            width="100%"
-            height="80"
-            frameBorder="0"
-            allowFullScreen
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            loading="lazy"
-          />
-        </div>
       </div>
 
       <table className="w-full text-sm">
@@ -285,7 +269,7 @@ const EPortfolio = () => {
               </p>
 
               {/* Launch GIF + episode list, side by side, centered as a self-contained block */}
-              <div className="my-6 w-full flex justify-center">
+              <div className="my-6 w-full flex justify-center md:translate-x-[150px]">
                 <div className="flex flex-col md:flex-row items-center gap-4">
                   <NotableProjectsPixelation />
 
@@ -326,38 +310,34 @@ const EPortfolio = () => {
               <h3 id="hyde-and-seek" className="text-xl font-serif mt-4 mb-2">
                 Hyde &amp; Seek — PR &amp; Communications Intern
               </h3>
-              <p className="mb-2 leading-relaxed relative z-10">
-                Since July 2026, Caulfield has supported strategic communications and media relations
-                for clients across the fintech, tech and consumer sectors at Hyde &amp; Seek, a boutique
-                PR agency, working directly with the Founding Director. His responsibilities include
-                writing and pitching press releases and media alerts, building and maintaining media
-                mapping and journalist tracking systems, and monitoring live news cycles to identify
-                timely press opportunities for clients.
-              </p>
-              <p className="mb-4 leading-relaxed relative z-10">
-                This placement has deepened his understanding of client servicing, research rigour and
-                pitch development within an agency structure, and strengthened his grounding in
-                brand-led thinking and integrated campaign execution.
-              </p>
-              <div className="mb-4 max-w-[360px]">
-                <iframe
-                  src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
-                  width="100%"
-                  height="480"
-                  frameBorder="0"
-                  scrolling="no"
-                  allowTransparency
-                  style={{ border: "none", overflow: "hidden", borderRadius: "12px" }}
-                  title="Hyde & Seek Instagram post"
-                />
-                <a
-                  href="https://www.instagram.com/p/DbKcgg6M1Bu/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-[#0645ad] hover:underline block mt-1"
-                >
-                  View on Instagram
-                </a>
+              <div className="mb-4 flex flex-col md:flex-row gap-4 items-stretch">
+                <div className="flex-1">
+                  <p className="mb-2 leading-relaxed relative z-10">
+                    Since July 2026, Caulfield has supported strategic communications and media
+                    relations for clients across the fintech, tech and consumer sectors at Hyde &amp;
+                    Seek, a boutique PR agency, working directly with the Founding Director. His
+                    responsibilities include writing and pitching press releases and media alerts,
+                    building and maintaining media mapping and journalist tracking systems, and
+                    monitoring live news cycles to identify timely press opportunities for clients.
+                  </p>
+                  <p className="leading-relaxed relative z-10">
+                    This placement has deepened his understanding of client servicing, research rigour
+                    and pitch development within an agency structure, and strengthened his grounding in
+                    brand-led thinking and integrated campaign execution.
+                  </p>
+                </div>
+                <div className="w-full md:w-[300px] flex-shrink-0">
+                  <iframe
+                    src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
+                    width="100%"
+                    height="100%"
+                    frameBorder="0"
+                    scrolling="no"
+                    allowTransparency
+                    style={{ border: "none", overflow: "hidden", borderRadius: "12px", minHeight: "340px" }}
+                    title="Hyde & Seek Instagram post"
+                  />
+                </div>
               </div>
 
               {/* Skills */}
@@ -389,9 +369,12 @@ const EPortfolio = () => {
               </div>
 
               {/* Contact */}
-              <ScrollTypeHeading id="contact" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+              <h2
+                id="contact"
+                className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3"
+              >
                 Contact
-              </ScrollTypeHeading>
+              </h2>
               <p className="mb-4 leading-relaxed relative z-10">
                 Get in touch at{" "}
                 <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">
