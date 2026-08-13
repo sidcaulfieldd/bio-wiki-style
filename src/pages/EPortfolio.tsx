@@ -318,7 +318,7 @@ const EPortfolio = () => {
                         href={`https://open.spotify.com/episode/${ep.id}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 border border-[#a2a9b1] bg-[#f8f9fa] hover:bg-[#eaecf0] transition-colors duration-150 rounded-lg px-2 py-1.5 no-underline"
+                        className="flex items-center gap-2 bg-[#121212] hover:bg-[#1a1a1a] transition-colors duration-150 rounded-lg px-2 py-1.5 no-underline"
                         style={{ height: "88px" }}
                       >
                         <div className="relative w-14 h-14 rounded-md overflow-hidden flex-shrink-0">
@@ -334,11 +334,13 @@ const EPortfolio = () => {
                           </div>
                         </div>
                         <div className="min-w-0">
-                          <div className="text-xs text-[#54595d]">Episode {i + 1}</div>
-                          <div className="text-sm font-semibold text-[#202122] truncate">
+                          <div className="text-[10px] font-bold uppercase tracking-wide text-[#1ed760]">
+                            Episode {i + 1}
+                          </div>
+                          <div className="text-sm font-semibold text-white truncate">
                             {ep.title}
                           </div>
-                          <div className="text-xs text-[#54595d]">
+                          <div className="text-xs text-[#b3b3b3]">
                             {ep.date} · {ep.duration}
                           </div>
                         </div>
