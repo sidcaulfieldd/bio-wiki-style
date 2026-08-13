@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import profilePic from "@/assets/profile_pic.gif";
+import profilePic from "@/assets/eportfolio_profile_pic.gif";
 import poddyCover from "@/assets/poddy-cover.jpg";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
