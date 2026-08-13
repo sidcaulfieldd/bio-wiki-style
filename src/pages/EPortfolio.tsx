@@ -285,19 +285,20 @@ const EPortfolio = () => {
               </p>
 
               {/* Launch GIF + episode embeds, side by side */}
-              <div className="my-6 flex flex-col md:flex-row items-center md:items-start justify-center gap-4">
+              <div className="my-6 flex flex-col md:flex-row items-center justify-center gap-4">
                 <NotableProjectsPixelation />
 
                 <div
-                  className="flex flex-col gap-2 w-full md:w-[320px]"
+                  className="flex flex-col justify-between w-[270px]"
                   style={{ height: "480px" }}
                 >
                   {MONS_MONDAY_EPISODES.map((ep) => (
-                    <div key={ep.id} className="flex-1 min-h-0 overflow-hidden relative">
+                    <div key={ep.id} className="relative">
                       <iframe
-                        style={{ borderRadius: "12px", height: "100%" }}
+                        style={{ borderRadius: "12px" }}
                         src={`https://open.spotify.com/embed/episode/${ep.id}?utm_source=generator&theme=0`}
                         width="100%"
+                        height="80"
                         frameBorder="0"
                         allowFullScreen
                         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
