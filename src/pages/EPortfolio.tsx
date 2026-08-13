@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
@@ -145,6 +145,23 @@ const EPortfolio = () => {
   useEffect(() => {
     document.body.classList.add("eportfolio-page");
     return () => document.body.classList.remove("eportfolio-page");
+  }, []);
+
+  // Measure the Hyde & Seek paragraph text at its normal full-column width (as if the
+  // Instagram embed weren't there), so the embed can be sized to match that height exactly.
+  const hydeAndSeekTextRef = useRef<HTMLDivElement>(null);
+  const hydeAndSeekMeasureRef = useRef<HTMLDivElement>(null);
+  const [hydeAndSeekHeight, setHydeAndSeekHeight] = useState<number | undefined>(undefined);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (hydeAndSeekMeasureRef.current) {
+        setHydeAndSeekHeight(hydeAndSeekMeasureRef.current.offsetHeight);
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, []);
 
   return (
@@ -310,9 +327,14 @@ const EPortfolio = () => {
               <h3 id="hyde-and-seek" className="text-xl font-serif mt-4 mb-2">
                 Hyde &amp; Seek — PR &amp; Communications Intern
               </h3>
-              <div className="mb-4 flex flex-col md:flex-row gap-4 items-stretch">
-                <div className="flex-1">
-                  <p className="mb-2 leading-relaxed relative z-10">
+              <div className="relative mb-4">
+                {/* Hidden clone, rendered at full column width, used only to measure natural text height */}
+                <div
+                  ref={hydeAndSeekMeasureRef}
+                  className="invisible absolute top-0 left-0 w-full pointer-events-none"
+                  aria-hidden="true"
+                >
+                  <p className="mb-2 leading-relaxed">
                     Since July 2026, Caulfield has supported strategic communications and media
                     relations for clients across the fintech, tech and consumer sectors at Hyde &amp;
                     Seek, a boutique PR agency, working directly with the Founding Director. His
@@ -320,26 +342,50 @@ const EPortfolio = () => {
                     building and maintaining media mapping and journalist tracking systems, and
                     monitoring live news cycles to identify timely press opportunities for clients.
                   </p>
-                  <p className="leading-relaxed relative z-10">
+                  <p className="leading-relaxed">
                     This placement has deepened his understanding of client servicing, research rigour
                     and pitch development within an agency structure, and strengthened his grounding in
                     brand-led thinking and integrated campaign execution.
                   </p>
                 </div>
+
+                {/* Real, visible two-column layout, height locked to the measurement above */}
                 <div
-                  className="w-full md:w-[300px] flex-shrink-0 relative overflow-hidden rounded-xl border border-[#a2a9b1]"
-                  style={{ height: "100%" }}
+                  ref={hydeAndSeekTextRef}
+                  className="flex flex-col md:flex-row gap-4"
+                  style={hydeAndSeekHeight ? { minHeight: hydeAndSeekHeight } : undefined}
                 >
-                  <iframe
-                    src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
-                    width="100%"
-                    height="800"
-                    frameBorder="0"
-                    scrolling="no"
-                    allowTransparency
-                    style={{ border: "none", position: "absolute", top: 0, left: 0 }}
-                    title="Hyde & Seek Instagram post"
-                  />
+                  <div className="flex-1">
+                    <p className="mb-2 leading-relaxed relative z-10">
+                      Since July 2026, Caulfield has supported strategic communications and media
+                      relations for clients across the fintech, tech and consumer sectors at Hyde
+                      &amp; Seek, a boutique PR agency, working directly with the Founding Director.
+                      His responsibilities include writing and pitching press releases and media
+                      alerts, building and maintaining media mapping and journalist tracking systems,
+                      and monitoring live news cycles to identify timely press opportunities for
+                      clients.
+                    </p>
+                    <p className="leading-relaxed relative z-10">
+                      This placement has deepened his understanding of client servicing, research
+                      rigour and pitch development within an agency structure, and strengthened his
+                      grounding in brand-led thinking and integrated campaign execution.
+                    </p>
+                  </div>
+                  <div
+                    className="w-full md:w-[300px] flex-shrink-0 relative overflow-hidden rounded-xl border border-[#a2a9b1]"
+                    style={{ height: hydeAndSeekHeight ? `${hydeAndSeekHeight}px` : "400px" }}
+                  >
+                    <iframe
+                      src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
+                      width="100%"
+                      height="800"
+                      frameBorder="0"
+                      scrolling="no"
+                      allowTransparency
+                      style={{ border: "none", position: "absolute", top: 0, left: 0 }}
+                      title="Hyde & Seek Instagram post"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -405,21 +451,6 @@ const EPortfolio = () => {
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-[#a7d7f9] mt-2 py-6">
-        <div className="max-w-[1000px] mx-auto px-4 text-xs text-[#54595d]">
-          <p>
-            This page was last edited on{" "}
-            {new Date().toLocaleDateString("en-US", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </p>
-          <p className="mt-2">Content is available under CC BY-SA 4.0 unless otherwise noted.</p>
-        </div>
-      </footer>
     </div>
   );
 };
