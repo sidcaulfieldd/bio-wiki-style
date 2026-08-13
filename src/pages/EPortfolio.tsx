@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import profilePic from "@/assets/profile_pic.gif";
+import poddyCover from "@/assets/poddy-cover.jpg";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 
@@ -320,10 +321,17 @@ const EPortfolio = () => {
                         className="flex items-center gap-2 border border-[#a2a9b1] bg-[#f8f9fa] hover:bg-[#eaecf0] transition-colors duration-150 rounded-lg px-2 py-1.5 no-underline"
                         style={{ height: "88px" }}
                       >
-                        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#1DB954] flex-shrink-0">
-                          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white ml-0.5">
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
+                        <div className="relative w-14 h-14 rounded-md overflow-hidden flex-shrink-0">
+                          <img
+                            src={poddyCover}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute bottom-[3px] right-[3px] w-5 h-5 rounded-full bg-[#1ed760] flex items-center justify-center shadow">
+                            <svg viewBox="0 0 24 24" className="w-[9px] h-[9px] fill-black ml-px">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
                         </div>
                         <div className="min-w-0">
                           <div className="text-xs text-[#54595d]">Episode {i + 1}</div>
