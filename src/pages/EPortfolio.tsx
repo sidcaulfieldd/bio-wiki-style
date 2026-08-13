@@ -344,16 +344,16 @@ const EPortfolio = () => {
             <div className="w-full md:w-1/2">
               <HydeAndSeekText />
             </div>
-            <div className="w-full md:w-1/2 flex-shrink-0 flex">
-              <div className="w-full max-w-[280px] ml-auto relative overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ maxHeight: "420px" }}>
+            <div className="w-full md:w-1/2 flex-shrink-0 flex items-center justify-center">
+              <div className="w-full max-w-[280px] relative overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ maxHeight: "400px" }}>
                 <iframe
                   src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
                   width="100%"
-                  height="800"
+                  height="450"
                   frameBorder="0"
                   scrolling="no"
                   allowTransparency
-                  style={{ border: "none", position: "absolute", top: 0, left: 0 }}
+                  style={{ border: "none" }}
                   title="Hyde & Seek Instagram post"
                 />
               </div>
