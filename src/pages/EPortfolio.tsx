@@ -12,33 +12,29 @@ const MONS_MONDAY_EPISODES = [
   { id: "6MIO4GqVcqZekF5l5DxxWe", title: "When Nothing Goes To Plan", duration: "52 min", date: "Aug 4, 2025" },
 ];
 
-const WRITING_SAMPLES = [
+const FLOW_ARTICLES = [
   {
     title: "What Is Trash Free Trails?",
-    outlet: "Flow Mountain Bike",
     url: "https://flowmountainbike.com/features/what-is-trash-free-trails/",
   },
   {
     title: "Fun First, Fast Always: Maddie Lloyd Might Be Australia's Fastest 13-Year-Old",
-    outlet: "Flow Mountain Bike",
     url: "https://flowmountainbike.com/features/fun-first-fast-always-maddie-lloyd-might-be-australias-fastest-13-year-old/",
   },
   {
     title: "Who Is Downhill Mountain Biker Jackson Connelly?",
-    outlet: "Flow Mountain Bike",
     url: "https://flowmountainbike.com/features/who-is-downhill-mountain-biker-jackson-connelly/",
   },
   {
     title: "Giant STP 26 Review",
-    outlet: "Flow Mountain Bike",
     url: "https://flowmountainbike.com/tests/giant-stp-26-review/",
   },
-  {
-    title: "Friends of Anglesea River Continue Five-Year Fight Amid Mining Corp Alcoa's Latest Water Bid",
-    outlet: "Forte Magazine",
-    url: "https://www.fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/",
-  },
 ];
+
+const FORTE_ARTICLE = {
+  title: "Friends of Anglesea River Continue Five-Year Fight Amid Mining Corp Alcoa's Latest Water Bid",
+  url: "https://www.fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/",
+};
 
 const SidebarContent = () => {
   return (
@@ -245,23 +241,81 @@ const EPortfolio = () => {
                 Examples of My Work
               </ScrollTypeHeading>
               <p className="mb-4 leading-relaxed relative z-10">
-                A selection of freelance, university and feature writing, spanning journalism, gear
+                A selection of professional and university writing, spanning journalism, gear
                 reviews and profile pieces.
               </p>
+
+              <h4 className="font-semibold mb-2 relative z-10">Professional</h4>
+              <ul className="list-disc ml-6 leading-relaxed mb-4 relative z-10">
+                <li className="mb-1">
+                  Flow Mountain Bike —{" "}
+                  <a
+                    href="https://www.instagram.com/flow_mtb/?hl=en"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Instagram
+                  </a>{" "}
+                  ·{" "}
+                  <a
+                    href="https://www.facebook.com/flowmountainbike/"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Facebook
+                  </a>
+                  <ul className="list-disc ml-6 mt-1">
+                    {FLOW_ARTICLES.map((article) => (
+                      <li key={article.url} className="mb-1">
+                        <a
+                          href={article.url}
+                          className="text-[#0645ad] hover:underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {article.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    The Mons Monday Podcast
+                  </a>{" "}
+                  —{" "}
+                  <a
+                    href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Spotify
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href={FORTE_ARTICLE.url}
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {FORTE_ARTICLE.title}
+                  </a>{" "}
+                  <span className="text-[#54595d]">— Forte Magazine</span>
+                </li>
+              </ul>
+
+              <h4 className="font-semibold mb-2 relative z-10">RMIT Coursework</h4>
               <ul className="list-disc ml-6 leading-relaxed mb-6 relative z-10">
-                {WRITING_SAMPLES.map((sample) => (
-                  <li key={sample.url} className="mb-1">
-                    <a
-                      href={sample.url}
-                      className="text-[#0645ad] hover:underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {sample.title}
-                    </a>{" "}
-                    <span className="text-[#54595d]">— {sample.outlet}</span>
-                  </li>
-                ))}
+                <li className="mb-1 text-[#54595d] italic">Placeholder — samples to be added.</li>
               </ul>
 
               {/* Career Overview */}
