@@ -353,11 +353,11 @@ const EPortfolio = () => {
 
           {/* Hyde & Seek — full card width now, so a plain 50/50 split always lands on the
               card's true center at any screen size, with no fixed-pixel guesswork. */}
-          <h3 id="hyde-and-seek" className="text-xl font-serif mt-4 mb-2">
-            Hyde &amp; Seek — PR &amp; Communications Intern
-          </h3>
           <div className="mb-4 flex flex-col md:flex-row md:items-start gap-4">
             <div ref={hydeAndSeekTextRef} className="w-full md:w-1/2">
+              <h3 id="hyde-and-seek" className="text-xl font-serif mt-4 mb-2">
+                Hyde &amp; Seek — PR &amp; Communications Intern
+              </h3>
               <HydeAndSeekText />
             </div>
             <div className="w-full md:w-1/2 flex-shrink-0 flex justify-center">
