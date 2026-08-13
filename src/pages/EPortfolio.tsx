@@ -323,96 +323,94 @@ const EPortfolio = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Hyde & Seek */}
-              <h3 id="hyde-and-seek" className="text-xl font-serif mt-4 mb-2">
-                Hyde &amp; Seek — PR &amp; Communications Intern
-              </h3>
-              {/* Fixed pixel widths, not percentages: the card is 1000px wide with 40px of
-                  padding (16px main + 24px card) on each side, so true center sits at 500px
-                  from the card's left edge — i.e. 460px from where this text starts. This
-                  intentionally overflows the narrower flex-1 column to its right, which is
-                  safe now that the sidebar no longer stretches to fill the whole page. */}
-              <div className="mb-4 flex flex-col md:flex-row gap-4" style={{ width: "920px", maxWidth: "100%" }}>
-                <div className="w-full" style={{ maxWidth: "460px" }}>
-                  <HydeAndSeekText />
-                </div>
-                <div className="w-full flex-1 flex">
-                  <div className="w-full max-w-[280px] ml-auto relative overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ maxHeight: "420px" }}>
-                    <iframe
-                      src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
-                      width="100%"
-                      height="800"
-                      frameBorder="0"
-                      scrolling="no"
-                      allowTransparency
-                      style={{ border: "none", position: "absolute", top: 0, left: 0 }}
-                      title="Hyde & Seek Instagram post"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Skills */}
-              <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Skills and Areas of Expertise
-              </ScrollTypeHeading>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {[
-                  "PR and media relations",
-                  "Client account management",
-                  "Content strategy and campaign development",
-                  "Press release and media pitch writing",
-                  "Copywriting and editing",
-                  "eDM planning, delivery and performance analysis",
-                  "Media monitoring and coverage reporting",
-                  "Audience profiling and insights",
-                  "Cross-platform syndication",
-                  "Integrated publishing and analytics tools",
-                  "Adobe Creative Suite",
-                  "Canva (team templates and system design)",
-                ].map((skill) => (
-                  <span
-                    key={skill}
-                    className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded cursor-pointer hover:bg-[#c8ccd1] hover:border-[#72777d] transition-colors duration-150"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-
-              {/* Contact */}
-              <h2
-                id="contact"
-                className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3"
-              >
-                Contact
-              </h2>
-              <p className="mb-4 leading-relaxed relative z-10">
-                Get in touch at{" "}
-                <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">
-                  caulfieldsid@gmail.com
-                </a>
-                , or connect via{" "}
-                <a
-                  className="text-[#0645ad] hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://www.linkedin.com/in/sid-caulfield-27b838356/"
-                >
-                  LinkedIn
-                </a>
-                .
-              </p>
             </div>
 
-            {/* Desktop Sidebar */}
+            {/* Desktop Sidebar — closes here since its content (photo/table) is already
+                fully shown by this point; everything below renders at the card's true full
+                width instead of the narrower column this sidebar would otherwise impose. */}
             <aside className="hidden md:block w-[300px] flex-shrink-0 order-1 md:order-2">
               <div className="border border-[#a2a9b1] bg-[#f8f9fa]">
                 <SidebarContent />
               </div>
             </aside>
           </div>
+
+          {/* Hyde & Seek — full card width now, so a plain 50/50 split always lands on the
+              card's true center at any screen size, with no fixed-pixel guesswork. */}
+          <h3 id="hyde-and-seek" className="text-xl font-serif mt-4 mb-2">
+            Hyde &amp; Seek — PR &amp; Communications Intern
+          </h3>
+          <div className="mb-4 flex flex-col md:flex-row gap-4">
+            <div className="w-full md:w-1/2">
+              <HydeAndSeekText />
+            </div>
+            <div className="w-full md:w-1/2 flex-shrink-0 flex">
+              <div className="w-full max-w-[280px] ml-auto relative overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ maxHeight: "420px" }}>
+                <iframe
+                  src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
+                  width="100%"
+                  height="800"
+                  frameBorder="0"
+                  scrolling="no"
+                  allowTransparency
+                  style={{ border: "none", position: "absolute", top: 0, left: 0 }}
+                  title="Hyde & Seek Instagram post"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Skills */}
+          <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+            Skills and Areas of Expertise
+          </ScrollTypeHeading>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {[
+              "PR and media relations",
+              "Client account management",
+              "Content strategy and campaign development",
+              "Press release and media pitch writing",
+              "Copywriting and editing",
+              "eDM planning, delivery and performance analysis",
+              "Media monitoring and coverage reporting",
+              "Audience profiling and insights",
+              "Cross-platform syndication",
+              "Integrated publishing and analytics tools",
+              "Adobe Creative Suite",
+              "Canva (team templates and system design)",
+            ].map((skill) => (
+              <span
+                key={skill}
+                className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded cursor-pointer hover:bg-[#c8ccd1] hover:border-[#72777d] transition-colors duration-150"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+
+          {/* Contact */}
+          <h2
+            id="contact"
+            className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3"
+          >
+            Contact
+          </h2>
+          <p className="mb-4 leading-relaxed relative z-10">
+            Get in touch at{" "}
+            <a className="text-[#0645ad] hover:underline" href="mailto:caulfieldsid@gmail.com">
+              caulfieldsid@gmail.com
+            </a>
+            , or connect via{" "}
+            <a
+              className="text-[#0645ad] hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://www.linkedin.com/in/sid-caulfield-27b838356/"
+            >
+              LinkedIn
+            </a>
+            .
+          </p>
         </div>
       </main>
     </div>
