@@ -55,7 +55,6 @@ const SidebarContent = () => {
             style={{ zIndex: 20 }}
           />
         </div>
-        <div className="text-xs text-[#54595d] mt-1 mb-3">Caulfield in 2025</div>
       </div>
 
       <table className="w-full text-sm">
@@ -117,19 +116,6 @@ const SidebarContent = () => {
               </a>
             </td>
           </tr>
-          <tr className="border-t border-[#a2a9b1]">
-            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Resume</th>
-            <td className="py-2 px-2 relative z-10">
-              <a
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://drive.google.com/file/d/1T26aUBmdWnSU0To83Md1-1DvCs1Ft6yt/view?usp=sharing"
-              >
-                View PDF
-              </a>
-            </td>
-          </tr>
         </tbody>
       </table>
     </>
@@ -181,12 +167,9 @@ const EPortfolio = () => {
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
       <style>{`
-        body.eportfolio-page,
-        body.eportfolio-page * {
-          cursor: auto !important;
-        }
         body.eportfolio-page img[src="/mouse.png"] {
-          display: none !important;
+          transform: scale(0.6);
+          transform-origin: center;
         }
       `}</style>
 
@@ -216,13 +199,7 @@ const EPortfolio = () => {
                 <div className="font-bold mb-2 relative z-10">Contents</div>
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
                   <li><a href="#examples-of-my-work" className="hover:underline">Examples of My Work</a></li>
-                  <li><a href="#career-overview" className="hover:underline">Career Overview</a>
-                    <ol className="list-decimal ml-4 text-[#0645ad]">
-                      <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
-                      <li><a href="#mons-monday-podcast" className="hover:underline">The Mons Monday Podcast</a></li>
-                      <li><a href="#hyde-and-seek" className="hover:underline">Hyde &amp; Seek Internship</a></li>
-                    </ol>
-                  </li>
+                  <li><a href="#career-overview" className="hover:underline">Career Overview</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
                   <li><a href="#contact" className="hover:underline">Contact</a></li>
                 </ol>
