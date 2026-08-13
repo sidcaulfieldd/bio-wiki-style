@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
@@ -163,6 +163,22 @@ const EPortfolio = () => {
   useEffect(() => {
     document.body.classList.add("eportfolio-page");
     return () => document.body.classList.remove("eportfolio-page");
+  }, []);
+
+  // Measure the real, visible Hyde & Seek text column so the embed can be cropped to
+  // exactly that height at any screen size (not a guessed/fixed pixel value).
+  const hydeAndSeekTextRef = useRef<HTMLDivElement>(null);
+  const [hydeAndSeekHeight, setHydeAndSeekHeight] = useState<number | undefined>(undefined);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (hydeAndSeekTextRef.current) {
+        setHydeAndSeekHeight(hydeAndSeekTextRef.current.offsetHeight);
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, []);
 
   return (
@@ -340,12 +356,15 @@ const EPortfolio = () => {
           <h3 id="hyde-and-seek" className="text-xl font-serif mt-4 mb-2">
             Hyde &amp; Seek — PR &amp; Communications Intern
           </h3>
-          <div className="mb-4 flex flex-col md:flex-row gap-4">
-            <div className="w-full md:w-1/2">
+          <div className="mb-4 flex flex-col md:flex-row md:items-start gap-4">
+            <div ref={hydeAndSeekTextRef} className="w-full md:w-1/2">
               <HydeAndSeekText />
             </div>
-            <div className="w-full md:w-1/2 flex-shrink-0 flex items-center justify-center">
-              <div className="w-full max-w-[280px] relative overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ maxHeight: "480px" }}>
+            <div className="w-full md:w-1/2 flex-shrink-0 flex justify-center">
+              <div
+                className="w-full max-w-[280px] relative overflow-hidden rounded-xl border border-[#a2a9b1]"
+                style={{ height: hydeAndSeekHeight ? `${hydeAndSeekHeight}px` : "480px" }}
+              >
                 <iframe
                   src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
                   width="100%"
