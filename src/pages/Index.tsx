@@ -159,7 +159,6 @@ const Index = () => {
               <p className="mb-4 leading-relaxed relative z-10">
                 — Available upon request!!
               </p>
-
             </div>
 
             {/* Desktop Sidebar */}
