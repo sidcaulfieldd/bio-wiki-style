@@ -160,12 +160,7 @@ const Index = () => {
                 — Available upon request!!
               </p>
 
-              <p className="mb-4 leading-relaxed relative z-10">
-                For detailed case studies of Caulfield's professional work, see his{" "}
-                <a href="/E-PORTFOLIO" className="text-[#0645ad] hover:underline">
-                  E-Portfolio
-                </a>.
-              </p>
+              
             </div>
 
             {/* Desktop Sidebar */}
