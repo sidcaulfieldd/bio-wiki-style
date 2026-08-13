@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
@@ -165,22 +165,6 @@ const EPortfolio = () => {
     return () => document.body.classList.remove("eportfolio-page");
   }, []);
 
-  // Measure the Hyde & Seek text at its natural full-column width (i.e. as if the embed
-  // weren't there), so the embed's height can be locked to match it exactly at any screen size.
-  const hydeAndSeekMeasureRef = useRef<HTMLDivElement>(null);
-  const [hydeAndSeekHeight, setHydeAndSeekHeight] = useState<number | undefined>(undefined);
-
-  useLayoutEffect(() => {
-    const measure = () => {
-      if (hydeAndSeekMeasureRef.current) {
-        setHydeAndSeekHeight(hydeAndSeekMeasureRef.current.offsetHeight);
-      }
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
       <style>{`
@@ -345,23 +329,25 @@ const EPortfolio = () => {
                 Hyde &amp; Seek — PR &amp; Communications Intern
               </h3>
               <div className="mb-4 flex flex-col md:flex-row gap-4">
-                <div ref={hydeAndSeekMeasureRef} className="flex-1">
+                <div className="flex-1">
                   <HydeAndSeekText />
                 </div>
-                <div
-                  className="w-full md:w-[300px] flex-shrink-0 relative overflow-hidden rounded-xl border border-[#a2a9b1]"
-                  style={{ height: hydeAndSeekHeight ? `${hydeAndSeekHeight}px` : "267px" }}
-                >
-                  <iframe
-                    src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
-                    width="100%"
-                    height="800"
-                    frameBorder="0"
-                    scrolling="no"
-                    allowTransparency
-                    style={{ border: "none", position: "absolute", top: 0, left: 0 }}
-                    title="Hyde & Seek Instagram post"
-                  />
+                <div className="w-full md:w-[180px] flex-shrink-0 flex md:justify-end">
+                  <div
+                    className="w-full md:w-[180px] relative overflow-hidden rounded-xl border border-[#a2a9b1]"
+                    style={{ height: "300px" }}
+                  >
+                    <iframe
+                      src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
+                      width="100%"
+                      height="800"
+                      frameBorder="0"
+                      scrolling="no"
+                      allowTransparency
+                      style={{ border: "none", position: "absolute", top: 0, left: 0 }}
+                      title="Hyde & Seek Instagram post"
+                    />
+                  </div>
                 </div>
               </div>
 
