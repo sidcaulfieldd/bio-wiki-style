@@ -326,15 +326,18 @@ const EPortfolio = () => {
                     brand-led thinking and integrated campaign execution.
                   </p>
                 </div>
-                <div className="w-full md:w-[300px] flex-shrink-0">
+                <div
+                  className="w-full md:w-[300px] flex-shrink-0 relative overflow-hidden rounded-xl border border-[#a2a9b1]"
+                  style={{ height: "100%" }}
+                >
                   <iframe
                     src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
                     width="100%"
-                    height="100%"
+                    height="800"
                     frameBorder="0"
                     scrolling="no"
                     allowTransparency
-                    style={{ border: "none", overflow: "hidden", borderRadius: "12px", minHeight: "340px" }}
+                    style={{ border: "none", position: "absolute", top: 0, left: 0 }}
                     title="Hyde & Seek Instagram post"
                   />
                 </div>
