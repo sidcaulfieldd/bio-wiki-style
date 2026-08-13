@@ -344,36 +344,24 @@ const EPortfolio = () => {
               <h3 id="hyde-and-seek" className="text-xl font-serif mt-4 mb-2">
                 Hyde &amp; Seek — PR &amp; Communications Intern
               </h3>
-              <div className="relative mb-4">
-                {/* Hidden clone at full column width — used only to measure natural text height */}
-                <div
-                  ref={hydeAndSeekMeasureRef}
-                  className="invisible absolute top-0 left-0 w-full pointer-events-none"
-                  aria-hidden="true"
-                >
+              <div className="mb-4 flex flex-col md:flex-row gap-4">
+                <div ref={hydeAndSeekMeasureRef} className="flex-1">
                   <HydeAndSeekText />
                 </div>
-
-                {/* Visible two-column layout, embed height locked to the measurement above */}
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <HydeAndSeekText />
-                  </div>
-                  <div
-                    className="w-full md:w-[300px] flex-shrink-0 relative overflow-hidden rounded-xl border border-[#a2a9b1]"
-                    style={{ height: hydeAndSeekHeight ? `${hydeAndSeekHeight}px` : "267px" }}
-                  >
-                    <iframe
-                      src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
-                      width="100%"
-                      height="800"
-                      frameBorder="0"
-                      scrolling="no"
-                      allowTransparency
-                      style={{ border: "none", position: "absolute", top: 0, left: 0 }}
-                      title="Hyde & Seek Instagram post"
-                    />
-                  </div>
+                <div
+                  className="w-full md:w-[300px] flex-shrink-0 relative overflow-hidden rounded-xl border border-[#a2a9b1]"
+                  style={{ height: hydeAndSeekHeight ? `${hydeAndSeekHeight}px` : "267px" }}
+                >
+                  <iframe
+                    src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
+                    width="100%"
+                    height="800"
+                    frameBorder="0"
+                    scrolling="no"
+                    allowTransparency
+                    style={{ border: "none", position: "absolute", top: 0, left: 0 }}
+                    title="Hyde & Seek Instagram post"
+                  />
                 </div>
               </div>
 
