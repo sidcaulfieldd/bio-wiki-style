@@ -4,11 +4,11 @@ import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 
 const MONS_MONDAY_EPISODES = [
-  { id: "3HbiKzvld9G51AgZEv1JL3", title: "Episode 1 — One Year Without Alcohol: Day 236" },
-  { id: "4BQNYu5ToaFbC5wSIpCW3v", title: "Episode 2 — 20 Things I Wish I Knew at 20" },
-  { id: "3ZOuHvoGEZchfqr5YIE704", title: "Episode 3 — Live from the Campsite" },
-  { id: "6M9acNMBf4em7iZumavOal", title: "Episode 4 — Life Before Sabi: How I Got Here" },
-  { id: "6MIO4GqVcqZekF5l5DxxWe", title: "Episode 5 — When Nothing Goes To Plan" },
+  { id: "3HbiKzvld9G51AgZEv1JL3", title: "One Year Without Alcohol: Day 236", duration: "41 min", date: "Jun 9, 2025" },
+  { id: "4BQNYu5ToaFbC5wSIpCW3v", title: "20 Things I Wish I Knew at 20", duration: "55 min", date: "Jun 23, 2025" },
+  { id: "3ZOuHvoGEZchfqr5YIE704", title: "Live from the Campsite", duration: "33 min", date: "Jul 7, 2025" },
+  { id: "6M9acNMBf4em7iZumavOal", title: "Life Before Sabi: How I Got Here", duration: "1 hr 5 min", date: "Jul 21, 2025" },
+  { id: "6MIO4GqVcqZekF5l5DxxWe", title: "When Nothing Goes To Plan", duration: "52 min", date: "Aug 4, 2025" },
 ];
 
 const WRITING_SAMPLES = [
@@ -284,29 +284,41 @@ const EPortfolio = () => {
                 production workflow management and post-launch performance analysis.
               </p>
 
-              {/* Launch GIF + episode embeds, side by side */}
-              <div className="my-6 flex flex-col md:flex-row items-center justify-center gap-4">
-                <NotableProjectsPixelation />
+              {/* Launch GIF + episode list, side by side, centered as a self-contained block */}
+              <div className="my-6 w-full flex justify-center">
+                <div className="flex flex-col md:flex-row items-center gap-4">
+                  <NotableProjectsPixelation />
 
-                <div
-                  className="flex flex-col justify-between w-[270px]"
-                  style={{ height: "480px" }}
-                >
-                  {MONS_MONDAY_EPISODES.map((ep) => (
-                    <div key={ep.id} className="relative">
-                      <iframe
-                        style={{ borderRadius: "12px" }}
-                        src={`https://open.spotify.com/embed/episode/${ep.id}?utm_source=generator&theme=0`}
-                        width="100%"
-                        height="80"
-                        frameBorder="0"
-                        allowFullScreen
-                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                        loading="lazy"
-                        title={ep.title}
-                      />
-                    </div>
-                  ))}
+                  <div
+                    className="flex flex-col justify-between w-[270px]"
+                    style={{ height: "480px" }}
+                  >
+                    {MONS_MONDAY_EPISODES.map((ep, i) => (
+                      <a
+                        key={ep.id}
+                        href={`https://open.spotify.com/episode/${ep.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 border border-[#a2a9b1] bg-[#f8f9fa] hover:bg-[#eaecf0] transition-colors duration-150 rounded-lg px-2 py-1.5 no-underline"
+                        style={{ height: "88px" }}
+                      >
+                        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#1DB954] flex-shrink-0">
+                          <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white ml-0.5">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs text-[#54595d]">Episode {i + 1}</div>
+                          <div className="text-sm font-semibold text-[#202122] truncate">
+                            {ep.title}
+                          </div>
+                          <div className="text-xs text-[#54595d]">
+                            {ep.date} · {ep.duration}
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -327,6 +339,26 @@ const EPortfolio = () => {
                 pitch development within an agency structure, and strengthened his grounding in
                 brand-led thinking and integrated campaign execution.
               </p>
+              <div className="mb-4 max-w-[360px]">
+                <iframe
+                  src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
+                  width="100%"
+                  height="480"
+                  frameBorder="0"
+                  scrolling="no"
+                  allowTransparency
+                  style={{ border: "none", overflow: "hidden", borderRadius: "12px" }}
+                  title="Hyde & Seek Instagram post"
+                />
+                <a
+                  href="https://www.instagram.com/p/DbKcgg6M1Bu/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-[#0645ad] hover:underline block mt-1"
+                >
+                  View on Instagram
+                </a>
+              </div>
 
               {/* Skills */}
               <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
