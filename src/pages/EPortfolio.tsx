@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
@@ -139,12 +139,46 @@ const SidebarContent = () => {
   );
 };
 
+const HydeAndSeekText = () => (
+  <>
+    <p className="mb-2 leading-relaxed relative z-10">
+      Since July 2026, Caulfield has supported strategic communications and media relations
+      for clients across the fintech, tech and consumer sectors at Hyde &amp; Seek, a boutique
+      PR agency, working directly with the Founding Director. His responsibilities include
+      writing and pitching press releases and media alerts, building and maintaining media
+      mapping and journalist tracking systems, and monitoring live news cycles to identify
+      timely press opportunities for clients.
+    </p>
+    <p className="leading-relaxed relative z-10">
+      This placement has deepened his understanding of client servicing, research rigour and
+      pitch development within an agency structure, and strengthened his grounding in
+      brand-led thinking and integrated campaign execution.
+    </p>
+  </>
+);
+
 const EPortfolio = () => {
   // This page is self-contained: disable the site-wide custom cursor while it's mounted,
   // without touching any files outside this page.
   useEffect(() => {
     document.body.classList.add("eportfolio-page");
     return () => document.body.classList.remove("eportfolio-page");
+  }, []);
+
+  // Measure the Hyde & Seek text at its natural full-column width (i.e. as if the embed
+  // weren't there), so the embed's height can be locked to match it exactly at any screen size.
+  const hydeAndSeekMeasureRef = useRef<HTMLDivElement>(null);
+  const [hydeAndSeekHeight, setHydeAndSeekHeight] = useState<number | undefined>(undefined);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (hydeAndSeekMeasureRef.current) {
+        setHydeAndSeekHeight(hydeAndSeekMeasureRef.current.offsetHeight);
+      }
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, []);
 
   return (
@@ -310,19 +344,38 @@ const EPortfolio = () => {
               <h3 id="hyde-and-seek" className="text-xl font-serif mt-4 mb-2">
                 Hyde &amp; Seek — PR &amp; Communications Intern
               </h3>
-              <p className="mb-2 leading-relaxed relative z-10">
-                Since July 2026, Caulfield has supported strategic communications and media relations
-                for clients across the fintech, tech and consumer sectors at Hyde &amp; Seek, a boutique
-                PR agency, working directly with the Founding Director. His responsibilities include
-                writing and pitching press releases and media alerts, building and maintaining media
-                mapping and journalist tracking systems, and monitoring live news cycles to identify
-                timely press opportunities for clients.
-              </p>
-              <p className="mb-4 leading-relaxed relative z-10">
-                This placement has deepened his understanding of client servicing, research rigour and
-                pitch development within an agency structure, and strengthened his grounding in
-                brand-led thinking and integrated campaign execution.
-              </p>
+              <div className="relative mb-4">
+                {/* Hidden clone at full column width — used only to measure natural text height */}
+                <div
+                  ref={hydeAndSeekMeasureRef}
+                  className="invisible absolute top-0 left-0 w-full pointer-events-none"
+                  aria-hidden="true"
+                >
+                  <HydeAndSeekText />
+                </div>
+
+                {/* Visible two-column layout, embed height locked to the measurement above */}
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1">
+                    <HydeAndSeekText />
+                  </div>
+                  <div
+                    className="w-full md:w-[300px] flex-shrink-0 relative overflow-hidden rounded-xl border border-[#a2a9b1]"
+                    style={{ height: hydeAndSeekHeight ? `${hydeAndSeekHeight}px` : "267px" }}
+                  >
+                    <iframe
+                      src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
+                      width="100%"
+                      height="800"
+                      frameBorder="0"
+                      scrolling="no"
+                      allowTransparency
+                      style={{ border: "none", position: "absolute", top: 0, left: 0 }}
+                      title="Hyde & Seek Instagram post"
+                    />
+                  </div>
+                </div>
+              </div>
 
               {/* Skills */}
               <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
