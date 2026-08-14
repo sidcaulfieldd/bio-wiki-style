@@ -322,7 +322,120 @@ const EPortfolio = () => {
 
               <h4 className="font-semibold mb-2 relative z-10">RMIT Coursework</h4>
               <ul className="list-disc ml-6 leading-relaxed mb-6 relative z-10">
-                <li className="mb-1 text-[#54595d] italic">Placeholder — samples to be added.</li>
+                <li className="mb-1">
+                  <a
+                    href="https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Off the Rails: Is V/Line Failing Geelong Commuters?
+                  </a>{" "}
+                  <span className="text-[#54595d]">— StoryMap</span>
+                  <ul className="list-disc ml-6 mt-1">
+                    <li className="mb-1">
+                      <a
+                        href="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/view"
+                        className="text-[#0645ad] hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Vertical video cut
+                      </a>
+                    </li>
+                    <li className="mb-1">
+                      <a
+                        href="https://drive.google.com/file/d/1j3Oknl1aBwhFBrSOkE6PBH1vNp4zAd8D/view"
+                        className="text-[#0645ad] hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Full video package
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://storymaps.arcgis.com/stories/6f8abf2a943d4b2f90f8ab996418d772"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Is Citizen Science Saving the Environment?
+                  </a>{" "}
+                  <span className="text-[#54595d]">— StoryMap (Merri Creek)</span>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1R9h4aHRwLLAiiO_op4TuWhfJ99Y-1vDi/view?usp=sharing"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    The Dams Are Drying Up
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1-r2Yh52eIp4AEvxNk9gVJMKO_M2gHsOU/view"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Proposed Housing at Community Hub Sparks "Town" Meeting
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1nXmTXIEI6gPNO9Yd6Auz0IkOxA5KKSoh/view?usp=sharing"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Court Report
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1h6aHY7ylw_M2u1hszfqSyEiP004s2pAj/view?usp=drive_link"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Affordable Rental Shortage Pushes Chef Out of Hometown
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1U4XzUXttANcJwZDz2Ss-H_sKqUjhrB62/view"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Hundreds Attend Paddle-Out Protesting Seismic Blasting
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1s6EZJq7r0rHDweMVjRqvvRmpe5vNW4yS/view"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Council Meeting — Live Event Assignment
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1oCV9Z7YaOcXUiUpyZjsFXVvnv0VJR5RE/view?usp=sharing"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Ridgeline Trail Piece
+                  </a>
+                </li>
               </ul>
 
               {/* Career Overview */}
