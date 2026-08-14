@@ -260,6 +260,11 @@ const EPortfolio = () => {
   const flowTextRef = useRef<HTMLDivElement>(null);
   const [flowGridHeight, setFlowGridHeight] = useState<number | undefined>(undefined);
 
+  // Measure the real, visible Course Work list column so the three stacked embeds on
+  // the right can be sized to fill exactly that height (not a guessed/fixed value).
+  const courseWorkTextRef = useRef<HTMLDivElement>(null);
+  const [courseWorkHeight, setCourseWorkHeight] = useState<number | undefined>(undefined);
+
   useLayoutEffect(() => {
     const measure = () => {
       if (hydeAndSeekTextRef.current) {
@@ -267,6 +272,9 @@ const EPortfolio = () => {
       }
       if (flowTextRef.current) {
         setFlowGridHeight(flowTextRef.current.offsetHeight);
+      }
+      if (courseWorkTextRef.current) {
+        setCourseWorkHeight(courseWorkTextRef.current.offsetHeight);
       }
     };
     measure();
@@ -514,7 +522,7 @@ const EPortfolio = () => {
           </p>
 
           <div className="flex flex-col md:flex-row md:items-start gap-4">
-            <div className="w-full md:w-1/2">
+            <div ref={courseWorkTextRef} className="w-full md:w-1/2">
               <ul className="list-disc ml-6 leading-relaxed mb-6 relative z-10">
                 {/* Forte piece */}
                 <li className="mb-2">
@@ -570,32 +578,35 @@ const EPortfolio = () => {
                 ))}
               </ul>
             </div>
-            <div className="w-full md:w-1/2 flex-shrink-0 flex flex-col gap-4">
-              <div className="w-full overflow-hidden rounded-xl border border-[#a2a9b1]">
+            <div
+              className="w-full md:w-1/2 flex-shrink-0 flex flex-col gap-4"
+              style={{ height: courseWorkHeight ? `${courseWorkHeight}px` : "1500px" }}
+            >
+              <div className="flex-1 min-h-0 overflow-hidden rounded-xl border border-[#a2a9b1]">
                 <iframe
                   src="https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba"
                   width="100%"
-                  height="500px"
+                  height="100%"
                   frameBorder="0"
                   allowFullScreen
                   allow="geolocation"
                   title="Off the Rails: Is V/Line Failing Geelong Commuters? — StoryMap"
                 />
               </div>
-              <div className="w-full overflow-hidden rounded-xl border border-[#a2a9b1]">
+              <div className="flex-1 min-h-0 overflow-hidden rounded-xl border border-[#a2a9b1]">
                 <iframe
                   src="https://www.fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/"
                   width="100%"
-                  height="500px"
+                  height="100%"
                   frameBorder="0"
                   title="Friends of Anglesea River Continue Five-Year Fight Amid Mining Corp Alcoa's Latest Water Bid — Forte Magazine"
                 />
               </div>
-              <div className="w-full overflow-hidden rounded-xl border border-[#a2a9b1]">
+              <div className="flex-1 min-h-0 overflow-hidden rounded-xl border border-[#a2a9b1]">
                 <iframe
                   src="https://storymaps.arcgis.com/stories/6f8abf2a943d4b2f90f8ab996418d772"
                   width="100%"
-                  height="500px"
+                  height="100%"
                   frameBorder="0"
                   allowFullScreen
                   allow="geolocation"
