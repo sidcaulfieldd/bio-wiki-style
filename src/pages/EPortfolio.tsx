@@ -616,6 +616,30 @@ const EPortfolio = () => {
             </div>
           </div>
 
+          {/* Course Work video pieces — vertical cut and horizontal package from the
+              V/Line StoryMap, shown side by side at matching height since one is
+              portrait and one is landscape. */}
+          <div className="mb-6 flex flex-col md:flex-row items-center md:items-stretch justify-center gap-4">
+            <div className="w-full max-w-[280px] md:w-[280px] flex-shrink-0 overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ height: "500px" }}>
+              <iframe
+                src="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/preview"
+                width="100%"
+                height="100%"
+                allow="autoplay"
+                title="Off the Rails — vertical video cut"
+              />
+            </div>
+            <div className="w-full md:flex-1 overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ height: "500px" }}>
+              <iframe
+                src="https://drive.google.com/file/d/1j3Oknl1aBwhFBrSOkE6PBH1vNp4zAd8D/preview"
+                width="100%"
+                height="100%"
+                allow="autoplay"
+                title="Off the Rails — full video package"
+              />
+            </div>
+          </div>
+
           {/* Skills */}
           <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
             Skills and Areas of Expertise
