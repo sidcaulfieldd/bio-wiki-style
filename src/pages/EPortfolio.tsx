@@ -1,6 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import profilePic from "@/assets/eportfolio_profile_pic.gif";
+import profilePic from "@/assets/profile_pic.gif";
 import poddyCover from "@/assets/poddy-cover.jpg";
+import flowTrashFreeTrails from "@/assets/flow-trash-free-trails.jpg";
+import flowMaddieLloyd from "@/assets/flow-maddie-lloyd.jpg";
+import flowJacksonConnelly from "@/assets/flow-jackson-connelly.jpg";
+import flowGiantStp from "@/assets/flow-giant-stp.jpg";
+import flowFacebook from "@/assets/flow-facebook.jpg";
+import flowInstagram from "@/assets/flow-instagram.jpg";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 
@@ -15,19 +21,39 @@ const MONS_MONDAY_EPISODES = [
 const FLOW_ARTICLES = [
   {
     title: "What Is Trash Free Trails?",
+    shortTitle: "What Is Trash Free Trails?",
     url: "https://flowmountainbike.com/features/what-is-trash-free-trails/",
+    image: flowTrashFreeTrails,
   },
   {
     title: "Fun First, Fast Always: Maddie Lloyd Might Be Australia's Fastest 13-Year-Old",
+    shortTitle: "Fun First, Fast Always",
     url: "https://flowmountainbike.com/features/fun-first-fast-always-maddie-lloyd-might-be-australias-fastest-13-year-old/",
+    image: flowMaddieLloyd,
   },
   {
     title: "Who Is Downhill Mountain Biker Jackson Connelly?",
+    shortTitle: "Me Against the World",
     url: "https://flowmountainbike.com/features/who-is-downhill-mountain-biker-jackson-connelly/",
+    image: flowJacksonConnelly,
   },
   {
     title: "Giant STP 26 Review",
+    shortTitle: "Giant STP 26 Review",
     url: "https://flowmountainbike.com/tests/giant-stp-26-review/",
+    image: flowGiantStp,
+  },
+  {
+    title: "Flow Mountain Bike on Facebook",
+    shortTitle: "Facebook",
+    url: "https://www.facebook.com/flowmountainbike/",
+    image: flowFacebook,
+  },
+  {
+    title: "Flow Mountain Bike on Instagram",
+    shortTitle: "Instagram",
+    url: "https://www.instagram.com/flow_mtb/?hl=en",
+    image: flowInstagram,
   },
 ];
 
@@ -45,7 +71,7 @@ const SidebarContent = () => {
       </div>
 
       {/* Infobox image */}
-      <div className="text-center p-3">
+      <div className="text-center p-3 pb-0">
         <div className="relative w-full aspect-square">
           <div className="absolute inset-0 bg-[#FF69B4]" style={{ zIndex: 2 }} />
           <img
@@ -55,6 +81,7 @@ const SidebarContent = () => {
             style={{ zIndex: 20 }}
           />
         </div>
+        <div className="text-xs text-[#54595d] mt-1 mb-3">Caulfield in 2025</div>
       </div>
 
       <table className="w-full text-sm">
@@ -116,6 +143,19 @@ const SidebarContent = () => {
               </a>
             </td>
           </tr>
+          <tr className="border-t border-[#a2a9b1]">
+            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Resume</th>
+            <td className="py-2 px-2 relative z-10">
+              <a
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+                href="https://drive.google.com/file/d/1T26aUBmdWnSU0To83Md1-1DvCs1Ft6yt/view?usp=sharing"
+              >
+                View PDF
+              </a>
+            </td>
+          </tr>
         </tbody>
       </table>
     </>
@@ -174,9 +214,6 @@ const EPortfolio = () => {
         body.eportfolio-page img[src="/mouse.png"] {
           display: none !important;
         }
-        body.eportfolio-page .cursor-trail-rect {
-          transform: scale(0.5);
-        }
       `}</style>
 
       {/* Wikipedia Header */}
@@ -205,7 +242,13 @@ const EPortfolio = () => {
                 <div className="font-bold mb-2 relative z-10">Contents</div>
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
                   <li><a href="#examples-of-my-work" className="hover:underline">Examples of My Work</a></li>
-                  <li><a href="#career-overview" className="hover:underline">Career Overview</a></li>
+                  <li><a href="#career-overview" className="hover:underline">Career Overview</a>
+                    <ol className="list-decimal ml-4 text-[#0645ad]">
+                      <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
+                      <li><a href="#mons-monday-podcast" className="hover:underline">The Mons Monday Podcast</a></li>
+                      <li><a href="#hyde-and-seek" className="hover:underline">Hyde &amp; Seek Internship</a></li>
+                    </ol>
+                  </li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
                   <li><a href="#contact" className="hover:underline">Contact</a></li>
                 </ol>
@@ -249,20 +292,6 @@ const EPortfolio = () => {
                   >
                     Facebook
                   </a>
-                  <ul className="list-disc ml-6 mt-1">
-                    {FLOW_ARTICLES.map((article) => (
-                      <li key={article.url} className="mb-1">
-                        <a
-                          href={article.url}
-                          className="text-[#0645ad] hover:underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {article.title}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
                 </li>
                 <li className="mb-1">
                   <a
@@ -310,18 +339,48 @@ const EPortfolio = () => {
               <h3 id="flow-mountain-bike" className="text-xl font-serif mt-4 mb-2">
                 Flow Mountain Bike — Content Syndication and Social Media Manager
               </h3>
-              <p className="mb-2 leading-relaxed relative z-10">
-                Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
-                syndication, reaching a cumulative audience of 375,000. He redesigned the publication's
-                syndication system and introduced Canva and Sprout Social, creating a collaborative
-                workflow for the team, and plans, builds and sends Flow's weekly eDM to 30,000
-                subscribers, achieving a 25–30% open rate.
-              </p>
-              <p className="mb-4 leading-relaxed relative z-10">
-                This role has sharpened his instincts for audience interest, timing and engagement
-                drivers, and given him practical experience lifting output, tightening processes and
-                improving brand storytelling consistency across a large syndication network.
-              </p>
+              <div className="mb-4 flex flex-col md:flex-row md:items-start gap-4">
+                <div className="w-full md:w-1/2">
+                  <p className="mb-2 leading-relaxed relative z-10">
+                    Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
+                    syndication, reaching a cumulative audience of 375,000. He redesigned the publication's
+                    syndication system and introduced Canva and Sprout Social, creating a collaborative
+                    workflow for the team, and plans, builds and sends Flow's weekly eDM to 30,000
+                    subscribers, achieving a 25–30% open rate.
+                  </p>
+                  <p className="leading-relaxed relative z-10">
+                    This role has sharpened his instincts for audience interest, timing and engagement
+                    drivers, and given him practical experience lifting output, tightening processes and
+                    improving brand storytelling consistency across a large syndication network.
+                  </p>
+                </div>
+                <div className="w-full md:w-1/2 grid grid-cols-2 gap-3">
+                  {FLOW_ARTICLES.map((article) => (
+                    <div key={article.url}>
+                      <a
+                        href={article.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block aspect-square rounded-xl overflow-hidden border border-[#a2a9b1]"
+                      >
+                        <img
+                          src={article.image}
+                          alt={article.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </a>
+                      <a
+                        href={article.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-xs text-[#0645ad] hover:underline mt-1 leading-snug"
+                      >
+                        {article.shortTitle}
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {/* Mons Monday Podcast */}
               <h3 id="mons-monday-podcast" className="text-xl font-serif mt-4 mb-2">
