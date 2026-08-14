@@ -436,7 +436,11 @@ const EPortfolio = () => {
                   <img
                     src={article.image}
                     alt={article.title}
-                    className="w-full h-full object-cover transition-transform duration-150 group-hover:scale-[1.03]"
+                    className={
+                      article.shortTitle === "Facebook" || article.shortTitle === "Instagram"
+                        ? "absolute left-0 w-full h-[114%] -top-[11%] object-cover transition-transform duration-150 group-hover:scale-[1.03]"
+                        : "w-full h-full object-cover object-left-top transition-transform duration-150 group-hover:scale-[1.03]"
+                    }
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-150" />
                   {article.shortTitle === "Instagram" && (
