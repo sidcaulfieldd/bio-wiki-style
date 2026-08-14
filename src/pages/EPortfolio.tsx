@@ -237,7 +237,7 @@ const EPortfolio = () => {
               <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 mb-6 inline-block relative">
                 <div className="font-bold mb-2 relative z-10">Contents</div>
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
-                  <li><a href="#professional-experience" className="hover:underline">Experience</a>
+                  <li><a href="#professional-experience" className="hover:underline">Professional Work</a>
                     <ol className="list-decimal ml-4 text-[#0645ad]">
                       <li><a href="#hyde-and-seek" className="hover:underline">Hyde &amp; Seek Internship</a></li>
                       <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
@@ -258,9 +258,9 @@ const EPortfolio = () => {
                 experience.
               </p>
 
-              {/* Experience */}
+              {/* Professional Work */}
               <ScrollTypeHeading id="professional-experience" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Experience
+                Professional Work
               </ScrollTypeHeading>
 
               {/* Hyde & Seek */}
@@ -303,7 +303,7 @@ const EPortfolio = () => {
 
           {/* Flow Mountain Bike — full card width, so the 50/50 split lands on the
               card's true center rather than the narrower column the sidebar imposes above. */}
-          <h3 id="flow-mountain-bike" className="text-xl font-serif mb-3">
+          <h3 id="flow-mountain-bike" className="text-xl font-serif mt-10 mb-3">
             Flow Mountain Bike — Content Syndication and Social Media Manager
           </h3>
           <div className="mb-6 flex flex-col md:flex-row md:items-center justify-center gap-4">
@@ -339,13 +339,27 @@ const EPortfolio = () => {
                     className="w-full h-full object-cover transition-transform duration-150 group-hover:scale-[1.03]"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-150" />
+                  {article.shortTitle === "Instagram" && (
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-90 transition-opacity duration-150">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10 drop-shadow-md" fill="white">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.98-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.198-4.354-2.618-6.782-6.98-6.98-1.281-.059-1.69-.073-4.949-.073zM12 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                      </svg>
+                    </div>
+                  )}
+                  {article.shortTitle === "Facebook" && (
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-90 transition-opacity duration-150">
+                      <svg viewBox="0 0 24 24" className="w-10 h-10 drop-shadow-md" fill="white">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                    </div>
+                  )}
                 </a>
               ))}
             </div>
           </div>
 
           {/* Mons Monday Podcast */}
-          <h3 id="mons-monday-podcast" className="text-xl font-serif mt-6 mb-3">
+          <h3 id="mons-monday-podcast" className="text-xl font-serif mt-10 mb-3">
             The Mons Monday Podcast — Producer
           </h3>
           <p className="mb-4 leading-relaxed relative z-10">
@@ -413,139 +427,156 @@ const EPortfolio = () => {
           <ScrollTypeHeading id="course-volunteer-work" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
             Course Work
           </ScrollTypeHeading>
-          <p className="mb-4 leading-relaxed relative z-10">
-            Hard-news and investigative reporting completed as part of Caulfield's Bachelor of
-            Communication (Journalism) at RMIT, plus freelance feature writing — proof of the
-            research rigour, verification habits and news judgement that carry directly into PR
-            and comms work.
-          </p>
-          <ul className="list-disc ml-6 leading-relaxed mb-6 relative z-10">
-            <li className="mb-1">
-              <a
-                href={FORTE_ARTICLE.url}
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {FORTE_ARTICLE.title}
-              </a>{" "}
-              <span className="text-[#54595d]">— Published in Forte Magazine</span>
-            </li>
-            <li className="mb-1">
-              <a
-                href="https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba"
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Off the Rails: Is V/Line Failing Geelong Commuters?
-              </a>{" "}
-              <span className="text-[#54595d]">— StoryMap</span>
-              <ul className="list-disc ml-6 mt-1">
+          <div className="flex flex-col md:flex-row md:items-start gap-4">
+            <div className="w-full md:w-1/2">
+              <p className="mb-4 leading-relaxed relative z-10">
+                Hard-news and investigative reporting completed as part of Caulfield's Bachelor of
+                Communication (Journalism) at RMIT, plus freelance feature writing — proof of the
+                research rigour, verification habits and news judgement that carry directly into PR
+                and comms work.
+              </p>
+              <ul className="list-disc ml-6 leading-relaxed mb-6 relative z-10">
                 <li className="mb-1">
                   <a
-                    href="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/view"
+                    href={FORTE_ARTICLE.url}
                     className="text-[#0645ad] hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Vertical video cut
+                    {FORTE_ARTICLE.title}
+                  </a>{" "}
+                  <span className="text-[#54595d]">— Published in Forte Magazine</span>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Off the Rails: Is V/Line Failing Geelong Commuters?
+                  </a>{" "}
+                  <span className="text-[#54595d]">— StoryMap</span>
+                  <ul className="list-disc ml-6 mt-1">
+                    <li className="mb-1">
+                      <a
+                        href="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/view"
+                        className="text-[#0645ad] hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Vertical video cut
+                      </a>
+                    </li>
+                    <li className="mb-1">
+                      <a
+                        href="https://drive.google.com/file/d/1j3Oknl1aBwhFBrSOkE6PBH1vNp4zAd8D/view"
+                        className="text-[#0645ad] hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Full video package
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://storymaps.arcgis.com/stories/6f8abf2a943d4b2f90f8ab996418d772"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Is Citizen Science Saving the Environment?
+                  </a>{" "}
+                  <span className="text-[#54595d]">— StoryMap (Merri Creek)</span>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1R9h4aHRwLLAiiO_op4TuWhfJ99Y-1vDi/view?usp=sharing"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    The Dams Are Drying Up
                   </a>
                 </li>
                 <li className="mb-1">
                   <a
-                    href="https://drive.google.com/file/d/1j3Oknl1aBwhFBrSOkE6PBH1vNp4zAd8D/view"
+                    href="https://drive.google.com/file/d/1-r2Yh52eIp4AEvxNk9gVJMKO_M2gHsOU/view"
                     className="text-[#0645ad] hover:underline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Full video package
+                    Proposed Housing at Community Hub Sparks "Town" Meeting
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1nXmTXIEI6gPNO9Yd6Auz0IkOxA5KKSoh/view?usp=sharing"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Court Report
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1h6aHY7ylw_M2u1hszfqSyEiP004s2pAj/view?usp=drive_link"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Affordable Rental Shortage Pushes Chef Out of Hometown
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1U4XzUXttANcJwZDz2Ss-H_sKqUjhrB62/view"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Hundreds Attend Paddle-Out Protesting Seismic Blasting
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1s6EZJq7r0rHDweMVjRqvvRmpe5vNW4yS/view"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Council Meeting — Live Event Assignment
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1oCV9Z7YaOcXUiUpyZjsFXVvnv0VJR5RE/view?usp=sharing"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Ridgeline Trail Piece
                   </a>
                 </li>
               </ul>
-            </li>
-            <li className="mb-1">
-              <a
-                href="https://storymaps.arcgis.com/stories/6f8abf2a943d4b2f90f8ab996418d772"
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Is Citizen Science Saving the Environment?
-              </a>{" "}
-              <span className="text-[#54595d]">— StoryMap (Merri Creek)</span>
-            </li>
-            <li className="mb-1">
-              <a
-                href="https://drive.google.com/file/d/1R9h4aHRwLLAiiO_op4TuWhfJ99Y-1vDi/view?usp=sharing"
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                The Dams Are Drying Up
-              </a>
-            </li>
-            <li className="mb-1">
-              <a
-                href="https://drive.google.com/file/d/1-r2Yh52eIp4AEvxNk9gVJMKO_M2gHsOU/view"
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Proposed Housing at Community Hub Sparks "Town" Meeting
-              </a>
-            </li>
-            <li className="mb-1">
-              <a
-                href="https://drive.google.com/file/d/1nXmTXIEI6gPNO9Yd6Auz0IkOxA5KKSoh/view?usp=sharing"
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Court Report
-              </a>
-            </li>
-            <li className="mb-1">
-              <a
-                href="https://drive.google.com/file/d/1h6aHY7ylw_M2u1hszfqSyEiP004s2pAj/view?usp=drive_link"
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Affordable Rental Shortage Pushes Chef Out of Hometown
-              </a>
-            </li>
-            <li className="mb-1">
-              <a
-                href="https://drive.google.com/file/d/1U4XzUXttANcJwZDz2Ss-H_sKqUjhrB62/view"
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Hundreds Attend Paddle-Out Protesting Seismic Blasting
-              </a>
-            </li>
-            <li className="mb-1">
-              <a
-                href="https://drive.google.com/file/d/1s6EZJq7r0rHDweMVjRqvvRmpe5vNW4yS/view"
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Council Meeting — Live Event Assignment
-              </a>
-            </li>
-            <li className="mb-1">
-              <a
-                href="https://drive.google.com/file/d/1oCV9Z7YaOcXUiUpyZjsFXVvnv0VJR5RE/view?usp=sharing"
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Ridgeline Trail Piece
-              </a>
-            </li>
-          </ul>
+            </div>
+            <div className="w-full md:w-1/2 flex-shrink-0">
+              <div className="w-full overflow-hidden rounded-xl border border-[#a2a9b1]">
+                <iframe
+                  src="https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba"
+                  width="100%"
+                  height="500px"
+                  frameBorder="0"
+                  allowFullScreen
+                  allow="geolocation"
+                  title="Off the Rails: Is V/Line Failing Geelong Commuters? — StoryMap"
+                />
+              </div>
+            </div>
+          </div>
 
           {/* Skills */}
           <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
