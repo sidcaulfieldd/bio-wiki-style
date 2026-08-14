@@ -230,7 +230,10 @@ const HydeAndSeekText = () => (
     <p className="mb-4 leading-relaxed relative z-10">
       Since July 2026, I’ve supported strategic communications and media relations for
       clients across the fintech, tech and consumer sectors at Hyde &amp; Seek, a boutique
-      PR agency, working directly with the Founding Director, Jasmin Hyde. My
+      PR agency, working directly with the{" "}
+      <a href="https://au.linkedin.com/in/jasmin-hyde" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
+        Founding Director, Jasmin Hyde
+      </a>. My
       responsibilities include writing and pitching press releases and media alerts,
       building and maintaining media mapping and journalist tracking systems, and
       monitoring live news cycles to identify timely press opportunities for clients.
@@ -331,7 +334,7 @@ const EPortfolio = () => {
                   </li>
                   <li><a href="#course-volunteer-work" className="hover:underline">Course Work</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
-                  <li><a href="#contact" className="hover:underline">Let’s chat!</a></li>
+                  <li><a href="#contact" className="hover:underline">Contact</a></li>
                 </ol>
               </div>
 
@@ -352,7 +355,9 @@ const EPortfolio = () => {
 
               {/* Hyde & Seek */}
               <h3 id="hyde-and-seek" className="text-xl font-serif mb-3">
-                Hyde &amp; Seek - PR &amp; Communications Intern
+                <a href="https://hydeandseek.agency/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
+                  Hyde &amp; Seek
+                </a> - PR &amp; Communications Intern
               </h3>
               <div className="mb-6 flex flex-col md:flex-row md:items-start gap-4">
                 <div ref={hydeAndSeekTextRef} className="w-full md:w-1/2">
@@ -391,7 +396,9 @@ const EPortfolio = () => {
           {/* Flow Mountain Bike - full card width, so the 50/50 split lands on the
               card’s true center rather than the narrower column the sidebar imposes above. */}
           <h3 id="flow-mountain-bike" className="text-xl font-serif mt-10 mb-3">
-            Flow Mountain Bike - Content Syndication and Social Media Manager
+            <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
+              Flow Mountain Bike
+            </a> - Content Syndication and Social Media Manager
           </h3>
           <div className="mb-6 flex flex-col md:flex-row md:items-center justify-center gap-4">
             <div ref={flowTextRef} className="w-full md:w-1/2">
@@ -408,6 +415,10 @@ const EPortfolio = () => {
                 engagement drivers, and given me practical experience lifting output,
                 tightening processes, working in a team and improving brand and voice
                 consistency across platforms.
+              </p>
+              <p className="mt-4 leading-relaxed relative z-10">
+                I’ve also written multiple articles for Flow in a freelance capacity,
+                covering profile, product review and investigative styles.
               </p>
             </div>
             <div
@@ -449,7 +460,9 @@ const EPortfolio = () => {
 
           {/* Mons Monday Podcast */}
           <h3 id="mons-monday-podcast" className="text-xl font-serif mt-10 mb-3">
-            The Mons Monday Podcast - Producer
+            <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
+              The Mons Monday Podcast
+            </a> - Producer
           </h3>
           <p className="mb-4 leading-relaxed relative z-10">
             I pitched a profile-led podcast to Mon Barton and secured the collaboration
@@ -457,7 +470,13 @@ const EPortfolio = () => {
             systems for planning, recording, editing, feedback and distribution. I also
             developed and produced the launch strategy. The podcast debuted at number
             three on the Apple Australia Arts chart, and went on to secure two commercial
-            partnerships, with LBDO and Krush Organics.
+            partnerships, with{" "}
+            <a href="https://www.lbdo.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
+              LBDO
+            </a> and{" "}
+            <a href="https://krushproducts.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
+              Krush Organics
+            </a>.
           </p>
           <p className="mb-6 leading-relaxed relative z-10">
             Producing the podcast end-to-end saw me plan, edit, distribute and manage
@@ -628,7 +647,7 @@ const EPortfolio = () => {
               <iframe
                 width="225"
                 height="400"
-                src="https://www.youtube.com/embed/O8puSsfD0YA"
+                src="https://www.youtube.com/embed/O8puSsfD0YA?modestbranding=1&rel=0&iv_load_policy=3"
                 title="sidcaulfield_vertical_geelongvline"
                 style={{ border: "none" }}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
