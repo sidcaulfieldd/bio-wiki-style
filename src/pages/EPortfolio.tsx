@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-
 import profilePic from "@/assets/eportfolio_profile_pic.gif";
 import poddyCover from "@/assets/poddy-cover.jpg";
 import flowTrashFreeTrails from "@/assets/flow-trash-free-trails.jpg";
@@ -63,6 +62,83 @@ const FORTE_ARTICLE = {
   url: "https://www.fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/",
 };
 
+// Course Work articles + one-line briefs, per RMIT Course Work section
+const COURSE_WORK_ARTICLES = [
+  {
+    title: "Off the Rails: Is V/Line Failing Geelong Commuters?",
+    tag: "StoryMap",
+    url: "https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba",
+    brief:
+      "Investigation into reliability failures on Victoria's busiest regional line, told through a stranded commuter and a 1,500-passenger disruption.",
+    children: [
+      {
+        title: "Vertical video cut",
+        url: "https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/view",
+      },
+      {
+        title: "Full video package",
+        url: "https://drive.google.com/file/d/1j3Oknl1aBwhFBrSOkE6PBH1vNp4zAd8D/view",
+      },
+    ],
+  },
+  {
+    title: "Is Citizen Science Saving the Environment?",
+    tag: "StoryMap (Merri Creek)",
+    url: "https://storymaps.arcgis.com/stories/6f8abf2a943d4b2f90f8ab996418d772",
+    brief:
+      "How social media and citizen-science apps like iNaturalist are reshaping grassroots environmental activism, reported through Friends of Merri Creek.",
+  },
+  {
+    title: "The Dams Are Drying Up",
+    tag: null,
+    url: "https://drive.google.com/file/d/1R9h4aHRwLLAiiO_op4TuWhfJ99Y-1vDi/view?usp=sharing",
+    brief:
+      "A three-part feature on Victoria's water crisis — a Bellbrae farmer selling stock as his dams run dry, Geelong drawing 50 billion litres from desalination, and Apollo Bay facing Stage 4 restrictions.",
+  },
+  {
+    title: "Proposed Housing at Community Hub Sparks \"Town\" Meeting",
+    tag: null,
+    url: "https://drive.google.com/file/d/1-r2Yh52eIp4AEvxNk9gVJMKO_M2gHsOU/view",
+    brief:
+      "Hard-news report on Anglesea residents opposing council plans to allocate community hub land to key-worker housing.",
+  },
+  {
+    title: "Woman Spared Jail Over $126,000 Burglary After Judge Cites \"Chaotic\" Childhood",
+    tag: "Court Report",
+    url: "https://drive.google.com/file/d/1nXmTXIEI6gPNO9Yd6Auz0IkOxA5KKSoh/view?usp=sharing",
+    brief:
+      "Sentencing report on a Melbourne County Court case weighing the offender's traumatic history against a $126,000 luxury goods theft.",
+  },
+  {
+    title: "Affordable Rental Shortage Pushes Chef Out of Hometown",
+    tag: null,
+    url: "https://drive.google.com/file/d/1h6aHY7ylw_M2u1hszfqSyEiP004s2pAj/view?usp=drive_link",
+    brief:
+      "Profile of a lifelong Anglesea hospitality worker priced out of her hometown, and the flow-on staffing crisis it's causing local businesses.",
+  },
+  {
+    title: "Hundreds Attend Paddle-Out Protesting Seismic Blasting",
+    tag: null,
+    url: "https://drive.google.com/file/d/1U4XzUXttANcJwZDz2Ss-H_sKqUjhrB62/view",
+    brief:
+      "Coverage of a Torquay paddle-out protest against a seismic blasting proposal threatening Southern Right Whale breeding grounds, with First Nations leaders and a senator in attendance.",
+  },
+  {
+    title: "Torquay Mental Health Housing Development To Go Ahead Despite Community Opposition",
+    tag: "Council Meeting — Live Event Assignment",
+    url: "https://drive.google.com/file/d/1s6EZJq7r0rHDweMVjRqvvRmpe5vNW4yS/view",
+    brief:
+      "Report on a Surfcoast Shire council meeting confirming the development will proceed despite resident concerns over its proximity to a primary school.",
+  },
+  {
+    title: "\"Finally\": Torquay–Bellbrae Bike Path Confirmed After Decade-Long Push",
+    tag: null,
+    url: "https://drive.google.com/file/d/1oCV9Z7YaOcXUiUpyZjsFXVvnv0VJR5RE/view?usp=sharing",
+    brief:
+      "News report on the long-awaited Ridgeline Trail, finally connecting Torquay, Jan Juc and Bellbrae for cyclists and pedestrians.",
+  },
+];
+
 const SidebarContent = () => {
   return (
     <>
@@ -98,7 +174,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Occupation(s)</th>
             <td className="py-2 px-2 relative z-10">
-              PR &amp; Communications, Digital Journalism, Content Syndication and Social Media Management, Podcast Production
+              PR &amp; Integrated Communications, Content Syndication and Social Media Management, Podcast Production
             </td>
           </tr>
           <tr className="border-t border-[#a2a9b1]">
@@ -152,17 +228,18 @@ const SidebarContent = () => {
 const HydeAndSeekText = () => (
   <>
     <p className="mb-4 leading-relaxed relative z-10">
-      Since July 2026, Caulfield has supported strategic communications and media relations
-      for clients across the fintech, tech and consumer sectors at Hyde &amp; Seek, a boutique
-      PR agency, working directly with the Founding Director. His responsibilities include
+      Since July 2026, I've supported strategic communications and media relations for
+      clients across the fintech, tech and consumer sectors at Hyde &amp; Seek, a boutique
+      PR agency, working directly with the Founding Director. My responsibilities include
       writing and pitching press releases and media alerts, building and maintaining media
       mapping and journalist tracking systems, and monitoring live news cycles to identify
       timely press opportunities for clients.
     </p>
     <p className="leading-relaxed relative z-10">
-      This placement has deepened his understanding of client servicing, research rigour and
-      pitch development within an agency structure, and strengthened his grounding in
-      brand-led thinking and integrated campaign execution.
+      This placement has sharpened my instincts for client servicing, research rigour and
+      pitch development — and shown me exactly where my journalism training pays off in
+      agency work: reading what a journalist actually wants before I pitch it, not after
+      it's rejected.
     </p>
   </>
 );
@@ -252,10 +329,10 @@ const EPortfolio = () => {
 
               {/* Lead */}
               <p className="mb-4 leading-relaxed relative z-10">
-                Caulfield is an Australian content and comms professional based in Melbourne, Victoria.
-                His work spans PR and media relations, digital journalism, content syndication and
-                podcast production. Below is a closer look at his written work and professional
-                experience.
+                I'm a journalism-trained communicator based in Melbourne, building a career
+                in PR and integrated comms. My work spans agency PR, content syndication,
+                social strategy and podcast production — below is a closer look at how it
+                all fits together.
               </p>
 
               {/* Professional Work */}
@@ -309,16 +386,17 @@ const EPortfolio = () => {
           <div className="mb-6 flex flex-col md:flex-row md:items-center justify-center gap-4">
             <div ref={flowTextRef} className="w-full md:w-1/2">
               <p className="mb-4 leading-relaxed relative z-10">
-                Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
-                syndication, reaching a cumulative audience of 375,000. He redesigned the publication's
-                syndication system and introduced Canva and Sprout Social, creating a collaborative
-                workflow for the team, and plans, builds and sends Flow's weekly eDM to 30,000
-                subscribers, achieving a 25–30% open rate.
+                Since 2025, I've managed Flow Mountain Bike's social presence and content
+                syndication, reaching a cumulative audience of 375,000. I redesigned the
+                publication's syndication system and introduced Canva and Sprout Social,
+                creating a collaborative workflow for the team, and plan, build and send
+                Flow's weekly eDM to 30,000 subscribers, achieving a 25–30% open rate.
               </p>
               <p className="leading-relaxed relative z-10">
-                This role has sharpened his instincts for audience interest, timing and engagement
-                drivers, and given him practical experience lifting output, tightening processes and
-                improving brand storytelling consistency across a large syndication network.
+                This role has sharpened my instincts for audience interest, timing and
+                engagement drivers, and given me practical experience lifting output,
+                tightening processes and improving brand storytelling consistency across a
+                large syndication network.
               </p>
             </div>
             <div
@@ -363,16 +441,17 @@ const EPortfolio = () => {
             The Mons Monday Podcast — Producer
           </h3>
           <p className="mb-4 leading-relaxed relative z-10">
-            Caulfield pitched a profile-led podcast to Mons Monday and secured the collaboration
+            I pitched a profile-led podcast to Mons Monday and secured the collaboration
             through cold outreach in 2025, developing the podcast's strategy and systems for
-            planning, recording, editing, feedback and distribution. The podcast debuted at number
-            three on the Apple Australia Arts chart, and went on to secure two commercial
-            partnerships, with LBDO and Krush Organics.
+            planning, recording, editing, feedback and distribution. The podcast debuted at
+            number three on the Apple Australia Arts chart, and went on to secure two
+            commercial partnerships, with LBDO and Krush Organics.
           </p>
           <p className="mb-6 leading-relaxed relative z-10">
-            Producing the podcast end-to-end — from conceptualising and editing promotional video
-            material to managing partner and audience communications — gave Caulfield a grounding in
-            production workflow management and post-launch performance analysis.
+            Producing the podcast end-to-end — from conceptualising and editing promotional
+            video material to managing partner and audience communications — gave me a
+            grounding in production workflow management and post-launch performance
+            analysis.
           </p>
 
           {/* Launch GIF + episode list, side by side, centered as a self-contained block */}
@@ -428,15 +507,17 @@ const EPortfolio = () => {
             Course Work
           </ScrollTypeHeading>
           <p className="mb-4 leading-relaxed relative z-10">
-            Hard-news and investigative reporting completed as part of Caulfield's Bachelor of
-            Communication (Journalism) at RMIT, plus freelance feature writing — proof of the
-            research rigour, verification habits and news judgement that carry directly into PR
-            and comms work.
+            Hard-news and investigative reporting completed as part of my Bachelor of
+            Communication (Journalism) at RMIT, plus freelance feature writing — proof of
+            the research rigour, verification habits and news judgement that carry directly
+            into PR and comms work.
           </p>
+
           <div className="flex flex-col md:flex-row md:items-start gap-4">
             <div className="w-full md:w-1/2">
               <ul className="list-disc ml-6 leading-relaxed mb-6 relative z-10">
-                <li className="mb-1">
+                {/* Forte piece */}
+                <li className="mb-2">
                   <a
                     href={FORTE_ARTICLE.url}
                     className="text-[#0645ad] hover:underline"
@@ -446,121 +527,47 @@ const EPortfolio = () => {
                     {FORTE_ARTICLE.title}
                   </a>{" "}
                   <span className="text-[#54595d]">— Published in Forte Magazine</span>
+                  <p className="text-sm text-[#54595d] mt-1 mb-0">
+                    Profile of a 14-year community campaign against Alcoa's bid to use
+                    groundwater to fill its former Anglesea coal mine, and the science
+                    linking the pumping to the river's decline.
+                  </p>
                 </li>
-                <li className="mb-1">
-                  <a
-                    href="https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Off the Rails: Is V/Line Failing Geelong Commuters?
-                  </a>{" "}
-                  <span className="text-[#54595d]">— StoryMap</span>
-                  <ul className="list-disc ml-6 mt-1">
-                    <li className="mb-1">
-                      <a
-                        href="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/view"
-                        className="text-[#0645ad] hover:underline"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Vertical video cut
-                      </a>
-                    </li>
-                    <li className="mb-1">
-                      <a
-                        href="https://drive.google.com/file/d/1j3Oknl1aBwhFBrSOkE6PBH1vNp4zAd8D/view"
-                        className="text-[#0645ad] hover:underline"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Full video package
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://storymaps.arcgis.com/stories/6f8abf2a943d4b2f90f8ab996418d772"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Is Citizen Science Saving the Environment?
-                  </a>{" "}
-                  <span className="text-[#54595d]">— StoryMap (Merri Creek)</span>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1R9h4aHRwLLAiiO_op4TuWhfJ99Y-1vDi/view?usp=sharing"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    The Dams Are Drying Up
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1-r2Yh52eIp4AEvxNk9gVJMKO_M2gHsOU/view"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Proposed Housing at Community Hub Sparks "Town" Meeting
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1nXmTXIEI6gPNO9Yd6Auz0IkOxA5KKSoh/view?usp=sharing"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Court Report
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1h6aHY7ylw_M2u1hszfqSyEiP004s2pAj/view?usp=drive_link"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Affordable Rental Shortage Pushes Chef Out of Hometown
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1U4XzUXttANcJwZDz2Ss-H_sKqUjhrB62/view"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Hundreds Attend Paddle-Out Protesting Seismic Blasting
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1s6EZJq7r0rHDweMVjRqvvRmpe5vNW4yS/view"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Council Meeting — Live Event Assignment
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1oCV9Z7YaOcXUiUpyZjsFXVvnv0VJR5RE/view?usp=sharing"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Ridgeline Trail Piece
-                  </a>
-                </li>
+
+                {/* Remaining course work pieces */}
+                {COURSE_WORK_ARTICLES.map((article) => (
+                  <li className="mb-2" key={article.url}>
+                    <a
+                      href={article.url}
+                      className="text-[#0645ad] hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {article.title}
+                    </a>{" "}
+                    {article.tag && (
+                      <span className="text-[#54595d]">— {article.tag}</span>
+                    )}
+                    <p className="text-sm text-[#54595d] mt-1 mb-0">{article.brief}</p>
+
+                    {article.children && (
+                      <ul className="list-disc ml-6 mt-1">
+                        {article.children.map((child) => (
+                          <li className="mb-1" key={child.url}>
+                            <a
+                              href={child.url}
+                              className="text-[#0645ad] hover:underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {child.title}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
               </ul>
             </div>
             <div className="w-full md:w-1/2 flex-shrink-0">
