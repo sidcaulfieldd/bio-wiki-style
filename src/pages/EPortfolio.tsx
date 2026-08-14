@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+
 import profilePic from "@/assets/eportfolio_profile_pic.gif";
 import poddyCover from "@/assets/poddy-cover.jpg";
 import flowTrashFreeTrails from "@/assets/flow-trash-free-trails.jpg";
@@ -95,9 +96,9 @@ const SidebarContent = () => {
             </td>
           </tr>
           <tr className="border-t border-[#a2a9b1]">
-            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Occupation</th>
+            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Occupation(s)</th>
             <td className="py-2 px-2 relative z-10">
-              Freelance Journalist, Content Syndication and Social Media Manager, Podcast Producer
+              PR &amp; Communications, Content Syndication and Social Media Management, Podcast Production
             </td>
           </tr>
           <tr className="border-t border-[#a2a9b1]">
@@ -236,14 +237,14 @@ const EPortfolio = () => {
               <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 mb-6 inline-block relative">
                 <div className="font-bold mb-2 relative z-10">Contents</div>
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
-                  <li><a href="#examples-of-my-work" className="hover:underline">Examples of My Work</a></li>
-                  <li><a href="#career-overview" className="hover:underline">Career Overview</a>
+                  <li><a href="#examples-of-my-work" className="hover:underline">Examples of My Work</a>
                     <ol className="list-decimal ml-4 text-[#0645ad]">
-                      <li><a href="#mons-monday-podcast" className="hover:underline">The Mons Monday Podcast</a></li>
-                      <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
                       <li><a href="#hyde-and-seek" className="hover:underline">Hyde &amp; Seek Internship</a></li>
+                      <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
+                      <li><a href="#mons-monday-podcast" className="hover:underline">The Mons Monday Podcast</a></li>
                     </ol>
                   </li>
+                  <li><a href="#rmit-coursework" className="hover:underline">RMIT Coursework</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
                   <li><a href="#contact" className="hover:underline">Contact</a></li>
                 </ol>
@@ -257,191 +258,79 @@ const EPortfolio = () => {
                 experience.
               </p>
 
-              {/* Examples of My Work */}
+              {/* Examples of My Work (formerly Career Overview) */}
               <ScrollTypeHeading id="examples-of-my-work" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Examples of My Work
               </ScrollTypeHeading>
-              <p className="mb-4 leading-relaxed relative z-10">
-                A selection of professional and university writing, spanning journalism, gear
-                reviews and profile pieces.
-              </p>
 
-              <h4 className="font-semibold mb-2 relative z-10">Professional</h4>
-              <ul className="list-disc ml-6 leading-relaxed mb-4 relative z-10">
-                <li className="mb-1">
-                  Flow Mountain Bike —{" "}
-                  <a
-                    href="https://www.instagram.com/flow_mtb/?hl=en"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
+              {/* Hyde & Seek */}
+              <div className="mb-6 flex flex-col md:flex-row md:items-start gap-4">
+                <div ref={hydeAndSeekTextRef} className="w-full md:w-1/2">
+                  <h3 id="hyde-and-seek" className="text-xl font-serif mb-3">
+                    Hyde &amp; Seek — PR &amp; Communications Intern
+                  </h3>
+                  <HydeAndSeekText />
+                </div>
+                <div className="w-full md:w-1/2 flex-shrink-0 flex justify-center">
+                  <div
+                    className="w-full max-w-[280px] relative overflow-hidden rounded-xl border border-[#a2a9b1]"
+                    style={{ height: hydeAndSeekHeight ? `${hydeAndSeekHeight}px` : "480px" }}
                   >
-                    Instagram
-                  </a>{" "}
-                  ·{" "}
-                  <a
-                    href="https://www.facebook.com/flowmountainbike/"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Facebook
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    The Mons Monday Podcast
-                  </a>{" "}
-                  —{" "}
-                  <a
-                    href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Spotify
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href={FORTE_ARTICLE.url}
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {FORTE_ARTICLE.title}
-                  </a>{" "}
-                  <span className="text-[#54595d]">— Forte Magazine</span>
-                </li>
-              </ul>
+                    <iframe
+                      src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
+                      width="100%"
+                      height="600"
+                      frameBorder="0"
+                      scrolling="no"
+                      allowTransparency
+                      style={{ border: "none" }}
+                      title="Hyde & Seek Instagram post"
+                    />
+                  </div>
+                </div>
+              </div>
 
-              <h4 className="font-semibold mb-2 relative z-10">RMIT Coursework</h4>
-              <ul className="list-disc ml-6 leading-relaxed mb-6 relative z-10">
-                <li className="mb-1">
-                  <a
-                    href="https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Off the Rails: Is V/Line Failing Geelong Commuters?
-                  </a>{" "}
-                  <span className="text-[#54595d]">— StoryMap</span>
-                  <ul className="list-disc ml-6 mt-1">
-                    <li className="mb-1">
-                      <a
-                        href="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/view"
-                        className="text-[#0645ad] hover:underline"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Vertical video cut
-                      </a>
-                    </li>
-                    <li className="mb-1">
-                      <a
-                        href="https://drive.google.com/file/d/1j3Oknl1aBwhFBrSOkE6PBH1vNp4zAd8D/view"
-                        className="text-[#0645ad] hover:underline"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Full video package
-                      </a>
-                    </li>
-                  </ul>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://storymaps.arcgis.com/stories/6f8abf2a943d4b2f90f8ab996418d772"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Is Citizen Science Saving the Environment?
-                  </a>{" "}
-                  <span className="text-[#54595d]">— StoryMap (Merri Creek)</span>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1R9h4aHRwLLAiiO_op4TuWhfJ99Y-1vDi/view?usp=sharing"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    The Dams Are Drying Up
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1-r2Yh52eIp4AEvxNk9gVJMKO_M2gHsOU/view"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Proposed Housing at Community Hub Sparks "Town" Meeting
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1nXmTXIEI6gPNO9Yd6Auz0IkOxA5KKSoh/view?usp=sharing"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Court Report
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1h6aHY7ylw_M2u1hszfqSyEiP004s2pAj/view?usp=drive_link"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Affordable Rental Shortage Pushes Chef Out of Hometown
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1U4XzUXttANcJwZDz2Ss-H_sKqUjhrB62/view"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Hundreds Attend Paddle-Out Protesting Seismic Blasting
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1s6EZJq7r0rHDweMVjRqvvRmpe5vNW4yS/view"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Council Meeting — Live Event Assignment
-                  </a>
-                </li>
-                <li className="mb-1">
-                  <a
-                    href="https://drive.google.com/file/d/1oCV9Z7YaOcXUiUpyZjsFXVvnv0VJR5RE/view?usp=sharing"
-                    className="text-[#0645ad] hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Ridgeline Trail Piece
-                  </a>
-                </li>
-              </ul>
-
-              {/* Career Overview */}
-              <ScrollTypeHeading id="career-overview" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Career Overview
-              </ScrollTypeHeading>
+              {/* Flow Mountain Bike */}
+              <h3 id="flow-mountain-bike" className="text-xl font-serif mb-3">
+                Flow Mountain Bike — Content Syndication and Social Media Manager
+              </h3>
+              <div className="mb-6 flex flex-col md:flex-row md:items-start gap-4">
+                <div ref={flowTextRef} className="w-full md:w-1/2">
+                  <p className="mb-4 leading-relaxed relative z-10">
+                    Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
+                    syndication, reaching a cumulative audience of 375,000. He redesigned the publication's
+                    syndication system and introduced Canva and Sprout Social, creating a collaborative
+                    workflow for the team, and plans, builds and sends Flow's weekly eDM to 30,000
+                    subscribers, achieving a 25–30% open rate.
+                  </p>
+                  <p className="leading-relaxed relative z-10">
+                    This role has sharpened his instincts for audience interest, timing and engagement
+                    drivers, and given him practical experience lifting output, tightening processes and
+                    improving brand storytelling consistency across a large syndication network.
+                  </p>
+                </div>
+                <div
+                  className="w-full md:w-1/2 grid grid-cols-3 grid-rows-2 gap-2"
+                  style={{ height: flowGridHeight ? `${flowGridHeight}px` : "320px" }}
+                >
+                  {FLOW_ARTICLES.map((article) => (
+                    <a
+                      key={article.url}
+                      href={article.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group relative block h-full w-full rounded-xl overflow-hidden border border-[#a2a9b1]"
+                    >
+                      <img
+                        src={article.image}
+                        alt={article.title}
+                        className="w-full h-full object-cover transition-transform duration-150 group-hover:scale-[1.03]"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-150" />
+                    </a>
+                  ))}
+                </div>
+              </div>
 
               {/* Mons Monday Podcast */}
               <h3 id="mons-monday-podcast" className="text-xl font-serif mt-6 mb-3">
@@ -464,7 +353,6 @@ const EPortfolio = () => {
               <div className="my-6 w-full flex justify-center md:translate-x-[150px]">
                 <div className="flex flex-col md:flex-row items-center gap-4">
                   <NotableProjectsPixelation />
-
                   <div
                     className="flex flex-col justify-between w-[270px]"
                     style={{ height: "480px" }}
@@ -506,6 +394,20 @@ const EPortfolio = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Also published */}
+              <p className="mb-6 leading-relaxed relative z-10">
+                Also featured in{" "}
+                <a
+                  href={FORTE_ARTICLE.url}
+                  className="text-[#0645ad] hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Forte Magazine
+                </a>
+                .
+              </p>
             </div>
 
             {/* Desktop Sidebar — closes here since its content (photo/table) is already
@@ -518,78 +420,133 @@ const EPortfolio = () => {
             </aside>
           </div>
 
-          {/* Flow Mountain Bike — full card width now, same as Hyde & Seek below, so the
-              50/50 split lands on the card's true center and the grid sits tucked directly
-              under the profile box above. Grid height matches the body copy only, not the
-              headline, since the heading sits above the split. */}
-          <h3 id="flow-mountain-bike" className="text-xl font-serif mb-3">
-            Flow Mountain Bike — Content Syndication and Social Media Manager
-          </h3>
-          <div className="mb-6 flex flex-col md:flex-row md:items-start gap-4">
-            <div ref={flowTextRef} className="w-full md:w-1/2">
-              <p className="mb-4 leading-relaxed relative z-10">
-                Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
-                syndication, reaching a cumulative audience of 375,000. He redesigned the publication's
-                syndication system and introduced Canva and Sprout Social, creating a collaborative
-                workflow for the team, and plans, builds and sends Flow's weekly eDM to 30,000
-                subscribers, achieving a 25–30% open rate.
-              </p>
-              <p className="leading-relaxed relative z-10">
-                This role has sharpened his instincts for audience interest, timing and engagement
-                drivers, and given him practical experience lifting output, tightening processes and
-                improving brand storytelling consistency across a large syndication network.
-              </p>
-            </div>
-            <div
-              className="w-full md:w-1/2 grid grid-cols-3 grid-rows-2 gap-2"
-              style={{ height: flowGridHeight ? `${flowGridHeight}px` : "320px" }}
-            >
-              {FLOW_ARTICLES.map((article) => (
-                <a
-                  key={article.url}
-                  href={article.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative block h-full w-full rounded-xl overflow-hidden border border-[#a2a9b1]"
-                >
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className="w-full h-full object-cover transition-transform duration-150 group-hover:scale-[1.03]"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-150" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Hyde & Seek — full card width now, so a plain 50/50 split always lands on the
-              card's true center at any screen size, with no fixed-pixel guesswork. */}
-          <div className="mb-6 flex flex-col md:flex-row md:items-start gap-4">
-            <div ref={hydeAndSeekTextRef} className="w-full md:w-1/2">
-              <h3 id="hyde-and-seek" className="text-xl font-serif mb-3">
-                Hyde &amp; Seek — PR &amp; Communications Intern
-              </h3>
-              <HydeAndSeekText />
-            </div>
-            <div className="w-full md:w-1/2 flex-shrink-0 flex justify-center">
-              <div
-                className="w-full max-w-[280px] relative overflow-hidden rounded-xl border border-[#a2a9b1]"
-                style={{ height: hydeAndSeekHeight ? `${hydeAndSeekHeight}px` : "480px" }}
+          {/* RMIT Coursework — own section, sitting after the professional work since it's
+              academic rather than professional experience, but still evidences the hard-news
+              training that underpins the comms work above. */}
+          <ScrollTypeHeading id="rmit-coursework" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+            RMIT Coursework
+          </ScrollTypeHeading>
+          <p className="mb-4 leading-relaxed relative z-10">
+            Hard-news and investigative reporting completed as part of Caulfield's Bachelor of
+            Communication (Journalism) at RMIT — proof of the research rigour, verification habits
+            and news judgement that carry directly into PR and comms work.
+          </p>
+          <ul className="list-disc ml-6 leading-relaxed mb-6 relative z-10">
+            <li className="mb-1">
+              <a
+                href="https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba"
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <iframe
-                  src="https://www.instagram.com/p/DbKcgg6M1Bu/embed"
-                  width="100%"
-                  height="600"
-                  frameBorder="0"
-                  scrolling="no"
-                  allowTransparency
-                  style={{ border: "none" }}
-                  title="Hyde & Seek Instagram post"
-                />
-              </div>
-            </div>
-          </div>
+                Off the Rails: Is V/Line Failing Geelong Commuters?
+              </a>{" "}
+              <span className="text-[#54595d]">— StoryMap</span>
+              <ul className="list-disc ml-6 mt-1">
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/view"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Vertical video cut
+                  </a>
+                </li>
+                <li className="mb-1">
+                  <a
+                    href="https://drive.google.com/file/d/1j3Oknl1aBwhFBrSOkE6PBH1vNp4zAd8D/view"
+                    className="text-[#0645ad] hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Full video package
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li className="mb-1">
+              <a
+                href="https://storymaps.arcgis.com/stories/6f8abf2a943d4b2f90f8ab996418d772"
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Is Citizen Science Saving the Environment?
+              </a>{" "}
+              <span className="text-[#54595d]">— StoryMap (Merri Creek)</span>
+            </li>
+            <li className="mb-1">
+              <a
+                href="https://drive.google.com/file/d/1R9h4aHRwLLAiiO_op4TuWhfJ99Y-1vDi/view?usp=sharing"
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                The Dams Are Drying Up
+              </a>
+            </li>
+            <li className="mb-1">
+              <a
+                href="https://drive.google.com/file/d/1-r2Yh52eIp4AEvxNk9gVJMKO_M2gHsOU/view"
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Proposed Housing at Community Hub Sparks "Town" Meeting
+              </a>
+            </li>
+            <li className="mb-1">
+              <a
+                href="https://drive.google.com/file/d/1nXmTXIEI6gPNO9Yd6Auz0IkOxA5KKSoh/view?usp=sharing"
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Court Report
+              </a>
+            </li>
+            <li className="mb-1">
+              <a
+                href="https://drive.google.com/file/d/1h6aHY7ylw_M2u1hszfqSyEiP004s2pAj/view?usp=drive_link"
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Affordable Rental Shortage Pushes Chef Out of Hometown
+              </a>
+            </li>
+            <li className="mb-1">
+              <a
+                href="https://drive.google.com/file/d/1U4XzUXttANcJwZDz2Ss-H_sKqUjhrB62/view"
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Hundreds Attend Paddle-Out Protesting Seismic Blasting
+              </a>
+            </li>
+            <li className="mb-1">
+              <a
+                href="https://drive.google.com/file/d/1s6EZJq7r0rHDweMVjRqvvRmpe5vNW4yS/view"
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Council Meeting — Live Event Assignment
+              </a>
+            </li>
+            <li className="mb-1">
+              <a
+                href="https://drive.google.com/file/d/1oCV9Z7YaOcXUiUpyZjsFXVvnv0VJR5RE/view?usp=sharing"
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ridgeline Trail Piece
+              </a>
+            </li>
+          </ul>
 
           {/* Skills */}
           <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
