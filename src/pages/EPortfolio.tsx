@@ -237,14 +237,14 @@ const EPortfolio = () => {
               <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 mb-6 inline-block relative">
                 <div className="font-bold mb-2 relative z-10">Contents</div>
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
-                  <li><a href="#professional-experience" className="hover:underline">Professional Experience</a>
+                  <li><a href="#professional-experience" className="hover:underline">Experience</a>
                     <ol className="list-decimal ml-4 text-[#0645ad]">
                       <li><a href="#hyde-and-seek" className="hover:underline">Hyde &amp; Seek Internship</a></li>
                       <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
                       <li><a href="#mons-monday-podcast" className="hover:underline">The Mons Monday Podcast</a></li>
                     </ol>
                   </li>
-                  <li><a href="#course-volunteer-work" className="hover:underline">Course/Volunteer Work</a></li>
+                  <li><a href="#course-volunteer-work" className="hover:underline">Course Work</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
                   <li><a href="#contact" className="hover:underline">Let's chat!</a></li>
                 </ol>
@@ -258,20 +258,18 @@ const EPortfolio = () => {
                 experience.
               </p>
 
-              {/* Examples of My Work (formerly Career Overview) */}
+              {/* Experience */}
               <ScrollTypeHeading id="professional-experience" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Professional Experience
+                Experience
               </ScrollTypeHeading>
 
               {/* Hyde & Seek */}
+              <h3 id="hyde-and-seek" className="text-xl font-serif mb-3">
+                Hyde &amp; Seek — PR &amp; Communications Intern
+              </h3>
               <div className="mb-6 flex flex-col md:flex-row md:items-start gap-4">
-                <div className="w-full md:w-1/2">
-                  <h3 id="hyde-and-seek" className="text-xl font-serif mb-3">
-                    Hyde &amp; Seek — PR &amp; Communications Intern
-                  </h3>
-                  <div ref={hydeAndSeekTextRef}>
-                    <HydeAndSeekText />
-                  </div>
+                <div ref={hydeAndSeekTextRef} className="w-full md:w-1/2">
+                  <HydeAndSeekText />
                 </div>
                 <div className="w-full md:w-1/2 flex-shrink-0 flex justify-center">
                   <div
@@ -291,117 +289,11 @@ const EPortfolio = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Flow Mountain Bike */}
-              <h3 id="flow-mountain-bike" className="text-xl font-serif mb-3">
-                Flow Mountain Bike — Content Syndication and Social Media Manager
-              </h3>
-              <div className="mb-6 flex flex-col md:flex-row md:items-center gap-4">
-                <div ref={flowTextRef} className="w-full md:w-1/2">
-                  <p className="mb-4 leading-relaxed relative z-10">
-                    Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
-                    syndication, reaching a cumulative audience of 375,000. He redesigned the publication's
-                    syndication system and introduced Canva and Sprout Social, creating a collaborative
-                    workflow for the team, and plans, builds and sends Flow's weekly eDM to 30,000
-                    subscribers, achieving a 25–30% open rate.
-                  </p>
-                  <p className="leading-relaxed relative z-10">
-                    This role has sharpened his instincts for audience interest, timing and engagement
-                    drivers, and given him practical experience lifting output, tightening processes and
-                    improving brand storytelling consistency across a large syndication network.
-                  </p>
-                </div>
-                <div
-                  className="w-full md:w-1/2 grid grid-cols-3 grid-rows-2 gap-2"
-                  style={{ height: flowGridHeight ? `${flowGridHeight}px` : "320px" }}
-                >
-                  {FLOW_ARTICLES.map((article) => (
-                    <a
-                      key={article.url}
-                      href={article.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative block h-full w-full rounded-xl overflow-hidden border border-[#a2a9b1]"
-                    >
-                      <img
-                        src={article.image}
-                        alt={article.title}
-                        className="w-full h-full object-cover transition-transform duration-150 group-hover:scale-[1.03]"
-                      />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-150" />
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Mons Monday Podcast */}
-              <h3 id="mons-monday-podcast" className="text-xl font-serif mt-6 mb-3">
-                The Mons Monday Podcast — Producer
-              </h3>
-              <p className="mb-4 leading-relaxed relative z-10">
-                Caulfield pitched a profile-led podcast to Mons Monday and secured the collaboration
-                through cold outreach in 2025, developing the podcast's strategy and systems for
-                planning, recording, editing, feedback and distribution. The podcast debuted at number
-                three on the Apple Australia Arts chart, and went on to secure two commercial
-                partnerships, with LBDO and Krush Organics.
-              </p>
-              <p className="mb-6 leading-relaxed relative z-10">
-                Producing the podcast end-to-end — from conceptualising and editing promotional video
-                material to managing partner and audience communications — gave Caulfield a grounding in
-                production workflow management and post-launch performance analysis.
-              </p>
-
-              {/* Launch GIF + episode list, side by side, centered as a self-contained block */}
-              <div className="my-6 w-full flex justify-center md:translate-x-[150px]">
-                <div className="flex flex-col md:flex-row items-center gap-4">
-                  <NotableProjectsPixelation />
-                  <div
-                    className="flex flex-col justify-between w-[270px]"
-                    style={{ height: "480px" }}
-                  >
-                    {MONS_MONDAY_EPISODES.map((ep, i) => (
-                      <a
-                        key={ep.id}
-                        href={`https://open.spotify.com/episode/${ep.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 bg-[#121212] hover:bg-[#1a1a1a] transition-colors duration-150 rounded-lg px-2 py-1.5 no-underline"
-                        style={{ height: "88px" }}
-                      >
-                        <div className="relative w-14 h-14 rounded-md overflow-hidden flex-shrink-0">
-                          <img
-                            src={poddyCover}
-                            alt=""
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute bottom-[3px] right-[3px] w-5 h-5 rounded-full bg-[#1ed760] flex items-center justify-center shadow">
-                            <svg viewBox="0 0 24 24" className="w-[9px] h-[9px] fill-black ml-px">
-                              <path d="M8 5v14l11-7z" />
-                            </svg>
-                          </div>
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-[10px] font-bold uppercase tracking-wide text-[#1ed760]">
-                            Episode {i + 1}
-                          </div>
-                          <div className="text-sm font-semibold text-white truncate">
-                            {ep.title}
-                          </div>
-                          <div className="text-xs text-[#b3b3b3]">
-                            {ep.date} · {ep.duration}
-                          </div>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
             </div>
 
             {/* Desktop Sidebar — closes here since its content (photo/table) is already
-                fully shown by this point; everything below renders at the card's true full
-                width instead of the narrower column this sidebar would otherwise impose. */}
+                fully shown by this point; Flow and Mons Monday below render at the card's
+                true full width instead of the narrower column this sidebar would impose. */}
             <aside className="hidden md:block w-[300px] flex-shrink-0 order-1 md:order-2">
               <div className="border border-[#a2a9b1] bg-[#f8f9fa]">
                 <SidebarContent />
@@ -409,11 +301,117 @@ const EPortfolio = () => {
             </aside>
           </div>
 
+          {/* Flow Mountain Bike — full card width, so the 50/50 split lands on the
+              card's true center rather than the narrower column the sidebar imposes above. */}
+          <h3 id="flow-mountain-bike" className="text-xl font-serif mb-3">
+            Flow Mountain Bike — Content Syndication and Social Media Manager
+          </h3>
+          <div className="mb-6 flex flex-col md:flex-row md:items-center justify-center gap-4">
+            <div ref={flowTextRef} className="w-full md:w-1/2">
+              <p className="mb-4 leading-relaxed relative z-10">
+                Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
+                syndication, reaching a cumulative audience of 375,000. He redesigned the publication's
+                syndication system and introduced Canva and Sprout Social, creating a collaborative
+                workflow for the team, and plans, builds and sends Flow's weekly eDM to 30,000
+                subscribers, achieving a 25–30% open rate.
+              </p>
+              <p className="leading-relaxed relative z-10">
+                This role has sharpened his instincts for audience interest, timing and engagement
+                drivers, and given him practical experience lifting output, tightening processes and
+                improving brand storytelling consistency across a large syndication network.
+              </p>
+            </div>
+            <div
+              className="w-full md:w-1/2 grid grid-cols-3 grid-rows-2 gap-2"
+              style={{ height: flowGridHeight ? `${flowGridHeight}px` : "320px" }}
+            >
+              {FLOW_ARTICLES.map((article) => (
+                <a
+                  key={article.url}
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative block h-full w-full rounded-xl overflow-hidden border border-[#a2a9b1]"
+                >
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-full object-cover transition-transform duration-150 group-hover:scale-[1.03]"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-150" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Mons Monday Podcast */}
+          <h3 id="mons-monday-podcast" className="text-xl font-serif mt-6 mb-3">
+            The Mons Monday Podcast — Producer
+          </h3>
+          <p className="mb-4 leading-relaxed relative z-10">
+            Caulfield pitched a profile-led podcast to Mons Monday and secured the collaboration
+            through cold outreach in 2025, developing the podcast's strategy and systems for
+            planning, recording, editing, feedback and distribution. The podcast debuted at number
+            three on the Apple Australia Arts chart, and went on to secure two commercial
+            partnerships, with LBDO and Krush Organics.
+          </p>
+          <p className="mb-6 leading-relaxed relative z-10">
+            Producing the podcast end-to-end — from conceptualising and editing promotional video
+            material to managing partner and audience communications — gave Caulfield a grounding in
+            production workflow management and post-launch performance analysis.
+          </p>
+
+          {/* Launch GIF + episode list, side by side, centered as a self-contained block */}
+          <div className="my-6 w-full flex justify-center">
+            <div className="flex flex-col md:flex-row items-center gap-4">
+              <NotableProjectsPixelation />
+              <div
+                className="flex flex-col justify-between w-[270px]"
+                style={{ height: "480px" }}
+              >
+                {MONS_MONDAY_EPISODES.map((ep, i) => (
+                  <a
+                    key={ep.id}
+                    href={`https://open.spotify.com/episode/${ep.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 bg-[#121212] hover:bg-[#1a1a1a] transition-colors duration-150 rounded-lg px-2 py-1.5 no-underline"
+                    style={{ height: "88px" }}
+                  >
+                    <div className="relative w-14 h-14 rounded-md overflow-hidden flex-shrink-0">
+                      <img
+                        src={poddyCover}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute bottom-[3px] right-[3px] w-5 h-5 rounded-full bg-[#1ed760] flex items-center justify-center shadow">
+                        <svg viewBox="0 0 24 24" className="w-[9px] h-[9px] fill-black ml-px">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-[10px] font-bold uppercase tracking-wide text-[#1ed760]">
+                        Episode {i + 1}
+                      </div>
+                      <div className="text-sm font-semibold text-white truncate">
+                        {ep.title}
+                      </div>
+                      <div className="text-xs text-[#b3b3b3]">
+                        {ep.date} · {ep.duration}
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {/* RMIT Coursework — own section, sitting after the professional work since it's
               academic rather than professional experience, but still evidences the hard-news
               training that underpins the comms work above. */}
           <ScrollTypeHeading id="course-volunteer-work" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-            Course/Volunteer Work
+            Course Work
           </ScrollTypeHeading>
           <p className="mb-4 leading-relaxed relative z-10">
             Hard-news and investigative reporting completed as part of Caulfield's Bachelor of
@@ -431,7 +429,7 @@ const EPortfolio = () => {
               >
                 {FORTE_ARTICLE.title}
               </a>{" "}
-              <span className="text-[#54595d]">— Forte Magazine</span>
+              <span className="text-[#54595d]">— Published in Forte Magazine</span>
             </li>
             <li className="mb-1">
               <a
