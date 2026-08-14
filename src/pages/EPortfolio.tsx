@@ -619,7 +619,7 @@ const EPortfolio = () => {
           {/* Course Work video pieces — vertical cut and horizontal package from the
               V/Line StoryMap, shown side by side at matching height since one is
               portrait and one is landscape. */}
-          <div className="mb-6 flex flex-col md:flex-row items-center md:items-stretch justify-center gap-4">
+          <div className="mt-8 mb-6 flex flex-col md:flex-row items-center md:items-stretch justify-center gap-4">
             <div className="w-full max-w-[220px] md:w-[220px] flex-shrink-0 overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ height: "390px" }}>
               <iframe
                 src="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/preview"
