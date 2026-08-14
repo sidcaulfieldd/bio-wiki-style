@@ -618,32 +618,22 @@ const EPortfolio = () => {
 
           {/* Course Work video pieces — vertical cut and horizontal package from the
               V/Line StoryMap, shown side by side at matching height since one is
-              portrait and one is landscape. The wrapping divs are set 56px taller than
-              the visible frame and the iframe shifted up by the same amount, clipping
-              off Google Drive's own player toolbar so only the video shows. */}
-          <div className="mt-10 mb-10 flex flex-col md:flex-row items-center md:items-stretch justify-center gap-6">
-            <div
-              className="w-full max-w-[280px] md:w-[280px] flex-shrink-0 overflow-hidden rounded-xl border border-[#a2a9b1]"
-              style={{ height: "500px" }}
-            >
+              portrait and one is landscape. */}
+          <div className="mb-6 flex flex-col md:flex-row items-center md:items-stretch justify-center gap-4">
+            <div className="w-full max-w-[220px] md:w-[220px] flex-shrink-0 overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ height: "390px" }}>
               <iframe
-                src="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/preview?autoplay=1&mute=1"
+                src="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/preview"
                 width="100%"
-                height="556px"
-                style={{ marginTop: "-56px", border: "none" }}
+                height="100%"
                 allow="autoplay"
                 title="Off the Rails — vertical video cut"
               />
             </div>
-            <div
-              className="w-full md:flex-1 overflow-hidden rounded-xl border border-[#a2a9b1]"
-              style={{ height: "500px" }}
-            >
+            <div className="w-full md:flex-1 overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ height: "390px" }}>
               <iframe
-                src="https://drive.google.com/file/d/1j3Oknl1aBwhFBrSOkE6PBH1vNp4zAd8D/preview?autoplay=1&mute=1"
+                src="https://drive.google.com/file/d/1j3Oknl1aBwhFBrSOkE6PBH1vNp4zAd8D/preview"
                 width="100%"
-                height="556px"
-                style={{ marginTop: "-56px", border: "none" }}
+                height="100%"
                 allow="autoplay"
                 title="Off the Rails — full video package"
               />
