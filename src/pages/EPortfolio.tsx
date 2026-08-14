@@ -45,7 +45,7 @@ const SidebarContent = () => {
       </div>
 
       {/* Infobox image */}
-      <div className="text-center p-3 pb-0">
+      <div className="text-center p-3">
         <div className="relative w-full aspect-square">
           <div className="absolute inset-0 bg-[#FF69B4]" style={{ zIndex: 2 }} />
           <img
@@ -167,9 +167,15 @@ const EPortfolio = () => {
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
       <style>{`
+        body.eportfolio-page,
+        body.eportfolio-page * {
+          cursor: auto !important;
+        }
         body.eportfolio-page img[src="/mouse.png"] {
-          transform: scale(0.6);
-          transform-origin: center;
+          display: none !important;
+        }
+        body.eportfolio-page .cursor-trail-rect {
+          transform: scale(0.5);
         }
       `}</style>
 
