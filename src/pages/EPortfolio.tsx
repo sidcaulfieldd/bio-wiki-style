@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import profilePic from "@/assets/profile_pic.gif";
+import profilePic from "@/assets/eportfolio_profile_pic.gif";
 import poddyCover from "@/assets/poddy-cover.jpg";
 import flowTrashFreeTrails from "@/assets/flow-trash-free-trails.jpg";
 import flowMaddieLloyd from "@/assets/flow-maddie-lloyd.jpg";
@@ -81,7 +81,6 @@ const SidebarContent = () => {
             style={{ zIndex: 20 }}
           />
         </div>
-        <div className="text-xs text-[#54595d] mt-1 mb-3">Caulfield in 2025</div>
       </div>
 
       <table className="w-full text-sm">
@@ -143,19 +142,6 @@ const SidebarContent = () => {
               </a>
             </td>
           </tr>
-          <tr className="border-t border-[#a2a9b1]">
-            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Resume</th>
-            <td className="py-2 px-2 relative z-10">
-              <a
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://drive.google.com/file/d/1T26aUBmdWnSU0To83Md1-1DvCs1Ft6yt/view?usp=sharing"
-              >
-                View PDF
-              </a>
-            </td>
-          </tr>
         </tbody>
       </table>
     </>
@@ -213,12 +199,9 @@ const EPortfolio = () => {
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
       <style>{`
-        body.eportfolio-page,
-        body.eportfolio-page * {
-          cursor: auto !important;
-        }
         body.eportfolio-page img[src="/mouse.png"] {
-          display: none !important;
+          transform: scale(0.5);
+          transform-origin: center;
         }
       `}</style>
 
@@ -418,12 +401,13 @@ const EPortfolio = () => {
 
           {/* Flow Mountain Bike — full card width now, same as Hyde & Seek below, so the
               50/50 split lands on the card's true center and the grid sits tucked directly
-              under the profile box above. */}
+              under the profile box above. Grid height matches the body copy only, not the
+              headline, since the heading sits above the split. */}
+          <h3 id="flow-mountain-bike" className="text-xl font-serif mb-2">
+            Flow Mountain Bike — Content Syndication and Social Media Manager
+          </h3>
           <div className="mb-4 flex flex-col md:flex-row md:items-start gap-4">
             <div ref={flowTextRef} className="w-full md:w-1/2">
-              <h3 id="flow-mountain-bike" className="text-xl font-serif mb-2">
-                Flow Mountain Bike — Content Syndication and Social Media Manager
-              </h3>
               <p className="mb-2 leading-relaxed relative z-10">
                 Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
                 syndication, reaching a cumulative audience of 375,000. He redesigned the publication's
