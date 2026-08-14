@@ -427,14 +427,14 @@ const EPortfolio = () => {
           <ScrollTypeHeading id="course-volunteer-work" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
             Course Work
           </ScrollTypeHeading>
+          <p className="mb-4 leading-relaxed relative z-10">
+            Hard-news and investigative reporting completed as part of Caulfield's Bachelor of
+            Communication (Journalism) at RMIT, plus freelance feature writing — proof of the
+            research rigour, verification habits and news judgement that carry directly into PR
+            and comms work.
+          </p>
           <div className="flex flex-col md:flex-row md:items-start gap-4">
             <div className="w-full md:w-1/2">
-              <p className="mb-4 leading-relaxed relative z-10">
-                Hard-news and investigative reporting completed as part of Caulfield's Bachelor of
-                Communication (Journalism) at RMIT, plus freelance feature writing — proof of the
-                research rigour, verification habits and news judgement that carry directly into PR
-                and comms work.
-              </p>
               <ul className="list-disc ml-6 leading-relaxed mb-6 relative z-10">
                 <li className="mb-1">
                   <a
