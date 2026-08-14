@@ -193,10 +193,16 @@ const EPortfolio = () => {
   const hydeAndSeekTextRef = useRef<HTMLDivElement>(null);
   const [hydeAndSeekHeight, setHydeAndSeekHeight] = useState<number | undefined>(undefined);
 
+  const flowTextRef = useRef<HTMLDivElement>(null);
+  const [flowGridHeight, setFlowGridHeight] = useState<number | undefined>(undefined);
+
   useLayoutEffect(() => {
     const measure = () => {
       if (hydeAndSeekTextRef.current) {
         setHydeAndSeekHeight(hydeAndSeekTextRef.current.offsetHeight);
+      }
+      if (flowTextRef.current) {
+        setFlowGridHeight(flowTextRef.current.offsetHeight);
       }
     };
     measure();
@@ -244,8 +250,8 @@ const EPortfolio = () => {
                   <li><a href="#examples-of-my-work" className="hover:underline">Examples of My Work</a></li>
                   <li><a href="#career-overview" className="hover:underline">Career Overview</a>
                     <ol className="list-decimal ml-4 text-[#0645ad]">
-                      <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
                       <li><a href="#mons-monday-podcast" className="hover:underline">The Mons Monday Podcast</a></li>
+                      <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
                       <li><a href="#hyde-and-seek" className="hover:underline">Hyde &amp; Seek Internship</a></li>
                     </ol>
                   </li>
@@ -335,53 +341,6 @@ const EPortfolio = () => {
                 Career Overview
               </ScrollTypeHeading>
 
-              {/* Flow Mountain Bike */}
-              <h3 id="flow-mountain-bike" className="text-xl font-serif mt-4 mb-2">
-                Flow Mountain Bike — Content Syndication and Social Media Manager
-              </h3>
-              <div className="mb-4 flex flex-col md:flex-row md:items-start gap-4">
-                <div className="w-full md:w-1/2">
-                  <p className="mb-2 leading-relaxed relative z-10">
-                    Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
-                    syndication, reaching a cumulative audience of 375,000. He redesigned the publication's
-                    syndication system and introduced Canva and Sprout Social, creating a collaborative
-                    workflow for the team, and plans, builds and sends Flow's weekly eDM to 30,000
-                    subscribers, achieving a 25–30% open rate.
-                  </p>
-                  <p className="leading-relaxed relative z-10">
-                    This role has sharpened his instincts for audience interest, timing and engagement
-                    drivers, and given him practical experience lifting output, tightening processes and
-                    improving brand storytelling consistency across a large syndication network.
-                  </p>
-                </div>
-                <div className="w-full md:w-1/2 grid grid-cols-2 gap-3">
-                  {FLOW_ARTICLES.map((article) => (
-                    <div key={article.url}>
-                      <a
-                        href={article.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block aspect-square rounded-xl overflow-hidden border border-[#a2a9b1]"
-                      >
-                        <img
-                          src={article.image}
-                          alt={article.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </a>
-                      <a
-                        href={article.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block text-xs text-[#0645ad] hover:underline mt-1 leading-snug"
-                      >
-                        {article.shortTitle}
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               {/* Mons Monday Podcast */}
               <h3 id="mons-monday-podcast" className="text-xl font-serif mt-4 mb-2">
                 The Mons Monday Podcast — Producer
@@ -455,6 +414,50 @@ const EPortfolio = () => {
                 <SidebarContent />
               </div>
             </aside>
+          </div>
+
+          {/* Flow Mountain Bike — full card width now, same as Hyde & Seek below, so the
+              50/50 split lands on the card's true center and the grid sits tucked directly
+              under the profile box above. */}
+          <div className="mb-4 flex flex-col md:flex-row md:items-start gap-4">
+            <div ref={flowTextRef} className="w-full md:w-1/2">
+              <h3 id="flow-mountain-bike" className="text-xl font-serif mb-2">
+                Flow Mountain Bike — Content Syndication and Social Media Manager
+              </h3>
+              <p className="mb-2 leading-relaxed relative z-10">
+                Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
+                syndication, reaching a cumulative audience of 375,000. He redesigned the publication's
+                syndication system and introduced Canva and Sprout Social, creating a collaborative
+                workflow for the team, and plans, builds and sends Flow's weekly eDM to 30,000
+                subscribers, achieving a 25–30% open rate.
+              </p>
+              <p className="leading-relaxed relative z-10">
+                This role has sharpened his instincts for audience interest, timing and engagement
+                drivers, and given him practical experience lifting output, tightening processes and
+                improving brand storytelling consistency across a large syndication network.
+              </p>
+            </div>
+            <div
+              className="w-full md:w-1/2 grid grid-cols-3 grid-rows-2 gap-2"
+              style={{ height: flowGridHeight ? `${flowGridHeight}px` : "320px" }}
+            >
+              {FLOW_ARTICLES.map((article) => (
+                <a
+                  key={article.url}
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative block h-full w-full rounded-xl overflow-hidden border border-[#a2a9b1]"
+                >
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-full object-cover transition-transform duration-150 group-hover:scale-[1.03]"
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-150" />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Hyde & Seek — full card width now, so a plain 50/50 split always lands on the
