@@ -570,7 +570,7 @@ const EPortfolio = () => {
                 ))}
               </ul>
             </div>
-            <div className="w-full md:w-1/2 flex-shrink-0">
+            <div className="w-full md:w-1/2 flex-shrink-0 flex flex-col gap-4">
               <div className="w-full overflow-hidden rounded-xl border border-[#a2a9b1]">
                 <iframe
                   src="https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba"
@@ -580,6 +580,26 @@ const EPortfolio = () => {
                   allowFullScreen
                   allow="geolocation"
                   title="Off the Rails: Is V/Line Failing Geelong Commuters? — StoryMap"
+                />
+              </div>
+              <div className="w-full overflow-hidden rounded-xl border border-[#a2a9b1]">
+                <iframe
+                  src="https://www.fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/"
+                  width="100%"
+                  height="500px"
+                  frameBorder="0"
+                  title="Friends of Anglesea River Continue Five-Year Fight Amid Mining Corp Alcoa's Latest Water Bid — Forte Magazine"
+                />
+              </div>
+              <div className="w-full overflow-hidden rounded-xl border border-[#a2a9b1]">
+                <iframe
+                  src="https://storymaps.arcgis.com/stories/6f8abf2a943d4b2f90f8ab996418d772"
+                  width="100%"
+                  height="500px"
+                  frameBorder="0"
+                  allowFullScreen
+                  allow="geolocation"
+                  title="Is Citizen Science Saving the Environment? — StoryMap"
                 />
               </div>
             </div>
