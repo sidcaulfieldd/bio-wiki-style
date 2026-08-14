@@ -204,8 +204,8 @@ const EPortfolio = () => {
           cursor: auto !important;
         }
         body.eportfolio-page img[src="/mouse.png"] {
-          transform: scale(0.5);
-          transform-origin: center;
+          transform: scale(0.5) !important;
+          transform-origin: center !important;
         }
       `}</style>
 
