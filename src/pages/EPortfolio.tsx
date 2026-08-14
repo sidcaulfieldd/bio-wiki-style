@@ -620,16 +620,17 @@ const EPortfolio = () => {
               V/Line StoryMap, shown side by side at matching height since one is
               portrait and one is landscape. */}
           <div className="mt-8 mb-6 flex flex-col md:flex-row items-center md:items-stretch justify-center gap-4">
-            <div className="w-full max-w-[220px] md:w-[220px] flex-shrink-0 overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ height: "390px" }}>
+            <div className="w-full max-w-[225px] md:w-[225px] flex-shrink-0 overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ height: "400px" }}>
               <iframe
                 src="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/preview"
-                width="100%"
-                height="100%"
+                width="225"
+                height="400"
+                style={{ border: "none" }}
                 allow="autoplay"
                 title="Off the Rails — vertical video cut"
               />
             </div>
-            <div className="w-full md:flex-1 overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ height: "390px" }}>
+            <div className="w-full md:flex-1 overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ height: "400px" }}>
               <iframe
                 src="https://drive.google.com/file/d/1j3Oknl1aBwhFBrSOkE6PBH1vNp4zAd8D/preview"
                 width="100%"
