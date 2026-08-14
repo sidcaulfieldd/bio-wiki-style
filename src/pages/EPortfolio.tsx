@@ -404,8 +404,8 @@ const EPortfolio = () => {
             <div ref={flowTextRef} className="w-full md:w-1/2">
               <p className="mb-4 leading-relaxed relative z-10">
                 Since 2025, I’ve managed Flow Mountain Bike’s social presence and content
-                syndication, reaching and managing a cumulative audience of 375,000 with
-                little oversight. I redesigned the publication’s syndication system and
+                syndication, posting twice daily for over a year, reaching a cumulative
+                audience of 375,000. I redesigned the publication’s syndication system and
                 introduced Canva and Sprout Social, creating a collaborative workflow for
                 the team. I plan, build and send Flow’s weekly eDM to 30,000 subscribers,
                 achieving a 25-30% open rate.
