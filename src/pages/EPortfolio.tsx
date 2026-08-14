@@ -71,7 +71,7 @@ const SidebarContent = () => {
       </div>
 
       {/* Infobox image */}
-      <div className="text-center p-3 pb-0">
+      <div className="text-center p-3">
         <div className="relative w-full aspect-square">
           <div className="absolute inset-0 bg-[#FF69B4]" style={{ zIndex: 2 }} />
           <img
@@ -150,7 +150,7 @@ const SidebarContent = () => {
 
 const HydeAndSeekText = () => (
   <>
-    <p className="mb-2 leading-relaxed relative z-10">
+    <p className="mb-4 leading-relaxed relative z-10">
       Since July 2026, Caulfield has supported strategic communications and media relations
       for clients across the fintech, tech and consumer sectors at Hyde &amp; Seek, a boutique
       PR agency, working directly with the Founding Director. His responsibilities include
@@ -199,6 +199,10 @@ const EPortfolio = () => {
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
       <style>{`
+        body.eportfolio-page,
+        body.eportfolio-page * {
+          cursor: auto !important;
+        }
         body.eportfolio-page img[src="/mouse.png"] {
           transform: scale(0.5);
           transform-origin: center;
@@ -325,17 +329,17 @@ const EPortfolio = () => {
               </ScrollTypeHeading>
 
               {/* Mons Monday Podcast */}
-              <h3 id="mons-monday-podcast" className="text-xl font-serif mt-4 mb-2">
+              <h3 id="mons-monday-podcast" className="text-xl font-serif mt-6 mb-3">
                 The Mons Monday Podcast — Producer
               </h3>
-              <p className="mb-2 leading-relaxed relative z-10">
+              <p className="mb-4 leading-relaxed relative z-10">
                 Caulfield pitched a profile-led podcast to Mons Monday and secured the collaboration
                 through cold outreach in 2025, developing the podcast's strategy and systems for
                 planning, recording, editing, feedback and distribution. The podcast debuted at number
                 three on the Apple Australia Arts chart, and went on to secure two commercial
                 partnerships, with LBDO and Krush Organics.
               </p>
-              <p className="mb-4 leading-relaxed relative z-10">
+              <p className="mb-6 leading-relaxed relative z-10">
                 Producing the podcast end-to-end — from conceptualising and editing promotional video
                 material to managing partner and audience communications — gave Caulfield a grounding in
                 production workflow management and post-launch performance analysis.
@@ -403,12 +407,12 @@ const EPortfolio = () => {
               50/50 split lands on the card's true center and the grid sits tucked directly
               under the profile box above. Grid height matches the body copy only, not the
               headline, since the heading sits above the split. */}
-          <h3 id="flow-mountain-bike" className="text-xl font-serif mb-2">
+          <h3 id="flow-mountain-bike" className="text-xl font-serif mb-3">
             Flow Mountain Bike — Content Syndication and Social Media Manager
           </h3>
-          <div className="mb-4 flex flex-col md:flex-row md:items-start gap-4">
+          <div className="mb-6 flex flex-col md:flex-row md:items-start gap-4">
             <div ref={flowTextRef} className="w-full md:w-1/2">
-              <p className="mb-2 leading-relaxed relative z-10">
+              <p className="mb-4 leading-relaxed relative z-10">
                 Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
                 syndication, reaching a cumulative audience of 375,000. He redesigned the publication's
                 syndication system and introduced Canva and Sprout Social, creating a collaborative
@@ -446,9 +450,9 @@ const EPortfolio = () => {
 
           {/* Hyde & Seek — full card width now, so a plain 50/50 split always lands on the
               card's true center at any screen size, with no fixed-pixel guesswork. */}
-          <div className="mb-4 flex flex-col md:flex-row md:items-start gap-4">
+          <div className="mb-6 flex flex-col md:flex-row md:items-start gap-4">
             <div ref={hydeAndSeekTextRef} className="w-full md:w-1/2">
-              <h3 id="hyde-and-seek" className="text-xl font-serif mb-2">
+              <h3 id="hyde-and-seek" className="text-xl font-serif mb-3">
                 Hyde &amp; Seek — PR &amp; Communications Intern
               </h3>
               <HydeAndSeekText />
