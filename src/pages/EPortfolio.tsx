@@ -66,7 +66,7 @@ const FORTE_ARTICLE = {
 const COURSE_WORK_ARTICLES = [
   {
     title: "Off the Rails: Is V/Line Failing Geelong Commuters?",
-    tag: "StoryMap",
+    tag: null,
     url: "https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba",
     brief:
       "Investigation into reliability failures on Victoria’s busiest regional line, told through a stranded commuter and a 1,500-passenger disruption.",
@@ -83,7 +83,7 @@ const COURSE_WORK_ARTICLES = [
   },
   {
     title: "Is Citizen Science Saving the Environment?",
-    tag: "StoryMap (Merri Creek)",
+    tag: null,
     url: "https://storymaps.arcgis.com/stories/6f8abf2a943d4b2f90f8ab996418d772",
     brief:
       "How social media and citizen-science apps like iNaturalist are reshaping grassroots environmental activism, reported through Friends of Merri Creek.",
@@ -104,7 +104,7 @@ const COURSE_WORK_ARTICLES = [
   },
   {
     title: "Woman Spared Jail Over $126,000 Burglary After Judge Cites “Chaotic” Childhood",
-    tag: "Court Report",
+    tag: null,
     url: "https://drive.google.com/file/d/1nXmTXIEI6gPNO9Yd6Auz0IkOxA5KKSoh/view?usp=sharing",
     brief:
       "Sentencing report on a Melbourne County Court case weighing the offender’s traumatic history against a $126,000 luxury goods theft.",
@@ -125,7 +125,7 @@ const COURSE_WORK_ARTICLES = [
   },
   {
     title: "Torquay Mental Health Housing Development To Go Ahead Despite Community Opposition",
-    tag: "Council Meeting - Live Event Assignment",
+    tag: null,
     url: "https://drive.google.com/file/d/1s6EZJq7r0rHDweMVjRqvvRmpe5vNW4yS/view",
     brief:
       "Report on a Surfcoast Shire council meeting confirming the development will proceed despite resident concerns over its proximity to a primary school.",
@@ -230,9 +230,9 @@ const HydeAndSeekText = () => (
     <p className="mb-4 leading-relaxed relative z-10">
       Since July 2026, I’ve supported strategic communications and media relations for
       clients across the fintech, tech and consumer sectors at Hyde &amp; Seek, a boutique
-      PR agency, working directly with the{" "}
+      PR agency, working directly with the Founding Director,{" "}
       <a href="https://au.linkedin.com/in/jasmin-hyde" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
-        Founding Director, Jasmin Hyde
+        Jasmin Hyde
       </a>. My
       responsibilities include writing and pitching press releases and media alerts,
       building and maintaining media mapping and journalist tracking systems, and
@@ -241,8 +241,8 @@ const HydeAndSeekText = () => (
     <p className="leading-relaxed relative z-10">
       This placement has sharpened my instincts for client servicing, research accuracy
       and pitch development. It’s also given me a good idea of where and how my
-      journalism skills pay off in agency work: reading what a journalist actually wants
-      before I pitch it, and not after it’s rejected.
+      journalism skills pay off in agency work, as I’m able to better read what a
+      journalist actually wants before I pitch to them.
     </p>
   </>
 );
@@ -342,8 +342,8 @@ const EPortfolio = () => {
               <p className="mb-4 leading-relaxed relative z-10">
                 Hi, my name is Sid, and welcome to my little corner of the internet! I’m a
                 journalism-trained communicator based out of Melbourne, building a career
-                in PR and integrated communications. My work so far spans agency PR,
-                content syndication, social media strategy and management and podcast
+                in PR and integrated communications. My work, so far, spans agency PR,
+                content syndication, social media strategy and management, and podcast
                 production. How does all of that fit together, you ask? Have a scroll and
                 find out!
               </p>
@@ -407,8 +407,8 @@ const EPortfolio = () => {
                 syndication, reaching and managing a cumulative audience of 375,000 with
                 little oversight. I redesigned the publication’s syndication system and
                 introduced Canva and Sprout Social, creating a collaborative workflow for
-                the team, and I plan, build and send Flow’s weekly eDM to 30,000
-                subscribers, achieving a 25-30% open rate.
+                the team. I plan, build and send Flow’s weekly eDM to 30,000 subscribers,
+                achieving a 25-30% open rate.
               </p>
               <p className="leading-relaxed relative z-10">
                 This role has sharpened my instincts for audience interest, timing and
@@ -465,7 +465,11 @@ const EPortfolio = () => {
             </a> - Producer
           </h3>
           <p className="mb-4 leading-relaxed relative z-10">
-            I pitched a profile-led podcast to Mon Barton and secured the collaboration
+            I pitched a profile-led podcast to{" "}
+            <a href="https://www.instagram.com/mons.monday/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">
+              Mon Barton
+            </a>{" "}
+            and secured the collaboration
             through cold outreach in early 2025, developing the podcast’s strategy and
             systems for planning, recording, editing, feedback and distribution. I also
             developed and produced the launch strategy. The podcast debuted at number
@@ -480,7 +484,7 @@ const EPortfolio = () => {
           </p>
           <p className="mb-6 leading-relaxed relative z-10">
             Producing the podcast end-to-end saw me plan, edit, distribute and manage
-            partnerships and community comms and gave me valuable experience in creating
+            partnerships and community comms, and gave me valuable experience in creating
             something out of nothing.
           </p>
 
