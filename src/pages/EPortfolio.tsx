@@ -98,7 +98,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Occupation(s)</th>
             <td className="py-2 px-2 relative z-10">
-              PR &amp; Communications, Content Syndication and Social Media Management, Podcast Production
+              PR &amp; Communications, Digital Journalism, Content Syndication and Social Media Management, Podcast Production
             </td>
           </tr>
           <tr className="border-t border-[#a2a9b1]">
@@ -227,7 +227,7 @@ const EPortfolio = () => {
         <div className="bg-white border border-[#a7d7f9] p-6">
           {/* Title */}
           <h1 className="text-3xl font-serif border-b border-[#a2a9b1] pb-2 mb-4">
-            Hi! I'm Sid.
+            Hey! I'm Sid.
           </h1>
 
           <div className="flex flex-col md:flex-row gap-6 items-start">
@@ -237,16 +237,16 @@ const EPortfolio = () => {
               <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 mb-6 inline-block relative">
                 <div className="font-bold mb-2 relative z-10">Contents</div>
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
-                  <li><a href="#examples-of-my-work" className="hover:underline">Examples of My Work</a>
+                  <li><a href="#professional-experience" className="hover:underline">Professional Experience</a>
                     <ol className="list-decimal ml-4 text-[#0645ad]">
                       <li><a href="#hyde-and-seek" className="hover:underline">Hyde &amp; Seek Internship</a></li>
                       <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
                       <li><a href="#mons-monday-podcast" className="hover:underline">The Mons Monday Podcast</a></li>
                     </ol>
                   </li>
-                  <li><a href="#rmit-coursework" className="hover:underline">RMIT Coursework</a></li>
+                  <li><a href="#course-volunteer-work" className="hover:underline">Course/Volunteer Work</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
-                  <li><a href="#contact" className="hover:underline">Contact</a></li>
+                  <li><a href="#contact" className="hover:underline">Let's chat!</a></li>
                 </ol>
               </div>
 
@@ -259,17 +259,19 @@ const EPortfolio = () => {
               </p>
 
               {/* Examples of My Work (formerly Career Overview) */}
-              <ScrollTypeHeading id="examples-of-my-work" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Examples of My Work
+              <ScrollTypeHeading id="professional-experience" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+                Professional Experience
               </ScrollTypeHeading>
 
               {/* Hyde & Seek */}
               <div className="mb-6 flex flex-col md:flex-row md:items-start gap-4">
-                <div ref={hydeAndSeekTextRef} className="w-full md:w-1/2">
+                <div className="w-full md:w-1/2">
                   <h3 id="hyde-and-seek" className="text-xl font-serif mb-3">
                     Hyde &amp; Seek — PR &amp; Communications Intern
                   </h3>
-                  <HydeAndSeekText />
+                  <div ref={hydeAndSeekTextRef}>
+                    <HydeAndSeekText />
+                  </div>
                 </div>
                 <div className="w-full md:w-1/2 flex-shrink-0 flex justify-center">
                   <div
@@ -294,7 +296,7 @@ const EPortfolio = () => {
               <h3 id="flow-mountain-bike" className="text-xl font-serif mb-3">
                 Flow Mountain Bike — Content Syndication and Social Media Manager
               </h3>
-              <div className="mb-6 flex flex-col md:flex-row md:items-start gap-4">
+              <div className="mb-6 flex flex-col md:flex-row md:items-center gap-4">
                 <div ref={flowTextRef} className="w-full md:w-1/2">
                   <p className="mb-4 leading-relaxed relative z-10">
                     Since 2025, Caulfield has managed Flow Mountain Bike's social presence and content
@@ -395,19 +397,6 @@ const EPortfolio = () => {
                 </div>
               </div>
 
-              {/* Also published */}
-              <p className="mb-6 leading-relaxed relative z-10">
-                Also featured in{" "}
-                <a
-                  href={FORTE_ARTICLE.url}
-                  className="text-[#0645ad] hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Forte Magazine
-                </a>
-                .
-              </p>
             </div>
 
             {/* Desktop Sidebar — closes here since its content (photo/table) is already
@@ -423,15 +412,27 @@ const EPortfolio = () => {
           {/* RMIT Coursework — own section, sitting after the professional work since it's
               academic rather than professional experience, but still evidences the hard-news
               training that underpins the comms work above. */}
-          <ScrollTypeHeading id="rmit-coursework" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-            RMIT Coursework
+          <ScrollTypeHeading id="course-volunteer-work" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+            Course/Volunteer Work
           </ScrollTypeHeading>
           <p className="mb-4 leading-relaxed relative z-10">
             Hard-news and investigative reporting completed as part of Caulfield's Bachelor of
-            Communication (Journalism) at RMIT — proof of the research rigour, verification habits
-            and news judgement that carry directly into PR and comms work.
+            Communication (Journalism) at RMIT, plus freelance feature writing — proof of the
+            research rigour, verification habits and news judgement that carry directly into PR
+            and comms work.
           </p>
           <ul className="list-disc ml-6 leading-relaxed mb-6 relative z-10">
+            <li className="mb-1">
+              <a
+                href={FORTE_ARTICLE.url}
+                className="text-[#0645ad] hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {FORTE_ARTICLE.title}
+              </a>{" "}
+              <span className="text-[#54595d]">— Forte Magazine</span>
+            </li>
             <li className="mb-1">
               <a
                 href="https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba"
@@ -581,7 +582,7 @@ const EPortfolio = () => {
             id="contact"
             className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3"
           >
-            Contact
+            Let's chat!
           </h2>
           <p className="mb-4 leading-relaxed relative z-10">
             Get in touch at{" "}
