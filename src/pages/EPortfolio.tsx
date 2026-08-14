@@ -26,7 +26,7 @@ const FLOW_ARTICLES = [
     image: flowTrashFreeTrails,
   },
   {
-    title: "Fun First, Fast Always: Maddie Lloyd Might Be Australia's Fastest 13-Year-Old",
+    title: "Fun First, Fast Always: Maddie Lloyd Might Be Australia’s Fastest 13-Year-Old",
     shortTitle: "Fun First, Fast Always",
     url: "https://flowmountainbike.com/features/fun-first-fast-always-maddie-lloyd-might-be-australias-fastest-13-year-old/",
     image: flowMaddieLloyd,
@@ -58,7 +58,7 @@ const FLOW_ARTICLES = [
 ];
 
 const FORTE_ARTICLE = {
-  title: "Friends of Anglesea River Continue Five-Year Fight Amid Mining Corp Alcoa's Latest Water Bid",
+  title: "Friends of Anglesea River Continue Five-Year Fight Amid Mining Corp Alcoa’s Latest Water Bid",
   url: "https://www.fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/",
 };
 
@@ -69,7 +69,7 @@ const COURSE_WORK_ARTICLES = [
     tag: "StoryMap",
     url: "https://storymaps.arcgis.com/stories/bec0b064fef64ba5afa724b977aeb9ba",
     brief:
-      "Investigation into reliability failures on Victoria's busiest regional line, told through a stranded commuter and a 1,500-passenger disruption.",
+      "Investigation into reliability failures on Victoria’s busiest regional line, told through a stranded commuter and a 1,500-passenger disruption.",
     children: [
       {
         title: "Vertical video cut",
@@ -93,28 +93,28 @@ const COURSE_WORK_ARTICLES = [
     tag: null,
     url: "https://drive.google.com/file/d/1R9h4aHRwLLAiiO_op4TuWhfJ99Y-1vDi/view?usp=sharing",
     brief:
-      "A three-part feature on Victoria's water crisis — a Bellbrae farmer selling stock as his dams run dry, Geelong drawing 50 billion litres from desalination, and Apollo Bay facing Stage 4 restrictions.",
+      "A three-part feature on Victoria’s water crisis - a Bellbrae farmer selling stock as his dams run dry, Geelong drawing 50 billion litres from desalination, and Apollo Bay facing Stage 4 restrictions.",
   },
   {
-    title: "Proposed Housing at Community Hub Sparks \"Town\" Meeting",
+    title: "Proposed Housing at Community Hub Sparks “Town” Meeting",
     tag: null,
     url: "https://drive.google.com/file/d/1-r2Yh52eIp4AEvxNk9gVJMKO_M2gHsOU/view",
     brief:
       "Hard-news report on Anglesea residents opposing council plans to allocate community hub land to key-worker housing.",
   },
   {
-    title: "Woman Spared Jail Over $126,000 Burglary After Judge Cites \"Chaotic\" Childhood",
+    title: "Woman Spared Jail Over $126,000 Burglary After Judge Cites “Chaotic” Childhood",
     tag: "Court Report",
     url: "https://drive.google.com/file/d/1nXmTXIEI6gPNO9Yd6Auz0IkOxA5KKSoh/view?usp=sharing",
     brief:
-      "Sentencing report on a Melbourne County Court case weighing the offender's traumatic history against a $126,000 luxury goods theft.",
+      "Sentencing report on a Melbourne County Court case weighing the offender’s traumatic history against a $126,000 luxury goods theft.",
   },
   {
     title: "Affordable Rental Shortage Pushes Chef Out of Hometown",
     tag: null,
     url: "https://drive.google.com/file/d/1h6aHY7ylw_M2u1hszfqSyEiP004s2pAj/view?usp=drive_link",
     brief:
-      "Profile of a lifelong Anglesea hospitality worker priced out of her hometown, and the flow-on staffing crisis it's causing local businesses.",
+      "Profile of a lifelong Anglesea hospitality worker priced out of her hometown, and the flow-on staffing crisis it’s causing local businesses.",
   },
   {
     title: "Hundreds Attend Paddle-Out Protesting Seismic Blasting",
@@ -125,13 +125,13 @@ const COURSE_WORK_ARTICLES = [
   },
   {
     title: "Torquay Mental Health Housing Development To Go Ahead Despite Community Opposition",
-    tag: "Council Meeting — Live Event Assignment",
+    tag: "Council Meeting - Live Event Assignment",
     url: "https://drive.google.com/file/d/1s6EZJq7r0rHDweMVjRqvvRmpe5vNW4yS/view",
     brief:
       "Report on a Surfcoast Shire council meeting confirming the development will proceed despite resident concerns over its proximity to a primary school.",
   },
   {
-    title: "\"Finally\": Torquay–Bellbrae Bike Path Confirmed After Decade-Long Push",
+    title: "“Finally”: Torquay-Bellbrae Bike Path Confirmed After Decade-Long Push",
     tag: null,
     url: "https://drive.google.com/file/d/1oCV9Z7YaOcXUiUpyZjsFXVvnv0VJR5RE/view?usp=sharing",
     brief:
@@ -174,7 +174,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Occupation(s)</th>
             <td className="py-2 px-2 relative z-10">
-              PR &amp; Integrated Communications, Content Syndication and Social Media Management, Podcast Production
+              PR &amp; Communications, Content Syndication and Social Media Management, Podcast Production, Digital Journalism
             </td>
           </tr>
           <tr className="border-t border-[#a2a9b1]">
@@ -183,7 +183,7 @@ const SidebarContent = () => {
           </tr>
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Years active</th>
-            <td className="py-2 px-2 relative z-10">2025—present</td>
+            <td className="py-2 px-2 relative z-10">2025-present</td>
           </tr>
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Education</th>
@@ -228,24 +228,24 @@ const SidebarContent = () => {
 const HydeAndSeekText = () => (
   <>
     <p className="mb-4 leading-relaxed relative z-10">
-      Since July 2026, I've supported strategic communications and media relations for
+      Since July 2026, I’ve supported strategic communications and media relations for
       clients across the fintech, tech and consumer sectors at Hyde &amp; Seek, a boutique
-      PR agency, working directly with the Founding Director. My responsibilities include
-      writing and pitching press releases and media alerts, building and maintaining media
-      mapping and journalist tracking systems, and monitoring live news cycles to identify
-      timely press opportunities for clients.
+      PR agency, working directly with the Founding Director, Jasmin Hyde. My
+      responsibilities include writing and pitching press releases and media alerts,
+      building and maintaining media mapping and journalist tracking systems, and
+      monitoring live news cycles to identify timely press opportunities for clients.
     </p>
     <p className="leading-relaxed relative z-10">
-      This placement has sharpened my instincts for client servicing, research rigour and
-      pitch development — and shown me exactly where my journalism training pays off in
-      agency work: reading what a journalist actually wants before I pitch it, not after
-      it's rejected.
+      This placement has sharpened my instincts for client servicing, research accuracy
+      and pitch development. It’s also given me a good idea of where and how my
+      journalism skills pay off in agency work: reading what a journalist actually wants
+      before I pitch it, and not after it’s rejected.
     </p>
   </>
 );
 
 const EPortfolio = () => {
-  // This page is self-contained: disable the site-wide custom cursor while it's mounted,
+  // This page is self-contained: disable the site-wide custom cursor while it’s mounted,
   // without touching any files outside this page.
   useEffect(() => {
     document.body.classList.add("eportfolio-page");
@@ -312,7 +312,7 @@ const EPortfolio = () => {
         <div className="bg-white border border-[#a7d7f9] p-6">
           {/* Title */}
           <h1 className="text-3xl font-serif border-b border-[#a2a9b1] pb-2 mb-4">
-            Hey! I'm Sid.
+            Hey! I’m Sid.
           </h1>
 
           <div className="flex flex-col md:flex-row gap-6 items-start">
@@ -331,16 +331,18 @@ const EPortfolio = () => {
                   </li>
                   <li><a href="#course-volunteer-work" className="hover:underline">Course Work</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
-                  <li><a href="#contact" className="hover:underline">Let's chat!</a></li>
+                  <li><a href="#contact" className="hover:underline">Let’s chat!</a></li>
                 </ol>
               </div>
 
               {/* Lead */}
               <p className="mb-4 leading-relaxed relative z-10">
-                I'm a journalism-trained communicator based in Melbourne, building a career
-                in PR and integrated comms. My work spans agency PR, content syndication,
-                social strategy and podcast production — below is a closer look at how it
-                all fits together.
+                Hi, my name is Sid, and welcome to my little corner of the internet! I’m a
+                journalism-trained communicator based out of Melbourne, building a career
+                in PR and integrated communications. My work so far spans agency PR,
+                content syndication, social media strategy and management and podcast
+                production. How does all of that fit together, you ask? Have a scroll and
+                find out!
               </p>
 
               {/* Professional Work */}
@@ -350,7 +352,7 @@ const EPortfolio = () => {
 
               {/* Hyde & Seek */}
               <h3 id="hyde-and-seek" className="text-xl font-serif mb-3">
-                Hyde &amp; Seek — PR &amp; Communications Intern
+                Hyde &amp; Seek - PR &amp; Communications Intern
               </h3>
               <div className="mb-6 flex flex-col md:flex-row md:items-start gap-4">
                 <div ref={hydeAndSeekTextRef} className="w-full md:w-1/2">
@@ -376,8 +378,8 @@ const EPortfolio = () => {
               </div>
             </div>
 
-            {/* Desktop Sidebar — closes here since its content (photo/table) is already
-                fully shown by this point; Flow and Mons Monday below render at the card's
+            {/* Desktop Sidebar - closes here since its content (photo/table) is already
+                fully shown by this point; Flow and Mons Monday below render at the card’s
                 true full width instead of the narrower column this sidebar would impose. */}
             <aside className="hidden md:block w-[300px] flex-shrink-0 order-1 md:order-2">
               <div className="border border-[#a2a9b1] bg-[#f8f9fa]">
@@ -386,25 +388,26 @@ const EPortfolio = () => {
             </aside>
           </div>
 
-          {/* Flow Mountain Bike — full card width, so the 50/50 split lands on the
-              card's true center rather than the narrower column the sidebar imposes above. */}
+          {/* Flow Mountain Bike - full card width, so the 50/50 split lands on the
+              card’s true center rather than the narrower column the sidebar imposes above. */}
           <h3 id="flow-mountain-bike" className="text-xl font-serif mt-10 mb-3">
-            Flow Mountain Bike — Content Syndication and Social Media Manager
+            Flow Mountain Bike - Content Syndication and Social Media Manager
           </h3>
           <div className="mb-6 flex flex-col md:flex-row md:items-center justify-center gap-4">
             <div ref={flowTextRef} className="w-full md:w-1/2">
               <p className="mb-4 leading-relaxed relative z-10">
-                Since 2025, I've managed Flow Mountain Bike's social presence and content
-                syndication, reaching a cumulative audience of 375,000. I redesigned the
-                publication's syndication system and introduced Canva and Sprout Social,
-                creating a collaborative workflow for the team, and plan, build and send
-                Flow's weekly eDM to 30,000 subscribers, achieving a 25–30% open rate.
+                Since 2025, I’ve managed Flow Mountain Bike’s social presence and content
+                syndication, reaching and managing a cumulative audience of 375,000 with
+                little oversight. I redesigned the publication’s syndication system and
+                introduced Canva and Sprout Social, creating a collaborative workflow for
+                the team, and I plan, build and send Flow’s weekly eDM to 30,000
+                subscribers, achieving a 25-30% open rate.
               </p>
               <p className="leading-relaxed relative z-10">
                 This role has sharpened my instincts for audience interest, timing and
                 engagement drivers, and given me practical experience lifting output,
-                tightening processes and improving brand storytelling consistency across a
-                large syndication network.
+                tightening processes, working in a team and improving brand and voice
+                consistency across platforms.
               </p>
             </div>
             <div
@@ -446,20 +449,20 @@ const EPortfolio = () => {
 
           {/* Mons Monday Podcast */}
           <h3 id="mons-monday-podcast" className="text-xl font-serif mt-10 mb-3">
-            The Mons Monday Podcast — Producer
+            The Mons Monday Podcast - Producer
           </h3>
           <p className="mb-4 leading-relaxed relative z-10">
-            I pitched a profile-led podcast to Mons Monday and secured the collaboration
-            through cold outreach in 2025, developing the podcast's strategy and systems for
-            planning, recording, editing, feedback and distribution. The podcast debuted at
-            number three on the Apple Australia Arts chart, and went on to secure two
-            commercial partnerships, with LBDO and Krush Organics.
+            I pitched a profile-led podcast to Mon Barton and secured the collaboration
+            through cold outreach in early 2025, developing the podcast’s strategy and
+            systems for planning, recording, editing, feedback and distribution. I also
+            developed and produced the launch strategy. The podcast debuted at number
+            three on the Apple Australia Arts chart, and went on to secure two commercial
+            partnerships, with LBDO and Krush Organics.
           </p>
           <p className="mb-6 leading-relaxed relative z-10">
-            Producing the podcast end-to-end — from conceptualising and editing promotional
-            video material to managing partner and audience communications — gave me a
-            grounding in production workflow management and post-launch performance
-            analysis.
+            Producing the podcast end-to-end saw me plan, edit, distribute and manage
+            partnerships and community comms and gave me valuable experience in creating
+            something out of nothing.
           </p>
 
           {/* Launch GIF + episode list, side by side, centered as a self-contained block */}
@@ -508,17 +511,18 @@ const EPortfolio = () => {
             </div>
           </div>
 
-          {/* RMIT Coursework — own section, sitting after the professional work since it's
+          {/* RMIT Coursework - own section, sitting after the professional work since it’s
               academic rather than professional experience, but still evidences the hard-news
               training that underpins the comms work above. */}
           <ScrollTypeHeading id="course-volunteer-work" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
             Course Work
           </ScrollTypeHeading>
           <p className="mb-4 leading-relaxed relative z-10">
-            Hard-news and investigative reporting completed as part of my Bachelor of
-            Communication (Journalism) at RMIT, plus freelance feature writing — proof of
-            the research rigour, verification habits and news judgement that carry directly
-            into PR and comms work.
+            Below are examples of hard-news and investigative reporting completed as part
+            of my Bachelor of Communication (Journalism) at RMIT. This work has helped me
+            improve my research, verification and judgement of news and what is a “story”.
+            These skills will be valuable to me and those I work for, whether that is in
+            PR and comms, or journalism.
           </p>
 
           <div className="flex flex-col md:flex-row md:items-start gap-4">
@@ -534,11 +538,11 @@ const EPortfolio = () => {
                   >
                     {FORTE_ARTICLE.title}
                   </a>{" "}
-                  <span className="text-[#54595d]">— Published in Forte Magazine</span>
+                  <span className="text-[#54595d]">- Published in Forte Magazine</span>
                   <p className="text-sm text-[#54595d] mt-1 mb-0">
-                    Profile of a 14-year community campaign against Alcoa's bid to use
+                    Profile of a 14-year community campaign against Alcoa’s bid to use
                     groundwater to fill its former Anglesea coal mine, and the science
-                    linking the pumping to the river's decline.
+                    linking the pumping to the river’s decline.
                   </p>
                 </li>
 
@@ -554,7 +558,7 @@ const EPortfolio = () => {
                       {article.title}
                     </a>{" "}
                     {article.tag && (
-                      <span className="text-[#54595d]">— {article.tag}</span>
+                      <span className="text-[#54595d]">- {article.tag}</span>
                     )}
                     <p className="text-sm text-[#54595d] mt-1 mb-0">{article.brief}</p>
 
@@ -590,7 +594,7 @@ const EPortfolio = () => {
                   frameBorder="0"
                   allowFullScreen
                   allow="geolocation"
-                  title="Off the Rails: Is V/Line Failing Geelong Commuters? — StoryMap"
+                  title="Off the Rails: Is V/Line Failing Geelong Commuters? - StoryMap"
                 />
               </div>
               <div className="flex-1 min-h-0 overflow-hidden rounded-xl border border-[#a2a9b1]">
@@ -599,7 +603,7 @@ const EPortfolio = () => {
                   width="100%"
                   height="100%"
                   frameBorder="0"
-                  title="Friends of Anglesea River Continue Five-Year Fight Amid Mining Corp Alcoa's Latest Water Bid — Forte Magazine"
+                  title="Friends of Anglesea River Continue Five-Year Fight Amid Mining Corp Alcoa’s Latest Water Bid - Forte Magazine"
                 />
               </div>
               <div className="flex-1 min-h-0 overflow-hidden rounded-xl border border-[#a2a9b1]">
@@ -610,24 +614,26 @@ const EPortfolio = () => {
                   frameBorder="0"
                   allowFullScreen
                   allow="geolocation"
-                  title="Is Citizen Science Saving the Environment? — StoryMap"
+                  title="Is Citizen Science Saving the Environment? - StoryMap"
                 />
               </div>
             </div>
           </div>
 
-          {/* Course Work video pieces — vertical cut and horizontal package from the
+          {/* Course Work video pieces - vertical cut and horizontal package from the
               V/Line StoryMap, shown side by side at matching height since one is
               portrait and one is landscape. */}
           <div className="mt-8 mb-6 flex flex-col md:flex-row items-center md:items-stretch justify-center gap-4">
             <div className="w-full max-w-[225px] md:w-[225px] flex-shrink-0 overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ height: "400px" }}>
               <iframe
-                src="https://drive.google.com/file/d/1pO-khla0hOTDAGF6zG129GYgArtrXlXB/preview"
                 width="225"
                 height="400"
+                src="https://www.youtube.com/embed/O8puSsfD0YA"
+                title="sidcaulfield_vertical_geelongvline"
                 style={{ border: "none" }}
-                allow="autoplay"
-                title="Off the Rails — vertical video cut"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
               />
             </div>
             <div className="w-full md:flex-1 overflow-hidden rounded-xl border border-[#a2a9b1]" style={{ height: "400px" }}>
@@ -636,7 +642,7 @@ const EPortfolio = () => {
                 width="100%"
                 height="100%"
                 allow="autoplay"
-                title="Off the Rails — full video package"
+                title="Off the Rails - full video package"
               />
             </div>
           </div>
@@ -674,7 +680,7 @@ const EPortfolio = () => {
             id="contact"
             className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3"
           >
-            Let's chat!
+            Let’s chat!
           </h2>
           <p className="mb-4 leading-relaxed relative z-10">
             Get in touch at{" "}
