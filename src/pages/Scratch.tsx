@@ -12,6 +12,7 @@ export default function Scratch() {
   const loaderRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoWrapRef = useRef<HTMLDivElement>(null);
+  const unmuteBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -36,6 +37,7 @@ export default function Scratch() {
     const stage = stageRef.current!;
     const video = videoRef.current!;
     const videoWrap = videoWrapRef.current!;
+    const unmuteBtn = unmuteBtnRef.current!;
 
     const frames: HTMLImageElement[] = [];
     let framesLoaded = 0;
@@ -120,23 +122,8 @@ export default function Scratch() {
       const offsetX = (cw - drawW) / 2;
       const offsetY = (ch - drawH) / 2;
 
-      const strips = CONFIG.stripCount;
-      const srcStripH = img.naturalHeight / strips;
-      const dstStripH = drawH / strips;
-
-      const desiredMaxGap = CONFIG.maxGap * (drawH / 900);
-      const maxAvailableGap = strips > 1 ? Math.max(0, (ch - drawH) / (strips - 1)) : 0;
-      const effectiveMaxGap = Math.min(desiredMaxGap, maxAvailableGap);
-      const gapPx = effectiveMaxGap * state.gapProgress;
-
-      const totalGap = gapPx * (strips - 1);
-      const stackStartY = offsetY - totalGap / 2;
-
-      for (let s = 0; s < strips; s++) {
-        const srcY = s * srcStripH;
-        const dstY = stackStartY + s * (dstStripH + gapPx);
-        ctx.drawImage(img, 0, srcY, img.naturalWidth, srcStripH, offsetX, dstY, drawW, dstStripH);
-      }
+      // Strips temporarily disabled for testing — draw the whole frame directly.
+      ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, offsetX, offsetY, drawW, drawH);
     }
 
     function enterVideoMode() {
@@ -146,17 +133,23 @@ export default function Scratch() {
       videoWrap.style.pointerEvents = "auto";
       video.currentTime = 0;
 
-      // The user has already interacted with the page (scrolling), so try
-      // playing with sound first. Some browsers still block unmuted
-      // autoplay regardless of prior interaction — fall back to muted
-      // playback rather than showing nothing if that happens.
+      // Try unmuted first (works in some browsers if the page has enough
+      // prior media engagement). Most browsers will still block this on a
+      // scroll-only interaction, so fall back to muted autoplay and show a
+      // tap-to-unmute button — clicking it is a direct gesture that reliably
+      // satisfies autoplay-with-sound policies everywhere.
       video.muted = false;
-      video.play().catch(() => {
-        video.muted = true;
-        video.play().catch(() => {
-          // Autoplay fully blocked; video will show its poster/first frame.
+      video.play()
+        .then(() => {
+          unmuteBtn.style.display = "none";
+        })
+        .catch(() => {
+          video.muted = true;
+          video.play().catch(() => {
+            // Autoplay fully blocked; video will show its poster/first frame.
+          });
+          unmuteBtn.style.display = "block";
         });
-      });
     }
 
     function exitVideoMode() {
@@ -164,8 +157,16 @@ export default function Scratch() {
       inVideoMode = false;
       videoWrap.style.opacity = "0";
       videoWrap.style.pointerEvents = "none";
+      unmuteBtn.style.display = "none";
       video.pause();
     }
+
+    function onUnmuteClick() {
+      video.muted = false;
+      video.play().catch(() => {});
+      unmuteBtn.style.display = "none";
+    }
+    unmuteBtn.addEventListener("click", onUnmuteClick);
 
     let st: ScrollTrigger | null = null;
 
@@ -237,6 +238,7 @@ export default function Scratch() {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
+      unmuteBtn.removeEventListener("click", onUnmuteClick);
       st?.kill();
     };
   }, []);
@@ -324,6 +326,27 @@ export default function Scratch() {
               objectFit: "cover"
             }}
           />
+
+          <button
+            ref={unmuteBtnRef}
+            style={{
+              display: "none",
+              position: "absolute",
+              bottom: 24,
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 20,
+              padding: "10px 18px",
+              borderRadius: 999,
+              border: "none",
+              background: "rgba(0,0,0,0.7)",
+              color: "#fff",
+              fontSize: 14,
+              cursor: "pointer"
+            }}
+          >
+            🔊 Tap for sound
+          </button>
         </div>
       </div>
     </div>
