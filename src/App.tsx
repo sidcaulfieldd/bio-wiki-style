@@ -6,12 +6,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import EPortfolio from "./pages/EPortfolio";
+import Scratch from "./pages/Scratch";
 import NotFound from "./pages/NotFound";
 import CustomCursor from "./components/CustomCursor";
 import CursorTrail from "./components/CursorTrail";
-
 const queryClient = new QueryClient();
-
 const AppContent = () => {
   return (
     <>
@@ -24,13 +23,13 @@ const AppContent = () => {
           <Route path="/" element={<Index />} />
           <Route path="/LETSGETVISUAL" element={<About />} />
           <Route path="/E-PORTFOLIO" element={<EPortfolio />} />
+          <Route path="/scratch" element={<Scratch />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </>
   );
 };
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -38,5 +37,4 @@ const App = () => (
     </TooltipProvider>
   </QueryClientProvider>
 );
-
 export default App;
