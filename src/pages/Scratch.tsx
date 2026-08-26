@@ -156,7 +156,7 @@ export default function Scratch() {
 
     function showMuteOverlay() {
       if (!userUnmuted) {
-        muteOverlay.style.display = "flex";
+        muteOverlay.style.display = "block";
       }
     }
 
@@ -178,9 +178,9 @@ export default function Scratch() {
       videoWrap.style.opacity = "1";
       videoWrap.style.pointerEvents = "auto";
       video.pause(); // paused — position is driven directly by scroll, not autoplay
+      positionVideoBox(); // safety net in case earlier sizing calls ran before layout was ready
       if (!userUnmuted) {
         video.muted = true;
-        showMuteOverlay();
       }
     }
 
@@ -189,7 +189,6 @@ export default function Scratch() {
       inVideoPhase = false;
       videoWrap.style.opacity = "0";
       videoWrap.style.pointerEvents = "none";
-      hideMuteOverlay();
       video.pause();
     }
 
@@ -243,9 +242,12 @@ export default function Scratch() {
       positionVideoBox();
     }
     video.addEventListener("loadedmetadata", onLoadedMetadata);
+    video.addEventListener("loadeddata", positionVideoBox);
+    video.addEventListener("canplay", positionVideoBox);
 
     resizeCanvas();
     drawCurrentFrame();
+    showMuteOverlay(); // visible from page load, persists until the user unmutes
 
     preloadFrames().then(() => {
       resizeCanvas();
@@ -256,6 +258,8 @@ export default function Scratch() {
     return () => {
       window.removeEventListener("resize", onResize);
       video.removeEventListener("loadedmetadata", onLoadedMetadata);
+      video.removeEventListener("loadeddata", positionVideoBox);
+      video.removeEventListener("canplay", positionVideoBox);
       unmuteLink.removeEventListener("click", onUnmuteClick);
       st?.kill();
     };
@@ -289,45 +293,55 @@ export default function Scratch() {
             src="/part2/scratch-video.mp4"
             playsInline
             preload="auto"
+            muted
             style={{
-              position: "absolute"
+              position: "absolute",
+              width: "1px",
+              height: "1px"
             }}
           />
         </div>
 
-        {/* Mute prompt sits in the middle layer — above the video, behind the gif */}
+        {/* Mute prompt sits in the middle layer — above the video, behind the gif.
+            Shown from page load; hidden permanently once the user unmutes. */}
         <div
           ref={muteOverlayRef}
           style={{
             display: "none",
             position: "absolute",
-            top: "6vh",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "80vw",
+            inset: 0,
             zIndex: 20,
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 12,
             pointerEvents: "none"
           }}
         >
           <div
             style={{
               ...sfPro,
+              position: "absolute",
+              top: "10vh",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "80vw",
               fontWeight: 700,
               letterSpacing: "-0.02em",
               color: "#000",
-              fontSize: "clamp(28px, 6vw, 64px)",
+              fontSize: "clamp(24px, 5vw, 56px)",
               textAlign: "center",
-              lineHeight: 1.05
+              lineHeight: 1.2,
+              whiteSpace: "nowrap",
+              pointerEvents: "none"
             }}
           >
             SID, YOU'RE ON MUTE
           </div>
+
           <div
             style={{
               ...sfPro,
+              position: "absolute",
+              top: "calc(10vh + 4.5em)",
+              left: "75vw",
+              transform: "translateX(-50%)",
               display: "flex",
               alignItems: "center",
               gap: 8,
@@ -335,7 +349,9 @@ export default function Scratch() {
               fontWeight: 700,
               textTransform: "uppercase",
               letterSpacing: "0.05em",
-              color: "#000"
+              pointerEvents: "none",
+              color: "#000",
+              whiteSpace: "nowrap"
             }}
           >
             <span>↑ press</span>
@@ -358,7 +374,8 @@ export default function Scratch() {
             width: "100%",
             height: "100vh",
             transform: "translate(-50%, -50%)",
-            zIndex: 30
+            zIndex: 30,
+            pointerEvents: "none"
           }}
         >
           <canvas
@@ -369,7 +386,8 @@ export default function Scratch() {
               left: 0,
               width: "100%",
               height: "100%",
-              display: "block"
+              display: "block",
+              pointerEvents: "none"
             }}
           />
         </div>
