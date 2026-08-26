@@ -25,7 +25,7 @@ export default function Scratch() {
       maxGap: 90,           // desired gap; auto-clamped so it always fits vertically
       scrubSmoothness: 0.1,
       pinSpacerMultiplier: 1.5,
-      portraitScale: 0.33
+      targetHeightFraction: 0.8 // final assembled frame's height = 80% of the page
     };
 
     const canvas = canvasRef.current!;
@@ -103,19 +103,12 @@ export default function Scratch() {
       if (!img || !img.complete || img.naturalWidth === 0) return;
 
       const imgRatio = img.naturalWidth / img.naturalHeight;
-      const canvasRatio = cw / ch;
 
-      let baseW, baseH;
-      if (imgRatio > canvasRatio) {
-        baseW = cw;
-        baseH = cw / imgRatio;
-      } else {
-        baseH = ch;
-        baseW = ch * imgRatio;
-      }
-
-      const drawW = baseW * CONFIG.portraitScale;
-      const drawH = baseH * CONFIG.portraitScale;
+      // Final assembled frame's visible height = drawH exactly (gaps collapse
+      // to 0), so sizing drawH directly to a fraction of the page gives an
+      // exact, predictable result rather than an indirect scale multiplier.
+      const drawH = ch * CONFIG.targetHeightFraction;
+      const drawW = drawH * imgRatio;
       const offsetX = (cw - drawW) / 2;
       const offsetY = (ch - drawH) / 2;
 
@@ -123,14 +116,16 @@ export default function Scratch() {
       const srcStripH = img.naturalHeight / strips;
       const dstStripH = drawH / strips;
 
-      // Desired gap, scaled to the portrait's own height.
-      const desiredGap = CONFIG.maxGap * (drawH / 900) * state.gapProgress;
+      // Desired starting gap (at gapProgress = 1), scaled to the portrait's own height.
+      const desiredMaxGap = CONFIG.maxGap * (drawH / 900);
 
-      // Hard clamp: total spread (drawH + totalGap) must never exceed the
-      // stage height, so the most-elongated (initial) frame always fits
-      // fully within the viewport, however the config is tuned.
+      // Hard clamp on the STARTING gap so the most-elongated (initial) frame
+      // always fits fully within the page. Clamping the max up front (rather
+      // than clamping each frame's gap individually) keeps the shrink linear
+      // across the whole scroll instead of plateauing partway through.
       const maxAvailableGap = strips > 1 ? Math.max(0, (ch - drawH) / (strips - 1)) : 0;
-      const gapPx = Math.min(desiredGap, maxAvailableGap);
+      const effectiveMaxGap = Math.min(desiredMaxGap, maxAvailableGap);
+      const gapPx = effectiveMaxGap * state.gapProgress;
 
       const totalGap = gapPx * (strips - 1);
       const stackStartY = offsetY - totalGap / 2;
@@ -198,7 +193,7 @@ export default function Scratch() {
             top: "50%",
             left: "50%",
             width: "min(96vw, 177.78vh)",
-            height: "min(54vw, 100vh)",
+            height: "100vh",
             transform: "translate(-50%, -50%)"
           }}
         >
