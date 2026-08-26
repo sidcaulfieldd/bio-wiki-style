@@ -167,7 +167,6 @@ export default function Scratch() {
     function onUnmuteClick() {
       userUnmuted = true;
       video.muted = false;
-      video.play().catch(() => {});
       hideMuteOverlay();
     }
     unmuteLink.addEventListener("click", onUnmuteClick);
@@ -177,6 +176,7 @@ export default function Scratch() {
       inVideoPhase = true;
       videoWrap.style.opacity = "1";
       videoWrap.style.pointerEvents = "auto";
+      canvas.style.opacity = "0"; // hide the frozen gif frame — clean video only
       video.pause(); // paused — position is driven directly by scroll, not autoplay
       positionVideoBox(); // safety net in case earlier sizing calls ran before layout was ready
       if (!userUnmuted) {
@@ -189,6 +189,7 @@ export default function Scratch() {
       inVideoPhase = false;
       videoWrap.style.opacity = "0";
       videoWrap.style.pointerEvents = "none";
+      canvas.style.opacity = "1"; // gif visible again
       video.pause();
     }
 
@@ -354,7 +355,7 @@ export default function Scratch() {
               whiteSpace: "nowrap"
             }}
           >
-            <span>↑ press</span>
+            <span>press</span>
             <span
               ref={unmuteLinkRef}
               style={{ textDecoration: "underline", cursor: "pointer", pointerEvents: "auto" }}
@@ -387,7 +388,8 @@ export default function Scratch() {
               width: "100%",
               height: "100%",
               display: "block",
-              pointerEvents: "none"
+              pointerEvents: "none",
+              opacity: 1
             }}
           />
         </div>
