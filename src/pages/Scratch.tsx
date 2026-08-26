@@ -25,7 +25,7 @@ export default function Scratch() {
       maxGap: 90,           // desired gap; auto-clamped so it always fits vertically
       scrubSmoothness: 0.1,
       pinSpacerMultiplier: 1.5,
-      targetHeightFraction: 0.5 // final assembled frame's height = 50% of the page (middle two quarters)
+      targetHeightFraction: 0.8 // final assembled frame's height = 80% of the page
     };
 
     const canvas = canvasRef.current!;
