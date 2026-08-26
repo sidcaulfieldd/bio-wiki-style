@@ -25,7 +25,7 @@ export default function Scratch() {
       maxGap: 90,           // desired gap; auto-clamped so it always fits vertically
       scrubSmoothness: 0.1,
       pinSpacerMultiplier: 1.5,
-      portraitScale: 0.33
+      targetHeightFraction: 0.5 // final assembled frame's height = 50% of the page (middle two quarters)
     };
 
     const canvas = canvasRef.current!;
@@ -103,19 +103,12 @@ export default function Scratch() {
       if (!img || !img.complete || img.naturalWidth === 0) return;
 
       const imgRatio = img.naturalWidth / img.naturalHeight;
-      const canvasRatio = cw / ch;
 
-      let baseW, baseH;
-      if (imgRatio > canvasRatio) {
-        baseW = cw;
-        baseH = cw / imgRatio;
-      } else {
-        baseH = ch;
-        baseW = ch * imgRatio;
-      }
-
-      const drawW = baseW * CONFIG.portraitScale;
-      const drawH = baseH * CONFIG.portraitScale;
+      // Final assembled frame's visible height = drawH exactly (gaps collapse
+      // to 0), so sizing drawH directly to a fraction of the page gives an
+      // exact, predictable result rather than an indirect scale multiplier.
+      const drawH = ch * CONFIG.targetHeightFraction;
+      const drawW = drawH * imgRatio;
       const offsetX = (cw - drawW) / 2;
       const offsetY = (ch - drawH) / 2;
 
@@ -198,7 +191,7 @@ export default function Scratch() {
             top: "50%",
             left: "50%",
             width: "min(96vw, 177.78vh)",
-            height: "min(54vw, 100vh)",
+            height: "100vh",
             transform: "translate(-50%, -50%)"
           }}
         >
