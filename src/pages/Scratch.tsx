@@ -2,6 +2,11 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+const sfPro = {
+  fontFamily:
+    '"SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif',
+};
+
 // Standalone scratch page.
 // No links, nav, or references to any other page on the site.
 export default function Scratch() {
@@ -12,23 +17,26 @@ export default function Scratch() {
   const loaderRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoWrapRef = useRef<HTMLDivElement>(null);
-  const unmuteBtnRef = useRef<HTMLButtonElement>(null);
+  const muteOverlayRef = useRef<HTMLDivElement>(null);
+  const unmuteLinkRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     const CONFIG = {
-      frameFolder: "/part2", // new frames + video live in their own subfolder to avoid colliding with the old set
+      frameFolder: "/part2",
       frameCount: 61,
       framePrefix: "frame_",
       frameDigits: 4,
       frameExt: "png",
 
-      stripCount: 10,
-      maxGap: 90,
       scrubSmoothness: 0.1,
-      pinSpacerMultiplier: 1.5,
-      targetHeightFraction: 0.8
+      pinSpacerMultiplier: 3, // extra scroll runway now covers gif phase + video-scrub phase
+      targetHeightFraction: 0.8,
+
+      // Fraction of the total pinned scroll range spent on the gif; the rest
+      // scrubs through the video.
+      gifPhaseFraction: 0.4
     };
 
     const canvas = canvasRef.current!;
@@ -37,13 +45,16 @@ export default function Scratch() {
     const stage = stageRef.current!;
     const video = videoRef.current!;
     const videoWrap = videoWrapRef.current!;
-    const unmuteBtn = unmuteBtnRef.current!;
+    const muteOverlay = muteOverlayRef.current!;
+    const unmuteLink = unmuteLinkRef.current!;
 
     const frames: HTMLImageElement[] = [];
     let framesLoaded = 0;
+    let videoDuration = 0;
+    let userUnmuted = false;
 
     const state = { frameIndex: 0, gapProgress: 1 };
-    let inVideoMode = false;
+    let inVideoPhase = false;
 
     function padNumber(n: number, digits: number) {
       return String(n).padStart(digits, "0");
@@ -51,6 +62,33 @@ export default function Scratch() {
 
     function frameUrl(index: number) {
       return `${CONFIG.frameFolder}/${CONFIG.framePrefix}${padNumber(index, CONFIG.frameDigits)}.${CONFIG.frameExt}`;
+    }
+
+    // Shared sizing math used by BOTH the gif canvas and the video element,
+    // so they land in the exact same box — no growth/zoom needed, and no
+    // mismatch at the hand-off, because both sides use this one formula.
+    function computeBox(cw: number, ch: number, naturalW: number, naturalH: number) {
+      const scale = (ch * CONFIG.targetHeightFraction) / naturalH;
+      const drawW = naturalW * scale;
+      const drawH = naturalH * scale;
+      const offsetX = (cw - drawW) / 2;
+      const offsetY = (ch - drawH) / 2;
+      return { drawW, drawH, offsetX, offsetY };
+    }
+
+    function positionVideoBox() {
+      const rect = stage.getBoundingClientRect();
+      const cw = rect.width;
+      const ch = rect.height;
+      const naturalW = video.videoWidth || 1920;
+      const naturalH = video.videoHeight || 960;
+      if (!cw || !ch) return;
+
+      const { drawW, drawH, offsetX, offsetY } = computeBox(cw, ch, naturalW, naturalH);
+      video.style.width = `${drawW}px`;
+      video.style.height = `${drawH}px`;
+      video.style.left = `${offsetX}px`;
+      video.style.top = `${offsetY}px`;
     }
 
     function resizeCanvas() {
@@ -62,6 +100,7 @@ export default function Scratch() {
       canvas.style.height = rect.height + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       drawCurrentFrame();
+      positionVideoBox();
     }
 
     function preloadFrames() {
@@ -108,65 +147,64 @@ export default function Scratch() {
       const img = frames[idx];
       if (!img || !img.complete || img.naturalWidth === 0) return;
 
-      // Start small (targetHeightFraction of the page) and grow smoothly to
-      // an exact "cover the whole page" size by the time scrolling finishes
-      // — the same math CSS object-fit:cover uses for the video. Landing on
-      // an identical scale/position means the hard cut to video is seamless.
-      const sizeProgress = 1 - state.gapProgress; // 0 at start, 1 when fully assembled
-      const scaleStart = (ch * CONFIG.targetHeightFraction) / img.naturalHeight;
-      const scaleCover = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-      const scale = scaleStart + (scaleCover - scaleStart) * sizeProgress;
+      // Constant size — same box computeBox() gives the video, so there's
+      // no growth/zoom and the hand-off to video is a pixel-exact match.
+      const { drawW, drawH, offsetX, offsetY } = computeBox(cw, ch, img.naturalWidth, img.naturalHeight);
 
-      const drawH = img.naturalHeight * scale;
-      const drawW = img.naturalWidth * scale;
-      const offsetX = (cw - drawW) / 2;
-      const offsetY = (ch - drawH) / 2;
-
-      // Strips temporarily disabled for testing — draw the whole frame directly.
       ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, offsetX, offsetY, drawW, drawH);
     }
 
-    function enterVideoMode() {
-      if (inVideoMode) return;
-      inVideoMode = true;
-      videoWrap.style.opacity = "1";
-      videoWrap.style.pointerEvents = "auto";
-      video.currentTime = 0;
-
-      // Try unmuted first (works in some browsers if the page has enough
-      // prior media engagement). Most browsers will still block this on a
-      // scroll-only interaction, so fall back to muted autoplay and show a
-      // tap-to-unmute button — clicking it is a direct gesture that reliably
-      // satisfies autoplay-with-sound policies everywhere.
-      video.muted = false;
-      video.play()
-        .then(() => {
-          unmuteBtn.style.display = "none";
-        })
-        .catch(() => {
-          video.muted = true;
-          video.play().catch(() => {
-            // Autoplay fully blocked; video will show its poster/first frame.
-          });
-          unmuteBtn.style.display = "block";
-        });
+    function showMuteOverlay() {
+      if (!userUnmuted) {
+        muteOverlay.style.display = "flex";
+      }
     }
 
-    function exitVideoMode() {
-      if (!inVideoMode) return;
-      inVideoMode = false;
-      videoWrap.style.opacity = "0";
-      videoWrap.style.pointerEvents = "none";
-      unmuteBtn.style.display = "none";
-      video.pause();
+    function hideMuteOverlay() {
+      muteOverlay.style.display = "none";
     }
 
     function onUnmuteClick() {
+      userUnmuted = true;
       video.muted = false;
       video.play().catch(() => {});
-      unmuteBtn.style.display = "none";
+      hideMuteOverlay();
     }
-    unmuteBtn.addEventListener("click", onUnmuteClick);
+    unmuteLink.addEventListener("click", onUnmuteClick);
+
+    function enterVideoPhase() {
+      if (inVideoPhase) return;
+      inVideoPhase = true;
+      videoWrap.style.opacity = "1";
+      videoWrap.style.pointerEvents = "auto";
+      video.pause(); // paused — position is driven directly by scroll, not autoplay
+      if (!userUnmuted) {
+        video.muted = true;
+        showMuteOverlay();
+      }
+    }
+
+    function exitVideoPhase() {
+      if (!inVideoPhase) return;
+      inVideoPhase = false;
+      videoWrap.style.opacity = "0";
+      videoWrap.style.pointerEvents = "none";
+      hideMuteOverlay();
+      video.pause();
+    }
+
+    // Scrub the video's playback position directly to match scroll — this is
+    // what makes scrolling up genuinely rewind it frame-by-frame, at
+    // whatever pace the person scrolls, rather than cutting back to the gif.
+    // Browser limitation: HTML5 video only plays audio smoothly during real
+    // forward playback — jumping currentTime around (in either direction)
+    // is silent/choppy in virtually all browsers, so audio will not be
+    // audible during the scrub itself even though currentTime moves
+    // correctly and the visuals scrub perfectly.
+    function scrubVideoTo(fraction: number) {
+      if (!videoDuration) return;
+      video.currentTime = Math.max(0, Math.min(1, fraction)) * videoDuration;
+    }
 
     let st: ScrollTrigger | null = null;
 
@@ -179,50 +217,32 @@ export default function Scratch() {
         anticipatePin: 1,
         scrub: CONFIG.scrubSmoothness,
         onUpdate: (self) => {
-          state.frameIndex = self.progress * (CONFIG.frameCount - 1);
-          state.gapProgress = 1 - self.progress;
+          const split = CONFIG.gifPhaseFraction;
 
-          if (self.progress >= 1) {
-            enterVideoMode();
-          } else {
-            exitVideoMode();
+          if (self.progress <= split) {
+            exitVideoPhase();
+            const gifProgress = self.progress / split;
+            state.frameIndex = gifProgress * (CONFIG.frameCount - 1);
+            state.gapProgress = 1 - gifProgress;
             drawCurrentFrame();
+          } else {
+            enterVideoPhase();
+            const videoProgress = (self.progress - split) / (1 - split);
+            scrubVideoTo(videoProgress);
           }
         },
         onRefresh: () => drawCurrentFrame()
       });
     }
 
-    // Once fully assembled (video mode), block further downward scroll so the
-    // page can't advance past this section. Scrolling up still works normally
-    // and will naturally drop ScrollTrigger's progress below 1, which
-    // reverses back into the strip animation via onUpdate above.
-    function onWheel(e: WheelEvent) {
-      if (inVideoMode && e.deltaY > 0) {
-        e.preventDefault();
-      }
-    }
-
-    // Best-effort touch equivalent: block upward finger drags (which scroll
-    // the page down) while in video mode; allow downward drags (scroll up).
-    let touchStartY = 0;
-    function onTouchStart(e: TouchEvent) {
-      touchStartY = e.touches[0].clientY;
-    }
-    function onTouchMove(e: TouchEvent) {
-      if (!inVideoMode) return;
-      const dy = touchStartY - e.touches[0].clientY;
-      if (dy > 0) {
-        e.preventDefault();
-      }
-    }
-
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-
     const onResize = () => resizeCanvas();
     window.addEventListener("resize", onResize);
+
+    function onLoadedMetadata() {
+      videoDuration = video.duration || 0;
+      positionVideoBox();
+    }
+    video.addEventListener("loadedmetadata", onLoadedMetadata);
 
     resizeCanvas();
     drawCurrentFrame();
@@ -235,10 +255,8 @@ export default function Scratch() {
 
     return () => {
       window.removeEventListener("resize", onResize);
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      unmuteBtn.removeEventListener("click", onUnmuteClick);
+      video.removeEventListener("loadedmetadata", onLoadedMetadata);
+      unmuteLink.removeEventListener("click", onUnmuteClick);
       st?.kill();
     };
   }, []);
@@ -255,6 +273,82 @@ export default function Scratch() {
           background: "#ffffff"
         }}
       >
+        {/* Video sits at the back */}
+        <div
+          ref={videoWrapRef}
+          style={{
+            position: "absolute",
+            inset: 0,
+            opacity: 0,
+            pointerEvents: "none",
+            zIndex: 10
+          }}
+        >
+          <video
+            ref={videoRef}
+            src="/part2/scratch-video.mp4"
+            playsInline
+            preload="auto"
+            style={{
+              position: "absolute"
+            }}
+          />
+        </div>
+
+        {/* Mute prompt sits in the middle layer — above the video, behind the gif */}
+        <div
+          ref={muteOverlayRef}
+          style={{
+            display: "none",
+            position: "absolute",
+            top: "6vh",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "80vw",
+            zIndex: 20,
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 12,
+            pointerEvents: "none"
+          }}
+        >
+          <div
+            style={{
+              ...sfPro,
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+              color: "#000",
+              fontSize: "clamp(28px, 6vw, 64px)",
+              textAlign: "center",
+              lineHeight: 1.05
+            }}
+          >
+            SID, YOU'RE ON MUTE
+          </div>
+          <div
+            style={{
+              ...sfPro,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              fontSize: 14,
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              color: "#000"
+            }}
+          >
+            <span>↑ press</span>
+            <span
+              ref={unmuteLinkRef}
+              style={{ textDecoration: "underline", cursor: "pointer", pointerEvents: "auto" }}
+            >
+              unmute
+            </span>
+          </div>
+        </div>
+
+        {/* Gif frames render on top of everything */}
         <div
           ref={stageRef}
           style={{
@@ -263,7 +357,8 @@ export default function Scratch() {
             left: "50%",
             width: "100%",
             height: "100vh",
-            transform: "translate(-50%, -50%)"
+            transform: "translate(-50%, -50%)",
+            zIndex: 30
           }}
         >
           <canvas
@@ -289,7 +384,7 @@ export default function Scratch() {
             justifyContent: "center",
             background: "#ffffff",
             transition: "opacity 0.4s ease",
-            zIndex: 5
+            zIndex: 40
           }}
         >
           <div
@@ -298,55 +393,6 @@ export default function Scratch() {
           >
             Loading… 0%
           </div>
-        </div>
-
-        {/* Fullscreen video takeover — hidden until the strip animation
-            fully assembles, then hard-cuts in at 100vw x 100vh. */}
-        <div
-          ref={videoWrapRef}
-          style={{
-            position: "absolute",
-            inset: 0,
-            opacity: 0,
-            pointerEvents: "none",
-            zIndex: 10,
-            background: "#000"
-          }}
-        >
-          <video
-            ref={videoRef}
-            src="/part2/scratch-video.mp4"
-            playsInline
-            loop
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover"
-            }}
-          />
-
-          <button
-            ref={unmuteBtnRef}
-            style={{
-              display: "none",
-              position: "absolute",
-              bottom: 24,
-              left: "50%",
-              transform: "translateX(-50%)",
-              zIndex: 20,
-              padding: "10px 18px",
-              borderRadius: 999,
-              border: "none",
-              background: "rgba(0,0,0,0.7)",
-              color: "#fff",
-              fontSize: 14,
-              cursor: "pointer"
-            }}
-          >
-            🔊 Tap for sound
-          </button>
         </div>
       </div>
     </div>
