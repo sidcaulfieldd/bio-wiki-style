@@ -16,10 +16,10 @@ export default function Scratch() {
 
     const CONFIG = {
       frameFolder: "", // frames sit directly in /public, served at site root
-      frameCount: 100,
+      frameCount: 80,
       framePrefix: "frame_",
       frameDigits: 4,
-      frameExt: "jpg",
+      frameExt: "png",
 
       stripCount: 10,
       maxGap: 90,           // desired gap; auto-clamped so it always fits vertically
@@ -97,8 +97,6 @@ export default function Scratch() {
       if (!cw || !ch) return;
 
       ctx.clearRect(0, 0, cw, ch);
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, cw, ch);
 
       const idx = Math.min(CONFIG.frameCount - 1, Math.max(0, Math.round(state.frameIndex)));
       const img = frames[idx];
@@ -212,8 +210,7 @@ export default function Scratch() {
               left: 0,
               width: "100%",
               height: "100%",
-              display: "block",
-              background: "#ffffff"
+              display: "block"
             }}
           />
         </div>
