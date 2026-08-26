@@ -10,40 +10,44 @@ export default function Scratch() {
   const pinRef = useRef<HTMLDivElement>(null);
   const loaderTextRef = useRef<HTMLDivElement>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoWrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     const CONFIG = {
-      frameFolder: "", // frames sit directly in /public, served at site root
-      frameCount: 80,
+      frameFolder: "/part2", // new frames + video live in their own subfolder to avoid colliding with the old set
+      frameCount: 61,
       framePrefix: "frame_",
       frameDigits: 4,
       frameExt: "png",
 
       stripCount: 10,
-      maxGap: 90,           // desired gap; auto-clamped so it always fits vertically
+      maxGap: 90,
       scrubSmoothness: 0.1,
       pinSpacerMultiplier: 1.5,
-      targetHeightFraction: 0.8 // final assembled frame's height = 80% of the page
+      targetHeightFraction: 0.8
     };
 
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
     const pinTarget = pinRef.current!;
     const stage = stageRef.current!;
+    const video = videoRef.current!;
+    const videoWrap = videoWrapRef.current!;
 
     const frames: HTMLImageElement[] = [];
     let framesLoaded = 0;
 
     const state = { frameIndex: 0, gapProgress: 1 };
+    let inVideoMode = false;
 
     function padNumber(n: number, digits: number) {
       return String(n).padStart(digits, "0");
     }
 
     function frameUrl(index: number) {
-      // frameFolder is "", so this resolves to "/frame_0001.jpg" etc. — root of /public
       return `${CONFIG.frameFolder}/${CONFIG.framePrefix}${padNumber(index, CONFIG.frameDigits)}.${CONFIG.frameExt}`;
     }
 
@@ -104,9 +108,6 @@ export default function Scratch() {
 
       const imgRatio = img.naturalWidth / img.naturalHeight;
 
-      // Final assembled frame's visible height = drawH exactly (gaps collapse
-      // to 0), so sizing drawH directly to a fraction of the page gives an
-      // exact, predictable result rather than an indirect scale multiplier.
       const drawH = ch * CONFIG.targetHeightFraction;
       const drawW = drawH * imgRatio;
       const offsetX = (cw - drawW) / 2;
@@ -116,13 +117,7 @@ export default function Scratch() {
       const srcStripH = img.naturalHeight / strips;
       const dstStripH = drawH / strips;
 
-      // Desired starting gap (at gapProgress = 1), scaled to the portrait's own height.
       const desiredMaxGap = CONFIG.maxGap * (drawH / 900);
-
-      // Hard clamp on the STARTING gap so the most-elongated (initial) frame
-      // always fits fully within the page. Clamping the max up front (rather
-      // than clamping each frame's gap individually) keeps the shrink linear
-      // across the whole scroll instead of plateauing partway through.
       const maxAvailableGap = strips > 1 ? Math.max(0, (ch - drawH) / (strips - 1)) : 0;
       const effectiveMaxGap = Math.min(desiredMaxGap, maxAvailableGap);
       const gapPx = effectiveMaxGap * state.gapProgress;
@@ -135,6 +130,25 @@ export default function Scratch() {
         const dstY = stackStartY + s * (dstStripH + gapPx);
         ctx.drawImage(img, 0, srcY, img.naturalWidth, srcStripH, offsetX, dstY, drawW, dstStripH);
       }
+    }
+
+    function enterVideoMode() {
+      if (inVideoMode) return;
+      inVideoMode = true;
+      videoWrap.style.opacity = "1";
+      videoWrap.style.pointerEvents = "auto";
+      video.currentTime = 0;
+      video.play().catch(() => {
+        // Autoplay can be blocked in rare cases; muted+playsInline covers most browsers.
+      });
+    }
+
+    function exitVideoMode() {
+      if (!inVideoMode) return;
+      inVideoMode = false;
+      videoWrap.style.opacity = "0";
+      videoWrap.style.pointerEvents = "none";
+      video.pause();
     }
 
     let st: ScrollTrigger | null = null;
@@ -150,11 +164,45 @@ export default function Scratch() {
         onUpdate: (self) => {
           state.frameIndex = self.progress * (CONFIG.frameCount - 1);
           state.gapProgress = 1 - self.progress;
-          drawCurrentFrame();
+
+          if (self.progress >= 1) {
+            enterVideoMode();
+          } else {
+            exitVideoMode();
+            drawCurrentFrame();
+          }
         },
         onRefresh: () => drawCurrentFrame()
       });
     }
+
+    // Once fully assembled (video mode), block further downward scroll so the
+    // page can't advance past this section. Scrolling up still works normally
+    // and will naturally drop ScrollTrigger's progress below 1, which
+    // reverses back into the strip animation via onUpdate above.
+    function onWheel(e: WheelEvent) {
+      if (inVideoMode && e.deltaY > 0) {
+        e.preventDefault();
+      }
+    }
+
+    // Best-effort touch equivalent: block upward finger drags (which scroll
+    // the page down) while in video mode; allow downward drags (scroll up).
+    let touchStartY = 0;
+    function onTouchStart(e: TouchEvent) {
+      touchStartY = e.touches[0].clientY;
+    }
+    function onTouchMove(e: TouchEvent) {
+      if (!inVideoMode) return;
+      const dy = touchStartY - e.touches[0].clientY;
+      if (dy > 0) {
+        e.preventDefault();
+      }
+    }
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
 
     const onResize = () => resizeCanvas();
     window.addEventListener("resize", onResize);
@@ -170,6 +218,9 @@ export default function Scratch() {
 
     return () => {
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
       st?.kill();
     };
   }, []);
@@ -229,6 +280,35 @@ export default function Scratch() {
           >
             Loading… 0%
           </div>
+        </div>
+
+        {/* Fullscreen video takeover — hidden until the strip animation
+            fully assembles, then hard-cuts in at 100vw x 100vh. */}
+        <div
+          ref={videoWrapRef}
+          style={{
+            position: "absolute",
+            inset: 0,
+            opacity: 0,
+            pointerEvents: "none",
+            zIndex: 10,
+            background: "#000"
+          }}
+        >
+          <video
+            ref={videoRef}
+            src="/part2/scratch-video.mp4"
+            muted
+            playsInline
+            loop
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover"
+            }}
+          />
         </div>
       </div>
     </div>
