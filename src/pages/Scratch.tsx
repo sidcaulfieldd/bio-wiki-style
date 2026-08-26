@@ -106,10 +106,17 @@ export default function Scratch() {
       const img = frames[idx];
       if (!img || !img.complete || img.naturalWidth === 0) return;
 
-      const imgRatio = img.naturalWidth / img.naturalHeight;
+      // Start small (targetHeightFraction of the page) and grow smoothly to
+      // an exact "cover the whole page" size by the time scrolling finishes
+      // — the same math CSS object-fit:cover uses for the video. Landing on
+      // an identical scale/position means the hard cut to video is seamless.
+      const sizeProgress = 1 - state.gapProgress; // 0 at start, 1 when fully assembled
+      const scaleStart = (ch * CONFIG.targetHeightFraction) / img.naturalHeight;
+      const scaleCover = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+      const scale = scaleStart + (scaleCover - scaleStart) * sizeProgress;
 
-      const drawH = ch * CONFIG.targetHeightFraction;
-      const drawW = drawH * imgRatio;
+      const drawH = img.naturalHeight * scale;
+      const drawW = img.naturalWidth * scale;
       const offsetX = (cw - drawW) / 2;
       const offsetY = (ch - drawH) / 2;
 
@@ -138,8 +145,17 @@ export default function Scratch() {
       videoWrap.style.opacity = "1";
       videoWrap.style.pointerEvents = "auto";
       video.currentTime = 0;
+
+      // The user has already interacted with the page (scrolling), so try
+      // playing with sound first. Some browsers still block unmuted
+      // autoplay regardless of prior interaction — fall back to muted
+      // playback rather than showing nothing if that happens.
+      video.muted = false;
       video.play().catch(() => {
-        // Autoplay can be blocked in rare cases; muted+playsInline covers most browsers.
+        video.muted = true;
+        video.play().catch(() => {
+          // Autoplay fully blocked; video will show its poster/first frame.
+        });
       });
     }
 
@@ -243,7 +259,7 @@ export default function Scratch() {
             position: "absolute",
             top: "50%",
             left: "50%",
-            width: "min(96vw, 177.78vh)",
+            width: "100%",
             height: "100vh",
             transform: "translate(-50%, -50%)"
           }}
@@ -298,7 +314,6 @@ export default function Scratch() {
           <video
             ref={videoRef}
             src="/part2/scratch-video.mp4"
-            muted
             playsInline
             loop
             style={{
