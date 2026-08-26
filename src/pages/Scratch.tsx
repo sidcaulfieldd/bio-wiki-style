@@ -1,85 +1,244 @@
-{
-  "name": "vite_react_shadcn_ts",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build && cp dist/index.html dist/404.html",
-    "build:dev": "vite build --mode development",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@hookform/resolvers": "^3.10.0",
-    "@radix-ui/react-accordion": "^1.2.11",
-    "@radix-ui/react-alert-dialog": "^1.1.14",
-    "@radix-ui/react-aspect-ratio": "^1.1.7",
-    "@radix-ui/react-avatar": "^1.1.10",
-    "@radix-ui/react-checkbox": "^1.3.2",
-    "@radix-ui/react-collapsible": "^1.1.11",
-    "@radix-ui/react-context-menu": "^2.2.15",
-    "@radix-ui/react-dialog": "^1.1.14",
-    "@radix-ui/react-dropdown-menu": "^2.1.15",
-    "@radix-ui/react-hover-card": "^1.1.14",
-    "@radix-ui/react-label": "^2.1.7",
-    "@radix-ui/react-menubar": "^1.1.15",
-    "@radix-ui/react-navigation-menu": "^1.2.13",
-    "@radix-ui/react-popover": "^1.1.14",
-    "@radix-ui/react-progress": "^1.1.7",
-    "@radix-ui/react-radio-group": "^1.3.7",
-    "@radix-ui/react-scroll-area": "^1.2.9",
-    "@radix-ui/react-select": "^2.2.5",
-    "@radix-ui/react-separator": "^1.1.7",
-    "@radix-ui/react-slider": "^1.3.5",
-    "@radix-ui/react-slot": "^1.2.3",
-    "@radix-ui/react-switch": "^1.2.5",
-    "@radix-ui/react-tabs": "^1.1.12",
-    "@radix-ui/react-toast": "^1.2.14",
-    "@radix-ui/react-toggle": "^1.1.9",
-    "@radix-ui/react-toggle-group": "^1.1.10",
-    "@radix-ui/react-tooltip": "^1.2.7",
-    "@tanstack/react-query": "^5.83.0",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "cmdk": "^1.1.1",
-    "date-fns": "^3.6.0",
-    "embla-carousel-react": "^8.6.0",
-    "gifuct-js": "^2.1.2",
-    "gsap": "^3.12.5",
-    "input-otp": "^1.4.2",
-    "lucide-react": "^0.462.0",
-    "next-themes": "^0.3.0",
-    "react": "^18.3.1",
-    "react-day-picker": "^8.10.1",
-    "react-dom": "^18.3.1",
-    "react-hook-form": "^7.61.1",
-    "react-resizable-panels": "^2.1.9",
-    "react-router-dom": "^6.30.1",
-    "recharts": "^2.15.4",
-    "sonner": "^1.7.4",
-    "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7",
-    "vaul": "^0.9.9",
-    "zod": "^3.25.76"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.32.0",
-    "@tailwindcss/typography": "^0.5.16",
-    "@types/node": "^22.16.5",
-    "@types/react": "^18.3.23",
-    "@types/react-dom": "^18.3.7",
-    "@vitejs/plugin-react-swc": "^3.11.0",
-    "autoprefixer": "^10.4.21",
-    "eslint": "^9.32.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
-    "globals": "^15.15.0",
-    "lovable-tagger": "^1.1.11",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.38.0",
-    "vite": "^5.4.19"
-  }
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Standalone scratch page.
+// No links, nav, or references to any other page on the site.
+export default function Scratch() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
+  const loaderTextRef = useRef<HTMLDivElement>(null);
+  const loaderRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const CONFIG = {
+      frameFolder: "", // frames sit directly in /public, served at site root
+      frameCount: 100,
+      framePrefix: "frame_",
+      frameDigits: 4,
+      frameExt: "jpg",
+
+      stripCount: 10,
+      maxGap: 90,           // desired gap; auto-clamped so it always fits vertically
+      scrubSmoothness: 0.1,
+      pinSpacerMultiplier: 1.5,
+      portraitScale: 0.33
+    };
+
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext("2d")!;
+    const pinTarget = pinRef.current!;
+    const stage = stageRef.current!;
+
+    const frames: HTMLImageElement[] = [];
+    let framesLoaded = 0;
+
+    const state = { frameIndex: 0, gapProgress: 1 };
+
+    function padNumber(n: number, digits: number) {
+      return String(n).padStart(digits, "0");
+    }
+
+    function frameUrl(index: number) {
+      // frameFolder is "", so this resolves to "/frame_0001.jpg" etc. — root of /public
+      return `${CONFIG.frameFolder}/${CONFIG.framePrefix}${padNumber(index, CONFIG.frameDigits)}.${CONFIG.frameExt}`;
+    }
+
+    function resizeCanvas() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = stage.getBoundingClientRect();
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      canvas.style.width = rect.width + "px";
+      canvas.style.height = rect.height + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      drawCurrentFrame();
+    }
+
+    function preloadFrames() {
+      return new Promise<void>((resolve) => {
+        let settled = 0;
+        for (let i = 1; i <= CONFIG.frameCount; i++) {
+          const img = new Image();
+          img.decoding = "async";
+          const onDone = () => {
+            settled++;
+            framesLoaded = settled;
+            if (loaderTextRef.current) {
+              const pct = Math.round((framesLoaded / CONFIG.frameCount) * 100);
+              loaderTextRef.current.textContent = `Loading… ${pct}%`;
+            }
+            if (settled >= CONFIG.frameCount) resolve();
+          };
+          img.onload = onDone;
+          img.onerror = onDone;
+          img.src = frameUrl(i);
+          frames[i - 1] = img;
+        }
+      });
+    }
+
+    function hideLoader() {
+      if (loaderRef.current) {
+        loaderRef.current.style.opacity = "0";
+        setTimeout(() => {
+          if (loaderRef.current) loaderRef.current.style.display = "none";
+        }, 400);
+      }
+    }
+
+    function drawCurrentFrame() {
+      const rect = stage.getBoundingClientRect();
+      const cw = rect.width;
+      const ch = rect.height;
+      if (!cw || !ch) return;
+
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, cw, ch);
+
+      const idx = Math.min(CONFIG.frameCount - 1, Math.max(0, Math.round(state.frameIndex)));
+      const img = frames[idx];
+      if (!img || !img.complete || img.naturalWidth === 0) return;
+
+      const imgRatio = img.naturalWidth / img.naturalHeight;
+      const canvasRatio = cw / ch;
+
+      let baseW, baseH;
+      if (imgRatio > canvasRatio) {
+        baseW = cw;
+        baseH = cw / imgRatio;
+      } else {
+        baseH = ch;
+        baseW = ch * imgRatio;
+      }
+
+      const drawW = baseW * CONFIG.portraitScale;
+      const drawH = baseH * CONFIG.portraitScale;
+      const offsetX = (cw - drawW) / 2;
+      const offsetY = (ch - drawH) / 2;
+
+      const strips = CONFIG.stripCount;
+      const srcStripH = img.naturalHeight / strips;
+      const dstStripH = drawH / strips;
+
+      // Desired gap, scaled to the portrait's own height.
+      const desiredGap = CONFIG.maxGap * (drawH / 900) * state.gapProgress;
+
+      // Hard clamp: total spread (drawH + totalGap) must never exceed the
+      // stage height, so the most-elongated (initial) frame always fits
+      // fully within the viewport, however the config is tuned.
+      const maxAvailableGap = strips > 1 ? Math.max(0, (ch - drawH) / (strips - 1)) : 0;
+      const gapPx = Math.min(desiredGap, maxAvailableGap);
+
+      const totalGap = gapPx * (strips - 1);
+      const stackStartY = offsetY - totalGap / 2;
+
+      for (let s = 0; s < strips; s++) {
+        const srcY = s * srcStripH;
+        const dstY = stackStartY + s * (dstStripH + gapPx);
+        ctx.drawImage(img, 0, srcY, img.naturalWidth, srcStripH, offsetX, dstY, drawW, dstStripH);
+      }
+    }
+
+    let st: ScrollTrigger | null = null;
+
+    function initScrollTrigger() {
+      st = ScrollTrigger.create({
+        trigger: pinTarget,
+        start: "top top",
+        end: () => `+=${window.innerHeight * CONFIG.pinSpacerMultiplier}`,
+        pin: true,
+        anticipatePin: 1,
+        scrub: CONFIG.scrubSmoothness,
+        onUpdate: (self) => {
+          state.frameIndex = self.progress * (CONFIG.frameCount - 1);
+          state.gapProgress = 1 - self.progress;
+          drawCurrentFrame();
+        },
+        onRefresh: () => drawCurrentFrame()
+      });
+    }
+
+    const onResize = () => resizeCanvas();
+    window.addEventListener("resize", onResize);
+
+    resizeCanvas();
+    drawCurrentFrame();
+
+    preloadFrames().then(() => {
+      resizeCanvas();
+      hideLoader();
+      initScrollTrigger();
+    });
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      st?.kill();
+    };
+  }, []);
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#ffffff" }}>
+      <div
+        ref={pinRef}
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "100vh",
+          overflow: "hidden",
+          background: "#ffffff"
+        }}
+      >
+        <div
+          ref={stageRef}
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: "min(96vw, 177.78vh)",
+            height: "min(54vw, 100vh)",
+            transform: "translate(-50%, -50%)"
+          }}
+        >
+          <canvas
+            ref={canvasRef}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              display: "block",
+              background: "#ffffff"
+            }}
+          />
+        </div>
+
+        <div
+          ref={loaderRef}
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#ffffff",
+            transition: "opacity 0.4s ease",
+            zIndex: 5
+          }}
+        >
+          <div
+            ref={loaderTextRef}
+            style={{ fontSize: 13, letterSpacing: "0.04em", color: "#666" }}
+          >
+            Loading… 0%
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
