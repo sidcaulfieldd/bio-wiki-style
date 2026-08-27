@@ -33,7 +33,6 @@ export default function Scratch() {
 
       scrubSmoothness: 0.1,
       pinSpacerMultiplier: 3,
-      targetHeightFraction: 0.8,
 
       gifScrubRate: 0.4 // how much scroll (as a fraction of the whole pin) it takes to traverse the entire gif — used as a rate, not a fixed boundary
     };
@@ -65,7 +64,11 @@ export default function Scratch() {
     }
 
     function computeBox(cw: number, ch: number, naturalW: number, naturalH: number) {
-      const scale = (ch * CONFIG.targetHeightFraction) / naturalH;
+      // Fixed full-screen "cover" size — fills the entire viewport
+      // (cropping overflow), constant from the very first frame. No growth,
+      // no shrink-to-a-fraction — same fixed size for both the gif and the
+      // video, on both desktop and mobile.
+      const scale = Math.max(cw / naturalW, ch / naturalH);
       const drawW = naturalW * scale;
       const drawH = naturalH * scale;
       const offsetX = (cw - drawW) / 2;
