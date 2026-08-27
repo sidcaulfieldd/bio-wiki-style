@@ -194,7 +194,6 @@ export default function Scratch() {
     let targetVideoTime = 0;
     let rewindRAF: number | null = null;
     const REWIND_EASE = 0.25;
-    let bouncingBack = false;
 
     function stopRewindLoop() {
       if (rewindRAF !== null) {
@@ -279,7 +278,6 @@ export default function Scratch() {
         anticipatePin: 1,
         scrub: CONFIG.scrubSmoothness,
         onUpdate: (self) => {
-          if (bouncingBack) return;
           const split = CONFIG.gifPhaseFraction;
           const progress = self.progress;
           const scrollingUp = progress < prevProgress;
@@ -294,19 +292,21 @@ export default function Scratch() {
               drawCurrentFrame();
             }
           } else {
-            if (progress <= split) {
-              if (targetVideoTime > 0.05) {
-                bouncingBack = true;
-                self.scroll(self.start + split * (self.end - self.start));
-                prevProgress = split;
-                bouncingBack = false;
-                return;
-              }
-              exitToGif();
-            } else if (scrollingUp) {
+            // In the video's zone (playing or rewinding). Since the visible
+            // canvas/video are a fixed overlay decoupled from real scroll
+            // position, there's no need to artificially hold the scroll in
+            // place while rewinding — just keep processing scroll input
+            // normally, and only flip back to the gif once BOTH the video
+            // has actually finished rewinding AND scroll has genuinely
+            // returned to the gif's portion of the range.
+            if (scrollingUp) {
               rewindBy(prevProgress - progress);
             } else if (mode === "video-rewinding") {
               startPlayingForward();
+            }
+
+            if (targetVideoTime <= 0.05 && progress <= split) {
+              exitToGif();
             }
           }
 
