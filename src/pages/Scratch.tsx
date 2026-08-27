@@ -89,6 +89,14 @@ export default function Scratch() {
     }
 
     function resizeCanvas() {
+      // iOS Safari's 100vh includes space behind the collapsible address
+      // bar and can misreport the real visible height at certain scroll
+      // moments — setting an explicit pixel height from window.innerHeight
+      // is more reliable than trusting the CSS value alone.
+      const vh = `${window.innerHeight}px`;
+      pinTarget.style.height = vh;
+      stage.style.height = vh;
+
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const rect = stage.getBoundingClientRect();
       canvas.width = Math.round(rect.width * dpr);
@@ -173,6 +181,18 @@ export default function Scratch() {
       videoWrap.style.pointerEvents = "auto";
       canvas.style.opacity = "0";
       positionVideoBox();
+      // Retry sizing across the next several frames — on some mobile
+      // browsers the container's layout isn't fully settled at the exact
+      // instant we enter, so the first attempt can silently compute a 0x0
+      // box and leave the video stuck at its tiny placeholder size even
+      // though it's genuinely playing (audible but invisible).
+      let retries = 10;
+      function retryPositioning() {
+        positionVideoBox();
+        retries--;
+        if (retries > 0) requestAnimationFrame(retryPositioning);
+      }
+      requestAnimationFrame(retryPositioning);
       if (!userUnmuted) {
         video.muted = true;
       }
@@ -279,6 +299,9 @@ export default function Scratch() {
       muteTitle.style.width = isMobile ? "92vw" : "80vw";
     }
     window.addEventListener("resize", onResize);
+    // iOS Safari doesn't reliably fire window 'resize' when just the
+    // collapsible address bar changes during scroll — visualViewport does.
+    window.visualViewport?.addEventListener("resize", onResize);
 
     function onLoadedMetadata() {
       videoDuration = video.duration || 0;
@@ -301,6 +324,7 @@ export default function Scratch() {
 
     return () => {
       window.removeEventListener("resize", onResize);
+      window.visualViewport?.removeEventListener("resize", onResize);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
