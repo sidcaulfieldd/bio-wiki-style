@@ -76,10 +76,18 @@ export default function Scratch() {
       return { drawW, drawH, offsetX, offsetY };
     }
 
+    // Cached stage size — updated ONLY on real resize/orientation events,
+    // never read fresh mid-scroll. iOS Safari's address bar collapses and
+    // expands as you scroll, which transiently changes the real viewport
+    // height; recalculating size from getBoundingClientRect() on every
+    // single frame update picks up that fluctuation and makes the frame
+    // visibly resize while scrolling, looking exactly like unwanted growth.
+    let cachedCw = 0;
+    let cachedCh = 0;
+
     function positionVideoBox() {
-      const rect = stage.getBoundingClientRect();
-      const cw = rect.width;
-      const ch = rect.height;
+      const cw = cachedCw;
+      const ch = cachedCh;
       const naturalW = video.videoWidth || 1920;
       const naturalH = video.videoHeight || 960;
       if (!cw || !ch) return;
@@ -100,12 +108,15 @@ export default function Scratch() {
       pinTarget.style.height = vh;
       stage.style.height = vh;
 
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const rect = stage.getBoundingClientRect();
-      canvas.width = Math.round(rect.width * dpr);
-      canvas.height = Math.round(rect.height * dpr);
-      canvas.style.width = rect.width + "px";
-      canvas.style.height = rect.height + "px";
+      cachedCw = rect.width;
+      cachedCh = rect.height;
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(cachedCw * dpr);
+      canvas.height = Math.round(cachedCh * dpr);
+      canvas.style.width = cachedCw + "px";
+      canvas.style.height = cachedCh + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       drawCurrentFrame();
       positionVideoBox();
@@ -144,9 +155,8 @@ export default function Scratch() {
     }
 
     function drawCurrentFrame() {
-      const rect = stage.getBoundingClientRect();
-      const cw = rect.width;
-      const ch = rect.height;
+      const cw = cachedCw;
+      const ch = cachedCh;
       if (!cw || !ch) return;
 
       ctx.clearRect(0, 0, cw, ch);
@@ -183,15 +193,18 @@ export default function Scratch() {
       videoWrap.style.opacity = "1";
       videoWrap.style.pointerEvents = "auto";
       canvas.style.opacity = "0";
-      positionVideoBox();
+      resizeCanvas();
       // Retry sizing across the next several frames — on some mobile
       // browsers the container's layout isn't fully settled at the exact
-      // instant we enter, so the first attempt can silently compute a 0x0
+      // instant we enter, so the first attempt can silently cache a 0x0
       // box and leave the video stuck at its tiny placeholder size even
-      // though it's genuinely playing (audible but invisible).
+      // though it's genuinely playing (audible but invisible). Calling
+      // resizeCanvas() (not just positionVideoBox()) each retry is what
+      // actually re-measures the real layout instead of reusing the same
+      // stale cached value.
       let retries = 10;
       function retryPositioning() {
-        positionVideoBox();
+        resizeCanvas();
         retries--;
         if (retries > 0) requestAnimationFrame(retryPositioning);
       }
