@@ -300,9 +300,19 @@ export default function Scratch() {
       });
     }
 
+    // Debounced — iOS can fire visualViewport 'resize' repeatedly with
+    // intermediate values WHILE the address bar is still mid-animation
+    // (not just once at the end), and reacting to every single one causes
+    // visible resizing throughout the scroll gesture itself. Waiting for
+    // the events to actually stop before applying anything means only the
+    // final, settled size ever gets used.
+    let resizeDebounce: ReturnType<typeof setTimeout> | null = null;
     const onResize = () => {
-      resizeCanvas();
-      applyResponsiveTitle();
+      if (resizeDebounce) clearTimeout(resizeDebounce);
+      resizeDebounce = setTimeout(() => {
+        resizeCanvas();
+        applyResponsiveTitle();
+      }, 200);
     };
 
     // Mobile-only: allow the title to wrap onto multiple centered lines
@@ -315,9 +325,12 @@ export default function Scratch() {
       muteTitle.style.width = isMobile ? "92vw" : "80vw";
     }
     window.addEventListener("resize", onResize);
-    // iOS Safari doesn't reliably fire window 'resize' when just the
-    // collapsible address bar changes during scroll — visualViewport does.
-    window.visualViewport?.addEventListener("resize", onResize);
+    // Deliberately NOT listening to visualViewport 'resize' — on iOS that
+    // fires repeatedly with intermediate values WHILE the address bar is
+    // still mid-collapse during scroll, and reacting to those is exactly
+    // what caused the visible "growing" effect. Measuring size once at
+    // mount and only re-measuring on a genuine window resize (e.g. device
+    // rotation) keeps it perfectly stable through every scroll gesture.
 
     function onLoadedMetadata() {
       videoDuration = video.duration || 0;
@@ -340,7 +353,6 @@ export default function Scratch() {
 
     return () => {
       window.removeEventListener("resize", onResize);
-      window.visualViewport?.removeEventListener("resize", onResize);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
@@ -382,8 +394,10 @@ export default function Scratch() {
             muted
             style={{
               position: "absolute",
-              width: "1px",
-              height: "1px"
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%"
             }}
           />
         </div>
