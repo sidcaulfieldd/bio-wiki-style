@@ -187,6 +187,7 @@ export default function Scratch() {
     }
 
     let prevProgress = 0;
+    let revertedAboveSplit = false;
 
     function startPlayingForward() {
       video.play().catch(() => {});
@@ -227,15 +228,43 @@ export default function Scratch() {
           const progress = self.progress;
           const scrollingUp = progress < prevProgress;
 
-          // Any upward scroll while in the video instantly reverts to the
-          // gif — snapping to the last (fully-assembled) frame — rather
-          // than rewinding through the video first.
-          if (progress <= split || (inVideoPhase && scrollingUp)) {
+          if (progress <= split) {
+            // Fully back in the gif's own natural range — clear the revert
+            // flag so a future forward scroll can re-enter the video normally.
+            revertedAboveSplit = false;
+            exitVideoPhase();
+            const gifProgress = progress / split;
+            state.frameIndex = gifProgress * (CONFIG.frameCount - 1);
+            state.gapProgress = 1 - gifProgress;
+            drawCurrentFrame();
+          } else if (inVideoPhase && scrollingUp) {
+            // Instant revert — snap to the last gif frame. Setting this flag
+            // is what stops the flutter: without it, the very next tick
+            // would see progress still above split and immediately
+            // re-enter the video, which could then re-exit on the next
+            // tiny scroll wobble, flickering back and forth.
+            revertedAboveSplit = true;
             exitVideoPhase();
             const gifProgress = Math.min(1, progress / split);
             state.frameIndex = gifProgress * (CONFIG.frameCount - 1);
             state.gapProgress = 1 - gifProgress;
             drawCurrentFrame();
+          } else if (revertedAboveSplit) {
+            if (scrollingUp) {
+              // Still scrolling up (or holding still) while reverted — stay
+              // on the gif, don't auto re-enter just because progress is
+              // numerically still above split.
+              const gifProgress = Math.min(1, progress / split);
+              state.frameIndex = gifProgress * (CONFIG.frameCount - 1);
+              state.gapProgress = 1 - gifProgress;
+              drawCurrentFrame();
+            } else {
+              // Genuinely reversed direction back to scrolling down —
+              // allow re-entry into the video.
+              revertedAboveSplit = false;
+              enterVideoPhase();
+              startPlayingForward();
+            }
           } else {
             const justEntered = !inVideoPhase;
             enterVideoPhase();
@@ -348,13 +377,14 @@ export default function Scratch() {
               pointerEvents: "none"
             }}
           >
-            I'M ON MUTE. PRESS{" "}
+            SID, YOU'RE ON MUTE. PRESS{" "}
             <span
               ref={unmuteLinkRef}
               style={{ textDecoration: "underline", cursor: "pointer", pointerEvents: "auto" }}
             >
               UNMUTE
             </span>
+            .
           </div>
         </div>
 
