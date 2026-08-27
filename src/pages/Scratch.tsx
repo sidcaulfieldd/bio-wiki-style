@@ -34,7 +34,7 @@ export default function Scratch() {
       pinSpacerMultiplier: 3,
       targetHeightFraction: 0.8,
 
-      gifPhaseFraction: 0.4
+      gifScrubRate: 0.4 // how much scroll (as a fraction of the whole pin) it takes to traverse the entire gif — used as a rate, not a fixed boundary
     };
 
     const canvas = canvasRef.current!;
@@ -187,8 +187,7 @@ export default function Scratch() {
     }
 
     let prevProgress = 0;
-    let revertedAboveSplit = false;
-    let revertStartProgress = 0;
+    let gifVirtualProgress = 0; // single source of truth for gif frame — moves forward/backward symmetrically with scroll, in both directions
 
     function startPlayingForward() {
       video.play().catch(() => {});
@@ -225,57 +224,37 @@ export default function Scratch() {
         anticipatePin: 1,
         scrub: CONFIG.scrubSmoothness,
         onUpdate: (self) => {
-          const split = CONFIG.gifPhaseFraction;
           const progress = self.progress;
-          const scrollingUp = progress < prevProgress;
+          const delta = progress - prevProgress;
 
-          if (progress <= split) {
-            // Fully back in the gif's own natural range — clear the revert
-            // flag so a future forward scroll can re-enter the video normally.
-            revertedAboveSplit = false;
-            exitVideoPhase();
-            const gifProgress = progress / split;
-            state.frameIndex = gifProgress * (CONFIG.frameCount - 1);
-            state.gapProgress = 1 - gifProgress;
+          if (!inVideoPhase) {
+            // Gif is visible — accumulate the same way whether scrolling
+            // forward or backward, so reversing is a perfect mirror of
+            // playing forward, not a separate formula that can disagree
+            // with this one at some boundary.
+            gifVirtualProgress = Math.max(0, Math.min(1, gifVirtualProgress + delta / CONFIG.gifScrubRate));
+            state.frameIndex = gifVirtualProgress * (CONFIG.frameCount - 1);
+            state.gapProgress = 1 - gifVirtualProgress;
             drawCurrentFrame();
-          } else if (inVideoPhase && scrollingUp) {
-            // Instant revert — snap to the last gif frame and remember
-            // exactly where this happened. Using THIS point as a fresh
-            // reference (rather than the original progress/split formula,
-            // which stays clamped at 1 for any progress still above split)
-            // is what makes the frame start decreasing immediately on the
-            // very next scroll tick instead of "holding" until progress
-            // drops all the way down to the original boundary.
-            revertedAboveSplit = true;
-            revertStartProgress = progress;
-            exitVideoPhase();
-            state.frameIndex = CONFIG.frameCount - 1;
-            state.gapProgress = 0;
-            drawCurrentFrame();
-          } else if (revertedAboveSplit) {
-            if (scrollingUp) {
-              // Immediate, linear continuation from the revert point —
-              // same per-scroll-unit rate as normal gif scrubbing, just
-              // measured from where the revert happened instead of from
-              // the original split boundary.
-              const gifProgress = Math.max(0, Math.min(1, 1 - (revertStartProgress - progress) / split));
-              state.frameIndex = gifProgress * (CONFIG.frameCount - 1);
-              state.gapProgress = 1 - gifProgress;
-              drawCurrentFrame();
-            } else {
-              // Genuinely reversed direction back to scrolling down —
-              // allow re-entry into the video.
-              revertedAboveSplit = false;
+
+            if (gifVirtualProgress >= 1 && delta > 0) {
+              // Fully assembled and still pushing forward — hand off to video.
               enterVideoPhase();
               startPlayingForward();
             }
-          } else {
-            const justEntered = !inVideoPhase;
-            enterVideoPhase();
-            if (justEntered) {
-              startPlayingForward();
-            }
+          } else if (delta < 0) {
+            // Scrolling up while in the video — instant revert to the last
+            // gif frame, then immediately keep applying this same tick's
+            // movement so it starts decreasing right away, no held frame.
+            exitVideoPhase();
+            gifVirtualProgress = Math.max(0, Math.min(1, 1 + delta / CONFIG.gifScrubRate));
+            state.frameIndex = gifVirtualProgress * (CONFIG.frameCount - 1);
+            state.gapProgress = 1 - gifVirtualProgress;
+            drawCurrentFrame();
           }
+          // else: in video phase, scrolling down (or still) — forward
+          // scroll is blocked by onWheel/onTouchMove anyway; video just
+          // keeps playing on its own.
 
           prevProgress = progress;
         },
