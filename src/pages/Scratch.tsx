@@ -188,6 +188,7 @@ export default function Scratch() {
 
     let prevProgress = 0;
     let revertedAboveSplit = false;
+    let revertStartProgress = 0;
 
     function startPlayingForward() {
       video.play().catch(() => {});
@@ -238,23 +239,26 @@ export default function Scratch() {
             state.gapProgress = 1 - gifProgress;
             drawCurrentFrame();
           } else if (inVideoPhase && scrollingUp) {
-            // Instant revert — snap to the last gif frame. Setting this flag
-            // is what stops the flutter: without it, the very next tick
-            // would see progress still above split and immediately
-            // re-enter the video, which could then re-exit on the next
-            // tiny scroll wobble, flickering back and forth.
+            // Instant revert — snap to the last gif frame and remember
+            // exactly where this happened. Using THIS point as a fresh
+            // reference (rather than the original progress/split formula,
+            // which stays clamped at 1 for any progress still above split)
+            // is what makes the frame start decreasing immediately on the
+            // very next scroll tick instead of "holding" until progress
+            // drops all the way down to the original boundary.
             revertedAboveSplit = true;
+            revertStartProgress = progress;
             exitVideoPhase();
-            const gifProgress = Math.min(1, progress / split);
-            state.frameIndex = gifProgress * (CONFIG.frameCount - 1);
-            state.gapProgress = 1 - gifProgress;
+            state.frameIndex = CONFIG.frameCount - 1;
+            state.gapProgress = 0;
             drawCurrentFrame();
           } else if (revertedAboveSplit) {
             if (scrollingUp) {
-              // Still scrolling up (or holding still) while reverted — stay
-              // on the gif, don't auto re-enter just because progress is
-              // numerically still above split.
-              const gifProgress = Math.min(1, progress / split);
+              // Immediate, linear continuation from the revert point —
+              // same per-scroll-unit rate as normal gif scrubbing, just
+              // measured from where the revert happened instead of from
+              // the original split boundary.
+              const gifProgress = Math.max(0, Math.min(1, 1 - (revertStartProgress - progress) / split));
               state.frameIndex = gifProgress * (CONFIG.frameCount - 1);
               state.gapProgress = 1 - gifProgress;
               drawCurrentFrame();
