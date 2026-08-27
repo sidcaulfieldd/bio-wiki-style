@@ -177,7 +177,6 @@ export default function Scratch() {
       videoWrap.style.opacity = "1";
       videoWrap.style.pointerEvents = "auto";
       canvas.style.opacity = "0"; // hide the frozen gif frame — clean video only
-      video.pause(); // paused — position is driven directly by scroll, not autoplay
       positionVideoBox(); // safety net in case earlier sizing calls ran before layout was ready
       if (!userUnmuted) {
         video.muted = true;
@@ -191,20 +190,53 @@ export default function Scratch() {
       videoWrap.style.pointerEvents = "none";
       canvas.style.opacity = "1"; // gif visible again
       video.pause();
+      video.currentTime = 0; // next entry always starts fresh from the beginning
     }
 
-    // Scrub the video's playback position directly to match scroll — this is
-    // what makes scrolling up genuinely rewind it frame-by-frame, at
-    // whatever pace the person scrolls, rather than cutting back to the gif.
-    // Browser limitation: HTML5 video only plays audio smoothly during real
-    // forward playback — jumping currentTime around (in either direction)
-    // is silent/choppy in virtually all browsers, so audio will not be
-    // audible during the scrub itself even though currentTime moves
-    // correctly and the visuals scrub perfectly.
-    function scrubVideoTo(fraction: number) {
-      if (!videoDuration) return;
-      video.currentTime = Math.max(0, Math.min(1, fraction)) * videoDuration;
+    // Once in the video's zone: forward scroll is locked out entirely (you
+    // can't scroll further down), and the video just plays normally with
+    // sound. Scrolling up pauses it and rewinds by however much you scroll
+    // — silent, since real reverse audio isn't something browsers support,
+    // but it tracks scroll pace exactly like the original gif scrubbing did.
+    let videoMode: "playing" | "rewinding" = "playing";
+    let prevProgress = 0;
+
+    function startPlayingForward() {
+      videoMode = "playing";
+      video.play().catch(() => {});
     }
+
+    function rewindBy(progressDelta: number) {
+      if (!videoDuration) return;
+      videoMode = "rewinding";
+      video.pause();
+      const REWIND_SENSITIVITY = 1 / (1 - CONFIG.gifPhaseFraction);
+      const dt = progressDelta * videoDuration * REWIND_SENSITIVITY;
+      video.currentTime = Math.max(0, Math.min(videoDuration, video.currentTime - dt));
+    }
+
+    // Blocks scrolling further down once inside the video's zone; scrolling
+    // up always passes through so ScrollTrigger's own progress can decrease
+    // and drive the rewind above.
+    function onWheel(e: WheelEvent) {
+      if (inVideoPhase && e.deltaY > 0) {
+        e.preventDefault();
+      }
+    }
+    let touchStartY = 0;
+    function onTouchStart(e: TouchEvent) {
+      touchStartY = e.touches[0].clientY;
+    }
+    function onTouchMove(e: TouchEvent) {
+      if (!inVideoPhase) return;
+      const dy = touchStartY - e.touches[0].clientY;
+      if (dy > 0) {
+        e.preventDefault();
+      }
+    }
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
 
     let st: ScrollTrigger | null = null;
 
@@ -218,18 +250,33 @@ export default function Scratch() {
         scrub: CONFIG.scrubSmoothness,
         onUpdate: (self) => {
           const split = CONFIG.gifPhaseFraction;
+          const progress = self.progress;
+          const scrollingUp = progress < prevProgress;
 
-          if (self.progress <= split) {
+          if (progress <= split) {
             exitVideoPhase();
-            const gifProgress = self.progress / split;
+            const gifProgress = progress / split;
             state.frameIndex = gifProgress * (CONFIG.frameCount - 1);
             state.gapProgress = 1 - gifProgress;
             drawCurrentFrame();
           } else {
+            const justEntered = !inVideoPhase;
             enterVideoPhase();
-            const videoProgress = (self.progress - split) / (1 - split);
-            scrubVideoTo(videoProgress);
+
+            if (justEntered) {
+              startPlayingForward();
+            } else if (scrollingUp) {
+              rewindBy(prevProgress - progress);
+            } else if (videoMode === "rewinding") {
+              // scrolling down again after having rewound — resume normal playback
+              startPlayingForward();
+            }
+            // else: already playing forward and still scrolling down —
+            // scroll is blocked by onWheel/onTouchMove, so this shouldn't
+            // normally advance further anyway; just let it keep playing.
           }
+
+          prevProgress = progress;
         },
         onRefresh: () => drawCurrentFrame()
       });
@@ -258,6 +305,9 @@ export default function Scratch() {
 
     return () => {
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
       video.removeEventListener("loadedmetadata", onLoadedMetadata);
       video.removeEventListener("loadeddata", positionVideoBox);
       video.removeEventListener("canplay", positionVideoBox);
