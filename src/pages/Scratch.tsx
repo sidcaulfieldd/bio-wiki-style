@@ -11,12 +11,12 @@ const sfPro = {
 // No links, nav, or references to any other page on the site.
 export default function Scratch() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const overlayStageRef = useRef<HTMLDivElement>(null);
-  const gifPinRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   const loaderTextRef = useRef<HTMLDivElement>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const videoPinRef = useRef<HTMLDivElement>(null);
+  const videoWrapRef = useRef<HTMLDivElement>(null);
   const muteOverlayRef = useRef<HTMLDivElement>(null);
   const unmuteLinkRef = useRef<HTMLSpanElement>(null);
 
@@ -31,20 +31,20 @@ export default function Scratch() {
       frameExt: "png",
 
       scrubSmoothness: 0.1,
-      gifScrollMultiplier: 1.5,
-      videoScrollMultiplier: 2.5,
+      pinSpacerMultiplier: 3, // extra scroll runway now covers gif phase + video-scrub phase
       targetHeightFraction: 0.8,
 
-      stripCount: 10,
-      maxGap: 90
+      // Fraction of the total pinned scroll range spent on the gif; the rest
+      // scrubs through the video.
+      gifPhaseFraction: 0.4
     };
 
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
-    const gifPin = gifPinRef.current!;
-    const videoPin = videoPinRef.current!;
-    const overlayStage = overlayStageRef.current!;
+    const pinTarget = pinRef.current!;
+    const stage = stageRef.current!;
     const video = videoRef.current!;
+    const videoWrap = videoWrapRef.current!;
     const muteOverlay = muteOverlayRef.current!;
     const unmuteLink = unmuteLinkRef.current!;
 
@@ -54,6 +54,7 @@ export default function Scratch() {
     let userUnmuted = false;
 
     const state = { frameIndex: 0, gapProgress: 1 };
+    let inVideoPhase = false;
 
     function padNumber(n: number, digits: number) {
       return String(n).padStart(digits, "0");
@@ -63,6 +64,9 @@ export default function Scratch() {
       return `${CONFIG.frameFolder}/${CONFIG.framePrefix}${padNumber(index, CONFIG.frameDigits)}.${CONFIG.frameExt}`;
     }
 
+    // Shared sizing math used by BOTH the gif canvas and the video element,
+    // so they land in the exact same box — no growth/zoom needed, and no
+    // mismatch at the hand-off, because both sides use this one formula.
     function computeBox(cw: number, ch: number, naturalW: number, naturalH: number) {
       const scale = (ch * CONFIG.targetHeightFraction) / naturalH;
       const drawW = naturalW * scale;
@@ -73,7 +77,7 @@ export default function Scratch() {
     }
 
     function positionVideoBox() {
-      const rect = overlayStage.getBoundingClientRect();
+      const rect = stage.getBoundingClientRect();
       const cw = rect.width;
       const ch = rect.height;
       const naturalW = video.videoWidth || 1920;
@@ -89,7 +93,7 @@ export default function Scratch() {
 
     function resizeCanvas() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const rect = overlayStage.getBoundingClientRect();
+      const rect = stage.getBoundingClientRect();
       canvas.width = Math.round(rect.width * dpr);
       canvas.height = Math.round(rect.height * dpr);
       canvas.style.width = rect.width + "px";
@@ -132,7 +136,7 @@ export default function Scratch() {
     }
 
     function drawCurrentFrame() {
-      const rect = overlayStage.getBoundingClientRect();
+      const rect = stage.getBoundingClientRect();
       const cw = rect.width;
       const ch = rect.height;
       if (!cw || !ch) return;
@@ -143,28 +147,11 @@ export default function Scratch() {
       const img = frames[idx];
       if (!img || !img.complete || img.naturalWidth === 0) return;
 
+      // Constant size — same box computeBox() gives the video, so there's
+      // no growth/zoom and the hand-off to video is a pixel-exact match.
       const { drawW, drawH, offsetX, offsetY } = computeBox(cw, ch, img.naturalWidth, img.naturalHeight);
 
-      // Strip-splitting effect: slice the frame into horizontal strips with
-      // a gap that closes linearly as scroll progresses through the gif,
-      // fully joined (gap=0) by the last frame.
-      const strips = CONFIG.stripCount;
-      const srcStripH = img.naturalHeight / strips;
-      const dstStripH = drawH / strips;
-
-      const desiredMaxGap = CONFIG.maxGap * (drawH / 900);
-      const maxAvailableGap = strips > 1 ? Math.max(0, (ch - drawH) / (strips - 1)) : 0;
-      const effectiveMaxGap = Math.min(desiredMaxGap, maxAvailableGap);
-      const gapPx = effectiveMaxGap * state.gapProgress;
-
-      const totalGap = gapPx * (strips - 1);
-      const stackStartY = offsetY - totalGap / 2;
-
-      for (let s = 0; s < strips; s++) {
-        const srcY = s * srcStripH;
-        const dstY = stackStartY + s * (dstStripH + gapPx);
-        ctx.drawImage(img, 0, srcY, img.naturalWidth, srcStripH, offsetX, dstY, drawW, dstStripH);
-      }
+      ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, offsetX, offsetY, drawW, drawH);
     }
 
     function showMuteOverlay() {
@@ -184,74 +171,55 @@ export default function Scratch() {
     }
     unmuteLink.addEventListener("click", onUnmuteClick);
 
-    function showCanvas() {
-      canvas.style.opacity = "1";
-      video.style.opacity = "0";
+    function enterVideoPhase() {
+      if (inVideoPhase) return;
+      inVideoPhase = true;
+      videoWrap.style.opacity = "1";
+      videoWrap.style.pointerEvents = "auto";
+      canvas.style.opacity = "0"; // hide the frozen gif frame — clean video only
+      positionVideoBox(); // safety net in case earlier sizing calls ran before layout was ready
+      if (!userUnmuted) {
+        video.muted = true;
+      }
     }
 
-    function showVideo() {
-      canvas.style.opacity = "0";
-      video.style.opacity = "1";
+    function exitVideoPhase() {
+      if (!inVideoPhase) return;
+      inVideoPhase = false;
+      videoWrap.style.opacity = "0";
+      videoWrap.style.pointerEvents = "none";
+      canvas.style.opacity = "1"; // gif visible again
+      video.pause();
+      video.currentTime = 0; // next entry always starts fresh from the beginning
     }
 
+    // Once in the video's zone: forward scroll is locked out entirely (you
+    // can't scroll further down), and the video just plays normally with
+    // sound. Scrolling up pauses it and rewinds by however much you scroll
+    // — silent, since real reverse audio isn't something browsers support,
+    // but it tracks scroll pace exactly like the original gif scrubbing did.
     let videoMode: "playing" | "rewinding" = "playing";
-    let prevVideoProgress = 0;
-    let targetVideoTime = 0;
-    let rewindRAF: number | null = null;
-    const REWIND_EASE = 0.25;
-
-    function stopRewindLoop() {
-      if (rewindRAF !== null) {
-        cancelAnimationFrame(rewindRAF);
-        rewindRAF = null;
-      }
-    }
-
-    function rewindLoopStep() {
-      const diff = targetVideoTime - video.currentTime;
-      if (Math.abs(diff) < 0.01) {
-        video.currentTime = targetVideoTime;
-        rewindRAF = null;
-        return;
-      }
-      video.currentTime += diff * REWIND_EASE;
-      rewindRAF = requestAnimationFrame(rewindLoopStep);
-    }
+    let prevProgress = 0;
 
     function startPlayingForward() {
       videoMode = "playing";
-      stopRewindLoop();
-      showVideo();
-      if (!userUnmuted) video.muted = true;
       video.play().catch(() => {});
     }
 
-    function rewindBy(deltaFraction: number) {
+    function rewindBy(progressDelta: number) {
       if (!videoDuration) return;
-      if (videoMode !== "rewinding") {
-        targetVideoTime = video.currentTime;
-      }
       videoMode = "rewinding";
       video.pause();
-      const dt = deltaFraction * videoDuration;
-      targetVideoTime = Math.max(0, Math.min(videoDuration, targetVideoTime - dt));
-      if (rewindRAF === null) {
-        rewindRAF = requestAnimationFrame(rewindLoopStep);
-      }
+      const REWIND_SENSITIVITY = 1 / (1 - CONFIG.gifPhaseFraction);
+      const dt = progressDelta * videoDuration * REWIND_SENSITIVITY;
+      video.currentTime = Math.max(0, Math.min(videoDuration, video.currentTime - dt));
     }
 
-    let bouncingBack = false;
-
-    function resetVideo() {
-      stopRewindLoop();
-      targetVideoTime = 0;
-      video.pause();
-      video.currentTime = 0;
-      showCanvas();
-    }
-
+    // Blocks scrolling further down once inside the video's zone; scrolling
+    // up always passes through so ScrollTrigger's own progress can decrease
+    // and drive the rewind above.
     function onWheel(e: WheelEvent) {
-      if (videoST?.isActive && e.deltaY > 0) {
+      if (inVideoPhase && e.deltaY > 0) {
         e.preventDefault();
       }
     }
@@ -260,7 +228,7 @@ export default function Scratch() {
       touchStartY = e.touches[0].clientY;
     }
     function onTouchMove(e: TouchEvent) {
-      if (!videoST?.isActive) return;
+      if (!inVideoPhase) return;
       const dy = touchStartY - e.touches[0].clientY;
       if (dy > 0) {
         e.preventDefault();
@@ -270,62 +238,48 @@ export default function Scratch() {
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
 
-    let gifST: ScrollTrigger | null = null;
-    let videoST: ScrollTrigger | null = null;
+    let st: ScrollTrigger | null = null;
 
-    function initScrollTriggers() {
-      gifST = ScrollTrigger.create({
-        trigger: gifPin,
+    function initScrollTrigger() {
+      st = ScrollTrigger.create({
+        trigger: pinTarget,
         start: "top top",
-        end: () => `+=${window.innerHeight * CONFIG.gifScrollMultiplier}`,
+        end: () => `+=${window.innerHeight * CONFIG.pinSpacerMultiplier}`,
         pin: true,
         anticipatePin: 1,
         scrub: CONFIG.scrubSmoothness,
         onUpdate: (self) => {
-          state.frameIndex = self.progress * (CONFIG.frameCount - 1);
-          state.gapProgress = 1 - self.progress;
-          drawCurrentFrame();
-        }
-      });
-
-      videoST = ScrollTrigger.create({
-        trigger: videoPin,
-        start: "top top",
-        end: () => `+=${window.innerHeight * CONFIG.videoScrollMultiplier}`,
-        pin: true,
-        scrub: CONFIG.scrubSmoothness,
-        onEnter: () => {
-          positionVideoBox();
-          startPlayingForward();
-        },
-        onEnterBack: () => {
-          positionVideoBox();
-          startPlayingForward();
-        },
-        onLeaveBack: (self) => {
-          if (targetVideoTime > 0.05) {
-            bouncingBack = true;
-            self.scroll(self.start);
-            prevVideoProgress = 0;
-            bouncingBack = false;
-            return;
-          }
-          resetVideo();
-        },
-        onUpdate: (self) => {
-          if (bouncingBack) return;
+          const split = CONFIG.gifPhaseFraction;
           const progress = self.progress;
-          const scrollingUp = progress < prevVideoProgress;
-          if (scrollingUp) {
-            rewindBy(prevVideoProgress - progress);
-          } else if (videoMode === "rewinding") {
-            startPlayingForward();
-          }
-          prevVideoProgress = progress;
-        }
-      });
+          const scrollingUp = progress < prevProgress;
 
-      ScrollTrigger.refresh();
+          if (progress <= split) {
+            exitVideoPhase();
+            const gifProgress = progress / split;
+            state.frameIndex = gifProgress * (CONFIG.frameCount - 1);
+            state.gapProgress = 1 - gifProgress;
+            drawCurrentFrame();
+          } else {
+            const justEntered = !inVideoPhase;
+            enterVideoPhase();
+
+            if (justEntered) {
+              startPlayingForward();
+            } else if (scrollingUp) {
+              rewindBy(prevProgress - progress);
+            } else if (videoMode === "rewinding") {
+              // scrolling down again after having rewound — resume normal playback
+              startPlayingForward();
+            }
+            // else: already playing forward and still scrolling down —
+            // scroll is blocked by onWheel/onTouchMove, so this shouldn't
+            // normally advance further anyway; just let it keep playing.
+          }
+
+          prevProgress = progress;
+        },
+        onRefresh: () => drawCurrentFrame()
+      });
     }
 
     const onResize = () => resizeCanvas();
@@ -341,13 +295,12 @@ export default function Scratch() {
 
     resizeCanvas();
     drawCurrentFrame();
-    showCanvas();
-    showMuteOverlay();
+    showMuteOverlay(); // visible from page load, persists until the user unmutes
 
     preloadFrames().then(() => {
       resizeCanvas();
       hideLoader();
-      initScrollTriggers();
+      initScrollTrigger();
     });
 
     return () => {
@@ -359,131 +312,159 @@ export default function Scratch() {
       video.removeEventListener("loadeddata", positionVideoBox);
       video.removeEventListener("canplay", positionVideoBox);
       unmuteLink.removeEventListener("click", onUnmuteClick);
-      gifST?.kill();
-      videoST?.kill();
+      st?.kill();
     };
   }, []);
 
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff" }}>
       <div
-        ref={muteOverlayRef}
+        ref={pinRef}
         style={{
-          display: "none",
-          position: "fixed",
-          inset: 0,
-          zIndex: 50,
-          pointerEvents: "none"
+          position: "relative",
+          width: "100%",
+          height: "100vh",
+          overflow: "hidden",
+          background: "#ffffff"
         }}
       >
+        {/* Video sits at the back */}
         <div
+          ref={videoWrapRef}
           style={{
-            ...sfPro,
             position: "absolute",
-            top: "10vh",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "80vw",
-            fontWeight: 700,
-            letterSpacing: "-0.02em",
-            color: "#000",
-            fontSize: "clamp(24px, 5vw, 56px)",
-            textAlign: "center",
-            lineHeight: 1.2,
-            whiteSpace: "nowrap",
+            inset: 0,
+            opacity: 0,
+            pointerEvents: "none",
+            zIndex: 10
+          }}
+        >
+          <video
+            ref={videoRef}
+            src="/part2/scratch-video.mp4"
+            playsInline
+            preload="auto"
+            muted
+            style={{
+              position: "absolute",
+              width: "1px",
+              height: "1px"
+            }}
+          />
+        </div>
+
+        {/* Mute prompt sits in the middle layer — above the video, behind the gif.
+            Shown from page load; hidden permanently once the user unmutes. */}
+        <div
+          ref={muteOverlayRef}
+          style={{
+            display: "none",
+            position: "absolute",
+            inset: 0,
+            zIndex: 20,
             pointerEvents: "none"
           }}
         >
-          SID, YOU'RE ON MUTE
+          <div
+            style={{
+              ...sfPro,
+              position: "absolute",
+              top: "10vh",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "80vw",
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+              color: "#000",
+              fontSize: "clamp(24px, 5vw, 56px)",
+              textAlign: "center",
+              lineHeight: 1.2,
+              whiteSpace: "nowrap",
+              pointerEvents: "none"
+            }}
+          >
+            SID, YOU'RE ON MUTE
+          </div>
+
+          <div
+            style={{
+              ...sfPro,
+              position: "absolute",
+              top: "calc(10vh + 4.5em)",
+              left: "75vw",
+              transform: "translateX(-50%)",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              fontSize: 14,
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              pointerEvents: "none",
+              color: "#000",
+              whiteSpace: "nowrap"
+            }}
+          >
+            <span>press</span>
+            <span
+              ref={unmuteLinkRef}
+              style={{ textDecoration: "underline", cursor: "pointer", pointerEvents: "auto" }}
+            >
+              unmute
+            </span>
+          </div>
+        </div>
+
+        {/* Gif frames render on top of everything */}
+        <div
+          ref={stageRef}
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: "100%",
+            height: "100vh",
+            transform: "translate(-50%, -50%)",
+            zIndex: 30,
+            pointerEvents: "none"
+          }}
+        >
+          <canvas
+            ref={canvasRef}
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              display: "block",
+              pointerEvents: "none",
+              opacity: 1
+            }}
+          />
         </div>
 
         <div
+          ref={loaderRef}
           style={{
-            ...sfPro,
             position: "absolute",
-            top: "calc(10vh + 4.5em)",
-            left: "75vw",
-            transform: "translateX(-50%)",
+            inset: 0,
             display: "flex",
             alignItems: "center",
-            gap: 8,
-            fontSize: 14,
-            fontWeight: 700,
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            pointerEvents: "none",
-            color: "#000",
-            whiteSpace: "nowrap"
+            justifyContent: "center",
+            background: "#ffffff",
+            transition: "opacity 0.4s ease",
+            zIndex: 40
           }}
         >
-          <span>press</span>
-          <span
-            ref={unmuteLinkRef}
-            style={{ textDecoration: "underline", cursor: "pointer", pointerEvents: "auto" }}
+          <div
+            ref={loaderTextRef}
+            style={{ fontSize: 13, letterSpacing: "0.04em", color: "#666" }}
           >
-            unmute
-          </span>
+            Loading… 0%
+          </div>
         </div>
       </div>
-
-      <div
-        ref={overlayStageRef}
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 30,
-          pointerEvents: "none"
-        }}
-      >
-        <canvas
-          ref={canvasRef}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            display: "block",
-            pointerEvents: "none"
-          }}
-        />
-        <video
-          ref={videoRef}
-          src="/part2/scratch-video.mp4"
-          playsInline
-          preload="auto"
-          muted
-          style={{
-            position: "absolute",
-            width: "1px",
-            height: "1px"
-          }}
-        />
-      </div>
-
-      <div
-        ref={loaderRef}
-        style={{
-          position: "fixed",
-          inset: 0,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#ffffff",
-          transition: "opacity 0.4s ease",
-          zIndex: 60
-        }}
-      >
-        <div
-          ref={loaderTextRef}
-          style={{ fontSize: 13, letterSpacing: "0.04em", color: "#666" }}
-        >
-          Loading… 0%
-        </div>
-      </div>
-
-      <div ref={gifPinRef} style={{ position: "relative", width: "100%", height: "100vh" }} />
-      <div ref={videoPinRef} style={{ position: "relative", width: "100%", height: "100vh" }} />
     </div>
   );
 }
