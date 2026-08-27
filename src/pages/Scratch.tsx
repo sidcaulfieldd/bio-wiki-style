@@ -20,6 +20,7 @@ export default function Scratch() {
   const muteOverlayRef = useRef<HTMLDivElement>(null);
   const muteTitleRef = useRef<HTMLDivElement>(null);
   const unmuteLinkRef = useRef<HTMLSpanElement>(null);
+  const debugRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -46,6 +47,7 @@ export default function Scratch() {
     const muteOverlay = muteOverlayRef.current!;
     const muteTitle = muteTitleRef.current!;
     const unmuteLink = unmuteLinkRef.current!;
+    const debugEl = debugRef.current!;
 
     const frames: HTMLImageElement[] = [];
     let framesLoaded = 0;
@@ -340,6 +342,29 @@ export default function Scratch() {
     video.addEventListener("loadeddata", positionVideoBox);
     video.addEventListener("canplay", positionVideoBox);
 
+    // TEMPORARY diagnostic overlay — remove once the mobile bugs are found.
+    // Shows live internal values directly on screen so they can be read
+    // straight off the phone without needing remote debugging tools.
+    function updateDebugHud() {
+      const videoRect = video.getBoundingClientRect();
+      const lines = [
+        `win: ${window.innerWidth}x${window.innerHeight}`,
+        `cached: ${Math.round(cachedCw)}x${Math.round(cachedCh)}`,
+        `inVideoPhase: ${inVideoPhase}`,
+        `gifProg: ${gifVirtualProgress.toFixed(3)}`,
+        `canvas op: ${canvas.style.opacity}`,
+        `videoWrap op: ${videoWrap.style.opacity}`,
+        `video rect: ${Math.round(videoRect.width)}x${Math.round(videoRect.height)} @ ${Math.round(videoRect.left)},${Math.round(videoRect.top)}`,
+        `video style: ${video.style.width} x ${video.style.height}`,
+        `readyState: ${video.readyState} networkState: ${video.networkState}`,
+        `videoWH: ${video.videoWidth}x${video.videoHeight}`,
+        `error: ${video.error ? video.error.code + " " + video.error.message : "none"}`,
+        `currentTime: ${video.currentTime.toFixed(2)} paused: ${video.paused} muted: ${video.muted}`
+      ];
+      debugEl.textContent = lines.join("\n");
+    }
+    const debugInterval = setInterval(updateDebugHud, 300);
+
     resizeCanvas();
     applyResponsiveTitle();
     drawCurrentFrame();
@@ -352,6 +377,7 @@ export default function Scratch() {
     });
 
     return () => {
+      clearInterval(debugInterval);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
@@ -366,6 +392,25 @@ export default function Scratch() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff" }}>
+      {/* TEMPORARY diagnostic overlay — remove once mobile bugs are found */}
+      <div
+        ref={debugRef}
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 999,
+          background: "rgba(0,0,0,0.85)",
+          color: "#0f0",
+          fontFamily: "monospace",
+          fontSize: 10,
+          lineHeight: 1.4,
+          padding: "8px",
+          whiteSpace: "pre-wrap",
+          pointerEvents: "none"
+        }}
+      />
       <div
         ref={pinRef}
         style={{
