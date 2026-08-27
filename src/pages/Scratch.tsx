@@ -189,6 +189,8 @@ export default function Scratch() {
       videoWrap.style.opacity = "0";
       videoWrap.style.pointerEvents = "none";
       canvas.style.opacity = "1"; // gif visible again
+      stopRewindLoop();
+      targetVideoTime = 0;
       video.pause();
       video.currentTime = 0; // next entry always starts fresh from the beginning
     }
@@ -201,18 +203,52 @@ export default function Scratch() {
     let videoMode: "playing" | "rewinding" = "playing";
     let prevProgress = 0;
 
+    // Rewinding eases toward a target time each frame instead of snapping
+    // currentTime directly on every scroll update — direct seeks are janky
+    // since video seeking isn't frame-instant; easing smooths that out.
+    let targetVideoTime = 0;
+    let rewindRAF: number | null = null;
+    const REWIND_EASE = 0.25; // higher = snappier/less smoothing, lower = smoother/laggier
+
+    function stopRewindLoop() {
+      if (rewindRAF !== null) {
+        cancelAnimationFrame(rewindRAF);
+        rewindRAF = null;
+      }
+    }
+
+    function rewindLoopStep() {
+      const diff = targetVideoTime - video.currentTime;
+      if (Math.abs(diff) < 0.01) {
+        video.currentTime = targetVideoTime;
+        rewindRAF = null;
+        return;
+      }
+      video.currentTime += diff * REWIND_EASE;
+      rewindRAF = requestAnimationFrame(rewindLoopStep);
+    }
+
     function startPlayingForward() {
       videoMode = "playing";
+      stopRewindLoop();
       video.play().catch(() => {});
     }
 
     function rewindBy(progressDelta: number) {
       if (!videoDuration) return;
+      if (videoMode !== "rewinding") {
+        // just transitioned from playing — sync the target to wherever
+        // real playback actually left off, not a stale prior value
+        targetVideoTime = video.currentTime;
+      }
       videoMode = "rewinding";
       video.pause();
       const REWIND_SENSITIVITY = 1 / (1 - CONFIG.gifPhaseFraction);
       const dt = progressDelta * videoDuration * REWIND_SENSITIVITY;
-      video.currentTime = Math.max(0, Math.min(videoDuration, video.currentTime - dt));
+      targetVideoTime = Math.max(0, Math.min(videoDuration, targetVideoTime - dt));
+      if (rewindRAF === null) {
+        rewindRAF = requestAnimationFrame(rewindLoopStep);
+      }
     }
 
     // Blocks scrolling further down once inside the video's zone; scrolling
