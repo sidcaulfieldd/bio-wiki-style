@@ -18,6 +18,7 @@ export default function Scratch() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoWrapRef = useRef<HTMLDivElement>(null);
   const muteOverlayRef = useRef<HTMLDivElement>(null);
+  const muteTitleRef = useRef<HTMLDivElement>(null);
   const unmuteLinkRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -44,6 +45,7 @@ export default function Scratch() {
     const video = videoRef.current!;
     const videoWrap = videoWrapRef.current!;
     const muteOverlay = muteOverlayRef.current!;
+    const muteTitle = muteTitleRef.current!;
     const unmuteLink = unmuteLinkRef.current!;
 
     const frames: HTMLImageElement[] = [];
@@ -262,7 +264,20 @@ export default function Scratch() {
       });
     }
 
-    const onResize = () => resizeCanvas();
+    const onResize = () => {
+      resizeCanvas();
+      applyResponsiveTitle();
+    };
+
+    // Mobile-only: allow the title to wrap onto multiple centered lines
+    // instead of overflowing off-screen. Desktop is untouched — this only
+    // kicks in below the breakpoint, so the wide-screen layout stays
+    // pixel-identical to before.
+    function applyResponsiveTitle() {
+      const isMobile = window.innerWidth <= 600;
+      muteTitle.style.whiteSpace = isMobile ? "normal" : "nowrap";
+      muteTitle.style.width = isMobile ? "92vw" : "80vw";
+    }
     window.addEventListener("resize", onResize);
 
     function onLoadedMetadata() {
@@ -274,6 +289,7 @@ export default function Scratch() {
     video.addEventListener("canplay", positionVideoBox);
 
     resizeCanvas();
+    applyResponsiveTitle();
     drawCurrentFrame();
     showMuteOverlay();
 
@@ -343,6 +359,7 @@ export default function Scratch() {
           }}
         >
           <div
+            ref={muteTitleRef}
             style={{
               ...sfPro,
               position: "absolute",
