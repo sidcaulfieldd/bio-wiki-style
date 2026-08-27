@@ -31,11 +31,9 @@ export default function Scratch() {
       frameExt: "png",
 
       scrubSmoothness: 0.1,
-      pinSpacerMultiplier: 3, // extra scroll runway now covers gif phase + video-scrub phase
+      pinSpacerMultiplier: 3,
       targetHeightFraction: 0.8,
 
-      // Fraction of the total pinned scroll range spent on the gif; the rest
-      // scrubs through the video.
       gifPhaseFraction: 0.4
     };
 
@@ -64,9 +62,6 @@ export default function Scratch() {
       return `${CONFIG.frameFolder}/${CONFIG.framePrefix}${padNumber(index, CONFIG.frameDigits)}.${CONFIG.frameExt}`;
     }
 
-    // Shared sizing math used by BOTH the gif canvas and the video element,
-    // so they land in the exact same box — no growth/zoom needed, and no
-    // mismatch at the hand-off, because both sides use this one formula.
     function computeBox(cw: number, ch: number, naturalW: number, naturalH: number) {
       const scale = (ch * CONFIG.targetHeightFraction) / naturalH;
       const drawW = naturalW * scale;
@@ -147,8 +142,6 @@ export default function Scratch() {
       const img = frames[idx];
       if (!img || !img.complete || img.naturalWidth === 0) return;
 
-      // Constant size — same box computeBox() gives the video, so there's
-      // no growth/zoom and the hand-off to video is a pixel-exact match.
       const { drawW, drawH, offsetX, offsetY } = computeBox(cw, ch, img.naturalWidth, img.naturalHeight);
 
       ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, offsetX, offsetY, drawW, drawH);
@@ -176,8 +169,8 @@ export default function Scratch() {
       inVideoPhase = true;
       videoWrap.style.opacity = "1";
       videoWrap.style.pointerEvents = "auto";
-      canvas.style.opacity = "0"; // hide the frozen gif frame — clean video only
-      positionVideoBox(); // safety net in case earlier sizing calls ran before layout was ready
+      canvas.style.opacity = "0";
+      positionVideoBox();
       if (!userUnmuted) {
         video.muted = true;
       }
@@ -188,36 +181,17 @@ export default function Scratch() {
       inVideoPhase = false;
       videoWrap.style.opacity = "0";
       videoWrap.style.pointerEvents = "none";
-      canvas.style.opacity = "1"; // gif visible again
+      canvas.style.opacity = "1";
       video.pause();
-      video.currentTime = 0; // next entry always starts fresh from the beginning
+      video.currentTime = 0;
     }
 
-    // Once in the video's zone: forward scroll is locked out entirely (you
-    // can't scroll further down), and the video just plays normally with
-    // sound. Scrolling up pauses it and rewinds by however much you scroll
-    // — silent, since real reverse audio isn't something browsers support,
-    // but it tracks scroll pace exactly like the original gif scrubbing did.
-    let videoMode: "playing" | "rewinding" = "playing";
     let prevProgress = 0;
 
     function startPlayingForward() {
-      videoMode = "playing";
       video.play().catch(() => {});
     }
 
-    function rewindBy(progressDelta: number) {
-      if (!videoDuration) return;
-      videoMode = "rewinding";
-      video.pause();
-      const REWIND_SENSITIVITY = 1 / (1 - CONFIG.gifPhaseFraction);
-      const dt = progressDelta * videoDuration * REWIND_SENSITIVITY;
-      video.currentTime = Math.max(0, Math.min(videoDuration, video.currentTime - dt));
-    }
-
-    // Blocks scrolling further down once inside the video's zone; scrolling
-    // up always passes through so ScrollTrigger's own progress can decrease
-    // and drive the rewind above.
     function onWheel(e: WheelEvent) {
       if (inVideoPhase && e.deltaY > 0) {
         e.preventDefault();
@@ -253,27 +227,21 @@ export default function Scratch() {
           const progress = self.progress;
           const scrollingUp = progress < prevProgress;
 
-          if (progress <= split) {
+          // Any upward scroll while in the video instantly reverts to the
+          // gif — snapping to the last (fully-assembled) frame — rather
+          // than rewinding through the video first.
+          if (progress <= split || (inVideoPhase && scrollingUp)) {
             exitVideoPhase();
-            const gifProgress = progress / split;
+            const gifProgress = Math.min(1, progress / split);
             state.frameIndex = gifProgress * (CONFIG.frameCount - 1);
             state.gapProgress = 1 - gifProgress;
             drawCurrentFrame();
           } else {
             const justEntered = !inVideoPhase;
             enterVideoPhase();
-
             if (justEntered) {
               startPlayingForward();
-            } else if (scrollingUp) {
-              rewindBy(prevProgress - progress);
-            } else if (videoMode === "rewinding") {
-              // scrolling down again after having rewound — resume normal playback
-              startPlayingForward();
             }
-            // else: already playing forward and still scrolling down —
-            // scroll is blocked by onWheel/onTouchMove, so this shouldn't
-            // normally advance further anyway; just let it keep playing.
           }
 
           prevProgress = progress;
@@ -295,7 +263,7 @@ export default function Scratch() {
 
     resizeCanvas();
     drawCurrentFrame();
-    showMuteOverlay(); // visible from page load, persists until the user unmutes
+    showMuteOverlay();
 
     preloadFrames().then(() => {
       resizeCanvas();
@@ -328,7 +296,6 @@ export default function Scratch() {
           background: "#ffffff"
         }}
       >
-        {/* Video sits at the back */}
         <div
           ref={videoWrapRef}
           style={{
@@ -353,8 +320,6 @@ export default function Scratch() {
           />
         </div>
 
-        {/* Mute prompt sits in the middle layer — above the video, behind the gif.
-            Shown from page load; hidden permanently once the user unmutes. */}
         <div
           ref={muteOverlayRef}
           style={{
@@ -383,39 +348,16 @@ export default function Scratch() {
               pointerEvents: "none"
             }}
           >
-            SID, YOU'RE ON MUTE
-          </div>
-
-          <div
-            style={{
-              ...sfPro,
-              position: "absolute",
-              top: "calc(10vh + 4.5em)",
-              left: "75vw",
-              transform: "translateX(-50%)",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              fontSize: 14,
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-              pointerEvents: "none",
-              color: "#000",
-              whiteSpace: "nowrap"
-            }}
-          >
-            <span>press</span>
+            I'M ON MUTE. PRESS{" "}
             <span
               ref={unmuteLinkRef}
               style={{ textDecoration: "underline", cursor: "pointer", pointerEvents: "auto" }}
             >
-              unmute
+              UNMUTE
             </span>
           </div>
         </div>
 
-        {/* Gif frames render on top of everything */}
         <div
           ref={stageRef}
           style={{
