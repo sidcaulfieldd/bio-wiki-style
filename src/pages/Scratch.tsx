@@ -20,6 +20,26 @@ export default function Scratch() {
   const muteTitleRef = useRef<HTMLDivElement>(null);
   const unmuteLinkRef = useRef<HTMLSpanElement>(null);
 
+  // Disables the site-wide custom cursor + trail effect, but only while
+  // this page is mounted — every other page keeps them untouched. Injects
+  // a stylesheet rule that matches (and beats, via source order) the
+  // global "html, body, * { cursor: none !important; }" rule, and hides
+  // the custom cursor image + trail rectangles those components render.
+  // Doesn't touch App.tsx or either cursor component at all.
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.id = "scratch-cursor-override";
+    style.textContent = `
+      html, body, * { cursor: auto !important; }
+      img[src="/mouse.png"] { display: none !important; }
+      .cursor-trail-rect { display: none !important; }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      style.remove();
+    };
+  }, []);
+
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
