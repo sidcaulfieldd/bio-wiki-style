@@ -85,12 +85,12 @@ export default function Scratch() {
         padding: 16px 36px;
         font-weight: 800;
         cursor: pointer;
-        box-shadow: 7px 7px 0 0 #000;
+        box-shadow: 0 4px 0 0 #000;
         transform: translate(0, 0);
-        transition: transform 0.12s ease, box-shadow 0.12s ease;
+        transition: transform 0.16s ease, box-shadow 0.16s ease;
       }
       .gate-btn:hover {
-        transform: translate(7px, 7px);
+        transform: translate(0, 4px);
         box-shadow: 0 0 0 0 #000;
       }
     `;
@@ -119,15 +119,22 @@ export default function Scratch() {
       if (!img) return;
       const cw = window.innerWidth;
       const ch = window.innerHeight;
-      const naturalW = img.naturalWidth || 1920;
-      const naturalH = img.naturalHeight || 960;
+      // Hardcoded — all part3 frames are known to be exactly 1920x960.
+      // Sizing this way means the image is correctly scaled immediately
+      // on first render, with no dependency on waiting for its 'load'
+      // event to fire first. Waiting on that was the actual bug: if
+      // scrolling started before load fired, the browser briefly showed
+      // the image at its raw native 1920x960 size — much bigger than the
+      // viewport — which is exactly the oversized, cropped "stuck frame"
+      // that was visible before reaching the correctly-scaled figure.
+      const naturalW = 1920;
+      const naturalH = 960;
       const scale = Math.max(cw / naturalW, ch / naturalH);
       img.style.width = `${naturalW * scale}px`;
       img.style.height = `${naturalH * scale}px`;
     }
 
-    if (img.complete) sizeImage();
-    img.addEventListener("load", sizeImage);
+    sizeImage();
     window.addEventListener("resize", sizeImage);
 
     const st = ScrollTrigger.create({
@@ -142,7 +149,6 @@ export default function Scratch() {
     });
 
     return () => {
-      img.removeEventListener("load", sizeImage);
       window.removeEventListener("resize", sizeImage);
       st.kill();
     };
@@ -245,7 +251,7 @@ export default function Scratch() {
             framesLoaded = settled;
             if (loaderTextRef.current) {
               const pct = Math.round((framesLoaded / CONFIG.frameCount) * 100);
-              loaderTextRef.current.textContent = `Loading… ${pct}%`;
+              loaderTextRef.current.textContent = `LOADING… ${pct}%`;
             }
             if (settled >= CONFIG.frameCount) resolve();
           };
@@ -490,11 +496,11 @@ export default function Scratch() {
                 fontSize: "clamp(28px, 5vw, 52px)",
                 lineHeight: 1.25,
                 color: "#000",
-                ...arial,
+                fontFamily: '"Gill Sans Ultra", "Gill Sans", "Gill Sans MT", Arial, sans-serif',
                 fontWeight: 800
               }}
             >
-              Who are you?
+              WHO ARE YOU?
             </div>
 
             <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
@@ -503,7 +509,7 @@ export default function Scratch() {
                 onClick={() => setGateChoice("correct")}
                 style={{ ...arial, fontSize: 20 }}
               >
-                I'm Joel
+                I'M JOEL
               </button>
               <button
                 className="gate-btn"
@@ -517,7 +523,7 @@ export default function Scratch() {
                 }}
                 style={{ ...arial, fontSize: 20 }}
               >
-                I'm Becca
+                I'M BECCA
               </button>
             </div>
           </div>
@@ -539,10 +545,10 @@ export default function Scratch() {
           >
             <div style={{ ...arial, maxWidth: 640 }}>
               <div style={{ fontSize: "clamp(24px, 4vw, 44px)", fontWeight: 700, lineHeight: 1.25 }}>
-                You're not Becca, but you can see what I sent to her if you like.
+                YOU'RE NOT BECCA, BUT YOU CAN SEE WHAT I SENT TO HER IF YOU LIKE.
               </div>
               <div style={{ fontSize: "clamp(14px, 1.6vw, 20px)", marginTop: "0.6em" }}>
-                Scroll down and{" "}
+                SCROLL DOWN AND{" "}
                 <span
                   style={{ textDecoration: "underline", cursor: "pointer" }}
                   onClick={() => {
@@ -550,7 +556,7 @@ export default function Scratch() {
                     setUnmuted(true);
                   }}
                 >
-                  unmute
+                  UNMUTE
                 </span>
               </div>
             </div>
@@ -573,6 +579,8 @@ export default function Scratch() {
                 position: "absolute",
                 top: "50%",
                 left: "50%",
+                width: `${1920 * Math.max(window.innerWidth / 1920, window.innerHeight / 960)}px`,
+                height: `${960 * Math.max(window.innerWidth / 1920, window.innerHeight / 960)}px`,
                 transform: "translate(-50%, -50%) translateY(100vh)"
               }}
             />
@@ -708,7 +716,7 @@ export default function Scratch() {
             ref={loaderTextRef}
             style={{ fontSize: 13, letterSpacing: "0.04em", color: "#666" }}
           >
-            Loading… 0%
+            LOADING… 0%
           </div>
         </div>
       </div>
