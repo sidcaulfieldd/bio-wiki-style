@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -18,14 +18,23 @@ export default function Scratch() {
   const videoWrapRef = useRef<HTMLDivElement>(null);
   const muteOverlayRef = useRef<HTMLDivElement>(null);
   const muteTitleRef = useRef<HTMLDivElement>(null);
-  const unmuteLinkRef = useRef<HTMLSpanElement>(null);
+  const unmuteHandlerRef = useRef<() => void>(() => {});
 
-  // Disables the site-wide custom cursor + trail effect, but only while
-  // this page is mounted — every other page keeps them untouched. Injects
-  // a stylesheet rule that matches (and beats, via source order) the
-  // global "html, body, * { cursor: none !important; }" rule, and hides
-  // the custom cursor image + trail rectangles those components render.
-  // Doesn't touch App.tsx or either cursor component at all.
+  // "pending" = gate showing, not yet chosen. "correct" = Joel picked
+  // Joel (current experience, unchanged). "wrong" = Joel picked Becca
+  // (heads-up message, then same experience).
+  const [gateChoice, setGateChoice] = useState<"pending" | "correct" | "wrong">("pending");
+  const [unmuted, setUnmuted] = useState(false);
+
+  // Lock page scroll while the gate is up, so nobody can scroll into the
+  // pinned experience invisibly behind it before choosing a name.
+  useEffect(() => {
+    document.body.style.overflow = gateChoice === "pending" ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [gateChoice]);
+
   useEffect(() => {
     const style = document.createElement("style");
     style.id = "scratch-cursor-override";
@@ -64,7 +73,6 @@ export default function Scratch() {
     const videoWrap = videoWrapRef.current!;
     const muteOverlay = muteOverlayRef.current!;
     const muteTitle = muteTitleRef.current!;
-    const unmuteLink = unmuteLinkRef.current!;
 
     const frames: HTMLImageElement[] = [];
     let framesLoaded = 0;
@@ -190,7 +198,13 @@ export default function Scratch() {
       video.muted = false;
       hideMuteOverlay();
     }
-    unmuteLink.addEventListener("click", onUnmuteClick);
+    // Stored in a ref rather than addEventListener directly on the DOM
+    // node — the mute text (and its "UNMUTE" span) swaps between two
+    // different JSX variants depending on gate choice, which means React
+    // may replace that DOM node. A ref-based callback always calls
+    // whatever the current handler is, regardless of which node is
+    // currently rendered — no stale/detached listener risk.
+    unmuteHandlerRef.current = onUnmuteClick;
 
     function enterVideoPhase() {
       if (inVideoPhase) return;
@@ -329,13 +343,93 @@ export default function Scratch() {
       video.removeEventListener("loadedmetadata", onLoadedMetadata);
       video.removeEventListener("loadeddata", positionVideoBox);
       video.removeEventListener("canplay", positionVideoBox);
-      unmuteLink.removeEventListener("click", onUnmuteClick);
       st?.kill();
     };
   }, []);
 
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff" }}>
+      {gateChoice === "pending" && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "#369FDC",
+            overflow: "hidden"
+          }}
+        >
+          <div style={{ position: "absolute", top: "-8%", left: "-6%", width: "38vw", height: "38vw", borderRadius: "50%", background: "#FF99CC" }} />
+          <div style={{ position: "absolute", bottom: "-12%", right: "-8%", width: "44vw", height: "44vw", borderRadius: "50%", background: "#FFB400" }} />
+          <div style={{ position: "absolute", top: "18%", right: "6%", width: "16vw", height: "16vw", borderRadius: "12%", background: "#FF451F", transform: "rotate(12deg)" }} />
+          <div style={{ position: "absolute", bottom: "10%", left: "8%", width: "14vw", height: "14vw", borderRadius: "12%", background: "#C03380", transform: "rotate(-10deg)" }} />
+
+          <div
+            style={{
+              position: "relative",
+              zIndex: 1,
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 40,
+              padding: 24,
+              textAlign: "center"
+            }}
+          >
+            <div
+              style={{
+                maxWidth: 640,
+                fontSize: "clamp(24px, 4vw, 44px)",
+                lineHeight: 1.25,
+                color: "#000"
+              }}
+            >
+              <span style={{ ...arial, fontWeight: 800 }}>Hey — </span>
+              <span style={{ fontFamily: '"Times New Roman", Times, serif' }}>before we get into it, </span>
+              <span style={{ ...arial, fontWeight: 800, textDecoration: "underline" }}>who's</span>
+              <span style={{ fontFamily: '"Times New Roman", Times, serif' }}> reading this?</span>
+            </div>
+
+            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
+              <button
+                onClick={() => setGateChoice("correct")}
+                style={{
+                  ...arial,
+                  fontWeight: 800,
+                  fontSize: 20,
+                  background: "#fff",
+                  color: "#000",
+                  border: "2px solid #000",
+                  borderRadius: 999,
+                  padding: "16px 32px",
+                  cursor: "pointer"
+                }}
+              >
+                I'm Joel ⌄
+              </button>
+              <button
+                onClick={() => setGateChoice("wrong")}
+                style={{
+                  ...arial,
+                  fontWeight: 800,
+                  fontSize: 20,
+                  background: "#fff",
+                  color: "#000",
+                  border: "2px solid #000",
+                  borderRadius: 999,
+                  padding: "16px 32px",
+                  cursor: "pointer"
+                }}
+              >
+                I'm Becca ⌄
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div
         ref={pinRef}
         style={{
@@ -400,19 +494,65 @@ export default function Scratch() {
               textAlign: "center",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
-              pointerEvents: "none"
+              pointerEvents: "none",
+              display: gateChoice === "wrong" ? "none" : "block"
             }}
           >
             SID, YOU'RE ON MUTE. PRESS{" "}
             <span
-              ref={unmuteLinkRef}
               style={{ textDecoration: "underline", cursor: "pointer", pointerEvents: "auto" }}
+              onClick={() => unmuteHandlerRef.current()}
             >
               UNMUTE
             </span>
             .
           </div>
         </div>
+
+        {/* Wrong-path message — a separate sibling with a HIGHER z-index
+            than the canvas (30), unlike the default mute text above which
+            deliberately sits behind it. This message is taller (wraps to
+            multiple lines) and would otherwise be partly hidden behind
+            the figure. */}
+        {gateChoice === "wrong" && !unmuted && (
+          <div
+            style={{
+              ...arial,
+              position: "absolute",
+              top: "10vh",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "80vw",
+              zIndex: 35,
+              fontWeight: 700,
+              letterSpacing: "-0.02em",
+              color: "#000",
+              textAlign: "center",
+              lineHeight: 1.2,
+              pointerEvents: "none",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "0.3em"
+            }}
+          >
+            <div style={{ whiteSpace: "normal", fontSize: "clamp(20px, 3.2vw, 40px)", width: "100%" }}>
+              You're not Becca, but you can see what I sent to her if you like.
+            </div>
+            <div style={{ whiteSpace: "normal", fontSize: "clamp(14px, 1.6vw, 20px)", width: "100%" }}>
+              Scroll down and{" "}
+              <span
+                style={{ textDecoration: "underline", cursor: "pointer", pointerEvents: "auto" }}
+                onClick={() => {
+                  unmuteHandlerRef.current();
+                  setUnmuted(true);
+                }}
+              >
+                unmute
+              </span>
+            </div>
+          </div>
+        )}
 
         <div
           ref={stageRef}
