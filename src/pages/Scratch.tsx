@@ -19,6 +19,10 @@ export default function Scratch() {
   const muteOverlayRef = useRef<HTMLDivElement>(null);
   const muteTitleRef = useRef<HTMLDivElement>(null);
   const unmuteHandlerRef = useRef<() => void>(() => {});
+  const revealSectionRef = useRef<HTMLDivElement>(null);
+  const revealImgRef = useRef<HTMLImageElement>(null);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  const initScrollTriggerRef = useRef<() => void>(() => {});
 
   // "pending" = gate showing, not yet chosen. "correct" = Joel picked
   // Joel (current experience, unchanged). "wrong" = Joel picked Becca
@@ -35,6 +39,24 @@ export default function Scratch() {
     };
   }, [gateChoice]);
 
+  // Whenever gate choice changes, the wrong path inserts two full-height
+  // sections before the pinned experience — shifting its position in the
+  // document. GSAP's pin physically wraps the pinned element in a node it
+  // inserts itself, which is incompatible with React inserting new
+  // siblings before it afterward — so for the wrong path specifically,
+  // the pin is killed synchronously in the button's own click handler
+  // (before the state change that inserts those siblings), and recreated
+  // here once the new layout has actually settled.
+  useEffect(() => {
+    if (gateChoice === "wrong") {
+      requestAnimationFrame(() => {
+        initScrollTriggerRef.current();
+      });
+    } else {
+      ScrollTrigger.refresh();
+    }
+  }, [gateChoice]);
+
   useEffect(() => {
     const style = document.createElement("style");
     style.id = "scratch-cursor-override";
@@ -48,6 +70,83 @@ export default function Scratch() {
       style.remove();
     };
   }, []);
+
+  // Gate button hover style — offset black "shadow" pill behind the
+  // button that tucks away (button slides into it) on hover.
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.id = "scratch-gate-button-style";
+    style.textContent = `
+      .gate-btn {
+        background: #fff;
+        color: #000;
+        border: 3px solid #000;
+        border-radius: 999px;
+        padding: 16px 36px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 7px 7px 0 0 #000;
+        transform: translate(0, 0);
+        transition: transform 0.12s ease, box-shadow 0.12s ease;
+      }
+      .gate-btn:hover {
+        transform: translate(7px, 7px);
+        box-shadow: 0 0 0 0 #000;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      style.remove();
+    };
+  }, []);
+
+  // Wrong-path only: as the person scrolls through the reveal section,
+  // slide the frozen first frame up from below the viewport into its
+  // exact "docked" position — the same cover-fit box the main experience
+  // uses — so by the time this section's top reaches the top of the
+  // viewport, it lines up pixel-perfect with where the pinned experience
+  // takes over immediately after it in the document.
+  useEffect(() => {
+    if (gateChoice !== "wrong") return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const section = revealSectionRef.current;
+    const img = revealImgRef.current;
+    if (!section || !img) return;
+
+    function sizeImage() {
+      if (!img) return;
+      const cw = window.innerWidth;
+      const ch = window.innerHeight;
+      const naturalW = img.naturalWidth || 1920;
+      const naturalH = img.naturalHeight || 960;
+      const scale = Math.max(cw / naturalW, ch / naturalH);
+      img.style.width = `${naturalW * scale}px`;
+      img.style.height = `${naturalH * scale}px`;
+    }
+
+    if (img.complete) sizeImage();
+    img.addEventListener("load", sizeImage);
+    window.addEventListener("resize", sizeImage);
+
+    const st = ScrollTrigger.create({
+      trigger: section,
+      start: "top bottom",
+      end: "top top",
+      scrub: true,
+      onUpdate: (self) => {
+        const offsetVh = (1 - self.progress) * 100;
+        img.style.transform = `translate(-50%, -50%) translateY(${offsetVh}vh)`;
+      }
+    });
+
+    return () => {
+      img.removeEventListener("load", sizeImage);
+      window.removeEventListener("resize", sizeImage);
+      st.kill();
+    };
+  }, [gateChoice]);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -298,6 +397,13 @@ export default function Scratch() {
         },
         onRefresh: () => drawCurrentFrame()
       });
+      // Exposed via refs so code outside this effect (the gate buttons) can
+      // kill and recreate this pin around DOM structure changes — GSAP's
+      // pin physically wraps pinTarget in a "pin-spacer" node it inserts
+      // itself, which conflicts with React later inserting new siblings
+      // before it unless the pin is torn down first.
+      scrollTriggerRef.current = st;
+      initScrollTriggerRef.current = initScrollTrigger;
     }
 
     let resizeDebounce: ReturnType<typeof setTimeout> | null = null;
@@ -381,53 +487,97 @@ export default function Scratch() {
             <div
               style={{
                 maxWidth: 640,
-                fontSize: "clamp(24px, 4vw, 44px)",
+                fontSize: "clamp(28px, 5vw, 52px)",
                 lineHeight: 1.25,
-                color: "#000"
+                color: "#000",
+                ...arial,
+                fontWeight: 800
               }}
             >
-              <span style={{ ...arial, fontWeight: 800 }}>Hey — </span>
-              <span style={{ fontFamily: '"Times New Roman", Times, serif' }}>before we get into it, </span>
-              <span style={{ ...arial, fontWeight: 800, textDecoration: "underline" }}>who's</span>
-              <span style={{ fontFamily: '"Times New Roman", Times, serif' }}> reading this?</span>
+              Who are you?
             </div>
 
             <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
               <button
+                className="gate-btn"
                 onClick={() => setGateChoice("correct")}
-                style={{
-                  ...arial,
-                  fontWeight: 800,
-                  fontSize: 20,
-                  background: "#fff",
-                  color: "#000",
-                  border: "2px solid #000",
-                  borderRadius: 999,
-                  padding: "16px 32px",
-                  cursor: "pointer"
-                }}
+                style={{ ...arial, fontSize: 20 }}
               >
-                I'm Joel ⌄
+                I'm Joel
               </button>
               <button
-                onClick={() => setGateChoice("wrong")}
-                style={{
-                  ...arial,
-                  fontWeight: 800,
-                  fontSize: 20,
-                  background: "#fff",
-                  color: "#000",
-                  border: "2px solid #000",
-                  borderRadius: 999,
-                  padding: "16px 32px",
-                  cursor: "pointer"
+                className="gate-btn"
+                onClick={() => {
+                  // Kill the pin BEFORE the state change inserts new
+                  // siblings before it — see note above the [gateChoice]
+                  // effect for why this ordering matters.
+                  scrollTriggerRef.current?.kill();
+                  scrollTriggerRef.current = null;
+                  setGateChoice("wrong");
                 }}
+                style={{ ...arial, fontSize: 20 }}
               >
-                I'm Becca ⌄
+                I'm Becca
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {gateChoice === "wrong" && (
+        <>
+          <div
+            style={{
+              height: "100vh",
+              background: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              padding: 24
+            }}
+          >
+            <div style={{ ...arial, maxWidth: 640 }}>
+              <div style={{ fontSize: "clamp(24px, 4vw, 44px)", fontWeight: 700, lineHeight: 1.25 }}>
+                You're not Becca, but you can see what I sent to her if you like.
+              </div>
+              <div style={{ fontSize: "clamp(14px, 1.6vw, 20px)", marginTop: "0.6em" }}>
+                Scroll down and{" "}
+                <span
+                  style={{ textDecoration: "underline", cursor: "pointer" }}
+                  onClick={() => {
+                    unmuteHandlerRef.current();
+                    setUnmuted(true);
+                  }}
+                >
+                  unmute
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div
+            ref={revealSectionRef}
+            style={{
+              height: "100vh",
+              position: "relative",
+              background: "#ffffff",
+              overflow: "hidden"
+            }}
+          >
+            <img
+              ref={revealImgRef}
+              src="/part3/frame_0001.png"
+              alt=""
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%) translateY(100vh)"
+              }}
+            />
+          </div>
+        </>
       )}
 
       <div
@@ -509,50 +659,9 @@ export default function Scratch() {
           </div>
         </div>
 
-        {/* Wrong-path message — a separate sibling with a HIGHER z-index
-            than the canvas (30), unlike the default mute text above which
-            deliberately sits behind it. This message is taller (wraps to
-            multiple lines) and would otherwise be partly hidden behind
-            the figure. */}
-        {gateChoice === "wrong" && !unmuted && (
-          <div
-            style={{
-              ...arial,
-              position: "absolute",
-              top: "10vh",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: "80vw",
-              zIndex: 35,
-              fontWeight: 700,
-              letterSpacing: "-0.02em",
-              color: "#000",
-              textAlign: "center",
-              lineHeight: 1.2,
-              pointerEvents: "none",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "0.3em"
-            }}
-          >
-            <div style={{ whiteSpace: "normal", fontSize: "clamp(20px, 3.2vw, 40px)", width: "100%" }}>
-              You're not Becca, but you can see what I sent to her if you like.
-            </div>
-            <div style={{ whiteSpace: "normal", fontSize: "clamp(14px, 1.6vw, 20px)", width: "100%" }}>
-              Scroll down and{" "}
-              <span
-                style={{ textDecoration: "underline", cursor: "pointer", pointerEvents: "auto" }}
-                onClick={() => {
-                  unmuteHandlerRef.current();
-                  setUnmuted(true);
-                }}
-              >
-                unmute
-              </span>
-            </div>
-          </div>
-        )}
+        {/* Wrong-path message now lives in a normal-flow section BEFORE
+            this pinned experience (see above) rather than as an overlay
+            on top of it. */}
 
         <div
           ref={stageRef}
