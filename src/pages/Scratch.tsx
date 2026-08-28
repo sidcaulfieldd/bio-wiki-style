@@ -21,7 +21,7 @@ const BLACKBIRD_COLORS = [
 
 // Mixes a hex color toward white to get a soft, pastel/scrapbook-ish tint
 // instead of the full-saturation brand color.
-function pastelize(hex: string, amount = 0.55): string {
+function pastelize(hex: string, amount = 0.15): string {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
@@ -217,9 +217,9 @@ export default function Scratch() {
       const c2 = PASTEL_COLORS[(idx + 3) % PASTEL_COLORS.length];
       const c3 = PASTEL_COLORS[(idx + 6) % PASTEL_COLORS.length];
       const layers = [
-        { color: c3, radius: 24 },
-        { color: c2, radius: 15 },
-        { color: c1, radius: 7 }
+        { color: c3, radius: 48 },
+        { color: c2, radius: 30 },
+        { color: c1, radius: 14 }
       ];
 
       layers.forEach(({ color, radius }) => {
