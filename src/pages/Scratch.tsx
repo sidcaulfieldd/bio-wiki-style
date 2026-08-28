@@ -3,9 +3,32 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const sfPro = {
-  fontFamily:
-    '"SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif',
+  fontFamily: '"Gill Sans Ultra", "Gill Sans MT", "Gill Sans", Arial, sans-serif',
 };
+
+// Blackbird brand palette — used for the silhouette outline drawn around
+// each gif frame, cycling through as the frame index changes.
+const BLACKBIRD_COLORS = [
+  "#FFB400", // Lemon
+  "#00B58F", // Leaf
+  "#369FDC", // Sky
+  "#FF99CC", // Rose
+  "#FF285F", // Watermelon
+  "#FF451F", // Mandarin
+  "#C03380", // Berry
+  "#5C408A" // Grape
+];
+
+// Mixes a hex color toward white to get a soft, pastel/scrapbook-ish tint
+// instead of the full-saturation brand color.
+function pastelize(hex: string, amount = 0.55): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const mix = (c: number) => Math.round(c + (255 - c) * amount);
+  return `rgb(${mix(r)}, ${mix(g)}, ${mix(b)})`;
+}
+const PASTEL_COLORS = BLACKBIRD_COLORS.map((c) => pastelize(c));
 
 // Standalone scratch page.
 // No links, nav, or references to any other page on the site.
@@ -39,6 +62,17 @@ export default function Scratch() {
 
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
+
+    // Two reusable offscreen canvases for building the silhouette outline:
+    // one holds a single flat-colored silhouette (alpha shape filled with
+    // one color), the other builds a "dilated" (expanded) version of it by
+    // stamping that silhouette in a ring of small offsets — a standard
+    // canvas trick for faking a stroke/outline around an arbitrary alpha
+    // shape, since canvas 2D has no built-in dilate filter.
+    const silhouetteCanvas = document.createElement("canvas");
+    const silhouetteCtx = silhouetteCanvas.getContext("2d")!;
+    const dilateCanvas = document.createElement("canvas");
+    const dilateCtx = dilateCanvas.getContext("2d")!;
     const pinTarget = pinRef.current!;
     const stage = stageRef.current!;
     const video = videoRef.current!;
@@ -118,6 +152,14 @@ export default function Scratch() {
       canvas.style.width = cachedCw + "px";
       canvas.style.height = cachedCh + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      silhouetteCanvas.width = canvas.width;
+      silhouetteCanvas.height = canvas.height;
+      silhouetteCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      dilateCanvas.width = canvas.width;
+      dilateCanvas.height = canvas.height;
+      dilateCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
       drawCurrentFrame();
       positionVideoBox();
     }
@@ -167,7 +209,61 @@ export default function Scratch() {
 
       const { drawW, drawH, offsetX, offsetY } = computeBox(cw, ch, img.naturalWidth, img.naturalHeight);
 
+      // Blackbird brand treatment: a scrapbook-style pastel outline that
+      // traces the actual silhouette (not a rectangle) — three concentric
+      // layers, largest drawn first (furthest out), colors cycling through
+      // the palette as the frame changes.
+      const c1 = PASTEL_COLORS[idx % PASTEL_COLORS.length];
+      const c2 = PASTEL_COLORS[(idx + 3) % PASTEL_COLORS.length];
+      const c3 = PASTEL_COLORS[(idx + 6) % PASTEL_COLORS.length];
+      const layers = [
+        { color: c3, radius: 24 },
+        { color: c2, radius: 15 },
+        { color: c1, radius: 7 }
+      ];
+
+      layers.forEach(({ color, radius }) => {
+        drawSilhouetteRing(img, offsetX, offsetY, drawW, drawH, color, radius, cw, ch);
+      });
+
+      // The crisp, true-colored frame goes on top, inside all the outline layers.
       ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, offsetX, offsetY, drawW, drawH);
+    }
+
+    // Builds a flat-colored silhouette of the image's alpha shape, then
+    // "dilates" it outward by stamping that silhouette at many small
+    // offsets around a ring of the given radius — canvas 2D has no native
+    // dilate/outline filter, so stamping in a circle is the standard trick
+    // to fake one. A slight per-stamp jitter gives it a rougher,
+    // hand-cut/scrapbook edge instead of a perfectly smooth ring.
+    function drawSilhouetteRing(
+      img: HTMLImageElement,
+      offsetX: number,
+      offsetY: number,
+      drawW: number,
+      drawH: number,
+      color: string,
+      radius: number,
+      cw: number,
+      ch: number
+    ) {
+      silhouetteCtx.clearRect(0, 0, cw, ch);
+      silhouetteCtx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, offsetX, offsetY, drawW, drawH);
+      silhouetteCtx.globalCompositeOperation = "source-in";
+      silhouetteCtx.fillStyle = color;
+      silhouetteCtx.fillRect(0, 0, cw, ch);
+      silhouetteCtx.globalCompositeOperation = "source-over";
+
+      dilateCtx.clearRect(0, 0, cw, ch);
+      const steps = 20;
+      for (let i = 0; i < steps; i++) {
+        const angle = (i / steps) * Math.PI * 2;
+        const jitter = 1 + (Math.sin(i * 12.9898) * 0.5 + 0.5) * 0.2; // 1.0–1.2x, deterministic per step
+        const dx = Math.cos(angle) * radius * jitter;
+        const dy = Math.sin(angle) * radius * jitter;
+        dilateCtx.drawImage(silhouetteCanvas, dx, dy);
+      }
+      ctx.drawImage(dilateCanvas, 0, 0);
     }
 
     function showMuteOverlay() {
@@ -425,7 +521,7 @@ export default function Scratch() {
               width: "80vw",
               fontWeight: 700,
               letterSpacing: "-0.02em",
-              color: "#000",
+              color: "#000000",
               fontSize: "clamp(24px, 5vw, 56px)",
               textAlign: "center",
               lineHeight: 1.2,
