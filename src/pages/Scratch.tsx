@@ -1,34 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const sfPro = {
-  fontFamily: '"Gill Sans Ultra", "Gill Sans MT", "Gill Sans", Arial, sans-serif',
+const arial = {
+  fontFamily: 'Arial, "Helvetica Neue", Helvetica, sans-serif',
 };
-
-// Blackbird brand palette — used for the silhouette outline drawn around
-// each gif frame, cycling through as the frame index changes.
-const BLACKBIRD_COLORS = [
-  "#FFB400", // Lemon
-  "#00B58F", // Leaf
-  "#369FDC", // Sky
-  "#FF99CC", // Rose
-  "#FF285F", // Watermelon
-  "#FF451F", // Mandarin
-  "#C03380", // Berry
-  "#5C408A" // Grape
-];
-
-// Mixes a hex color toward white to get a soft, pastel/scrapbook-ish tint
-// instead of the full-saturation brand color.
-function pastelize(hex: string, amount = 0.15): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  const mix = (c: number) => Math.round(c + (255 - c) * amount);
-  return `rgb(${mix(r)}, ${mix(g)}, ${mix(b)})`;
-}
-const PASTEL_COLORS = BLACKBIRD_COLORS.map((c) => pastelize(c));
 
 // Standalone scratch page.
 // No links, nav, or references to any other page on the site.
@@ -42,13 +18,123 @@ export default function Scratch() {
   const videoWrapRef = useRef<HTMLDivElement>(null);
   const muteOverlayRef = useRef<HTMLDivElement>(null);
   const muteTitleRef = useRef<HTMLDivElement>(null);
-  const unmuteLinkRef = useRef<HTMLSpanElement>(null);
+  const unmuteHandlerRef = useRef<() => void>(() => {});
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  const initScrollTriggerRef = useRef<() => void>(() => {});
+  const gateBgRef = useRef<HTMLDivElement>(null);
+
+  // "pending" = gate showing, not yet chosen. "correct" = Joel picked
+  // Joel (current experience, unchanged). "wrong" = Joel picked Becca
+  // (heads-up message, then same experience).
+  const [gateChoice, setGateChoice] = useState<"pending" | "correct" | "wrong">("pending");
+  const [unmuted, setUnmuted] = useState(false);
+
+  // Lock page scroll while the gate is up, so nobody can scroll into the
+  // pinned experience invisibly behind it before choosing a name.
+  useEffect(() => {
+    document.body.style.overflow = gateChoice === "pending" ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [gateChoice]);
+
+  // Whenever gate choice changes, the wrong path inserts two full-height
+  // sections before the pinned experience — shifting its position in the
+  // document. GSAP's pin physically wraps the pinned element in a node it
+  // inserts itself, which is incompatible with React inserting new
+  // siblings before it afterward — so for the wrong path specifically,
+  // the pin is killed synchronously in the button's own click handler
+  // (before the state change that inserts those siblings), and recreated
+  // here once the new layout has actually settled.
+  useEffect(() => {
+    if (gateChoice === "wrong") {
+      requestAnimationFrame(() => {
+        initScrollTriggerRef.current();
+      });
+    } else {
+      ScrollTrigger.refresh();
+    }
+  }, [gateChoice]);
+
+  // Gate background — cycles through 10 frames while the gate is showing.
+  // Fully independent of the main experience's own frame system below;
+  // just a simple interval swapping a CSS background-image.
+  useEffect(() => {
+    if (gateChoice !== "pending") return;
+    const el = gateBgRef.current;
+    if (!el) return;
+
+    const frameCount = 10;
+    const urls = Array.from(
+      { length: frameCount },
+      (_, i) => `/gatebg/frame_${String(i + 1).padStart(2, "0")}.png`
+    );
+    // Preload so each swap is instant, no flash/pop between frames.
+    urls.forEach((u) => {
+      const img = new Image();
+      img.src = u;
+    });
+
+    let idx = 0;
+    el.style.backgroundImage = `url(${urls[0]})`;
+    const intervalMs = 2600; // matches the ~2.6s spacing the frames were sampled at from the source video
+    const id = setInterval(() => {
+      idx = (idx + 1) % frameCount;
+      el.style.backgroundImage = `url(${urls[idx]})`;
+    }, intervalMs);
+
+    return () => clearInterval(id);
+  }, [gateChoice]);
+
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.id = "scratch-cursor-override";
+    style.textContent = `
+      html, body, * { cursor: auto !important; }
+      img[src="/mouse.png"] { display: none !important; }
+      .cursor-trail-rect { display: none !important; }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      style.remove();
+    };
+  }, []);
+
+  // Gate button hover style — offset black "shadow" pill behind the
+  // button that tucks away (button slides into it) on hover.
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.id = "scratch-gate-button-style";
+    style.textContent = `
+      .gate-btn {
+        background: #fff;
+        color: #000;
+        border: 3px solid #000;
+        border-radius: 999px;
+        padding: 16px 36px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 4px 0 0 #000;
+        transform: translate(0, 0);
+        transition: transform 0.16s ease, box-shadow 0.16s ease;
+      }
+      .gate-btn:hover {
+        transform: translate(0, 4px);
+        box-shadow: 0 0 0 0 #000;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      style.remove();
+    };
+  }, []);
+
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     const CONFIG = {
-      frameFolder: "/part2",
+      frameFolder: "/part3",
       frameCount: 61,
       framePrefix: "frame_",
       frameDigits: 4,
@@ -57,29 +143,17 @@ export default function Scratch() {
       scrubSmoothness: 0.1,
       pinSpacerMultiplier: 3,
 
-      gifScrubRate: 0.4 // how much scroll (as a fraction of the whole pin) it takes to traverse the entire gif — used as a rate, not a fixed boundary
+      gifScrubRate: 0.4
     };
 
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
-
-    // Two reusable offscreen canvases for building the silhouette outline:
-    // one holds a single flat-colored silhouette (alpha shape filled with
-    // one color), the other builds a "dilated" (expanded) version of it by
-    // stamping that silhouette in a ring of small offsets — a standard
-    // canvas trick for faking a stroke/outline around an arbitrary alpha
-    // shape, since canvas 2D has no built-in dilate filter.
-    const silhouetteCanvas = document.createElement("canvas");
-    const silhouetteCtx = silhouetteCanvas.getContext("2d")!;
-    const dilateCanvas = document.createElement("canvas");
-    const dilateCtx = dilateCanvas.getContext("2d")!;
     const pinTarget = pinRef.current!;
     const stage = stageRef.current!;
     const video = videoRef.current!;
     const videoWrap = videoWrapRef.current!;
     const muteOverlay = muteOverlayRef.current!;
     const muteTitle = muteTitleRef.current!;
-    const unmuteLink = unmuteLinkRef.current!;
 
     const frames: HTMLImageElement[] = [];
     let framesLoaded = 0;
@@ -98,10 +172,6 @@ export default function Scratch() {
     }
 
     function computeBox(cw: number, ch: number, naturalW: number, naturalH: number) {
-      // Fixed full-screen "cover" size — fills the entire viewport
-      // (cropping overflow), constant from the very first frame. No growth,
-      // no shrink-to-a-fraction — same fixed size for both the gif and the
-      // video, on both desktop and mobile.
       const scale = Math.max(cw / naturalW, ch / naturalH);
       const drawW = naturalW * scale;
       const drawH = naturalH * scale;
@@ -110,12 +180,6 @@ export default function Scratch() {
       return { drawW, drawH, offsetX, offsetY };
     }
 
-    // Cached stage size — updated ONLY on real resize/orientation events,
-    // never read fresh mid-scroll. iOS Safari's address bar collapses and
-    // expands as you scroll, which transiently changes the real viewport
-    // height; recalculating size from getBoundingClientRect() on every
-    // single frame update picks up that fluctuation and makes the frame
-    // visibly resize while scrolling, looking exactly like unwanted growth.
     let cachedCw = 0;
     let cachedCh = 0;
 
@@ -134,10 +198,6 @@ export default function Scratch() {
     }
 
     function resizeCanvas() {
-      // iOS Safari's 100vh includes space behind the collapsible address
-      // bar and can misreport the real visible height at certain scroll
-      // moments — setting an explicit pixel height from window.innerHeight
-      // is more reliable than trusting the CSS value alone.
       const vh = `${window.innerHeight}px`;
       pinTarget.style.height = vh;
       stage.style.height = vh;
@@ -152,14 +212,6 @@ export default function Scratch() {
       canvas.style.width = cachedCw + "px";
       canvas.style.height = cachedCh + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      silhouetteCanvas.width = canvas.width;
-      silhouetteCanvas.height = canvas.height;
-      silhouetteCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      dilateCanvas.width = canvas.width;
-      dilateCanvas.height = canvas.height;
-      dilateCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
       drawCurrentFrame();
       positionVideoBox();
     }
@@ -175,7 +227,7 @@ export default function Scratch() {
             framesLoaded = settled;
             if (loaderTextRef.current) {
               const pct = Math.round((framesLoaded / CONFIG.frameCount) * 100);
-              loaderTextRef.current.textContent = `Loading… ${pct}%`;
+              loaderTextRef.current.textContent = `LOADING… ${pct}%`;
             }
             if (settled >= CONFIG.frameCount) resolve();
           };
@@ -209,61 +261,7 @@ export default function Scratch() {
 
       const { drawW, drawH, offsetX, offsetY } = computeBox(cw, ch, img.naturalWidth, img.naturalHeight);
 
-      // Blackbird brand treatment: a scrapbook-style pastel outline that
-      // traces the actual silhouette (not a rectangle) — three concentric
-      // layers, largest drawn first (furthest out), colors cycling through
-      // the palette as the frame changes.
-      const c1 = PASTEL_COLORS[idx % PASTEL_COLORS.length];
-      const c2 = PASTEL_COLORS[(idx + 3) % PASTEL_COLORS.length];
-      const c3 = PASTEL_COLORS[(idx + 6) % PASTEL_COLORS.length];
-      const layers = [
-        { color: c3, radius: 48 },
-        { color: c2, radius: 30 },
-        { color: c1, radius: 14 }
-      ];
-
-      layers.forEach(({ color, radius }) => {
-        drawSilhouetteRing(img, offsetX, offsetY, drawW, drawH, color, radius, cw, ch);
-      });
-
-      // The crisp, true-colored frame goes on top, inside all the outline layers.
       ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, offsetX, offsetY, drawW, drawH);
-    }
-
-    // Builds a flat-colored silhouette of the image's alpha shape, then
-    // "dilates" it outward by stamping that silhouette at many small
-    // offsets around a ring of the given radius — canvas 2D has no native
-    // dilate/outline filter, so stamping in a circle is the standard trick
-    // to fake one. A slight per-stamp jitter gives it a rougher,
-    // hand-cut/scrapbook edge instead of a perfectly smooth ring.
-    function drawSilhouetteRing(
-      img: HTMLImageElement,
-      offsetX: number,
-      offsetY: number,
-      drawW: number,
-      drawH: number,
-      color: string,
-      radius: number,
-      cw: number,
-      ch: number
-    ) {
-      silhouetteCtx.clearRect(0, 0, cw, ch);
-      silhouetteCtx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, offsetX, offsetY, drawW, drawH);
-      silhouetteCtx.globalCompositeOperation = "source-in";
-      silhouetteCtx.fillStyle = color;
-      silhouetteCtx.fillRect(0, 0, cw, ch);
-      silhouetteCtx.globalCompositeOperation = "source-over";
-
-      dilateCtx.clearRect(0, 0, cw, ch);
-      const steps = 20;
-      for (let i = 0; i < steps; i++) {
-        const angle = (i / steps) * Math.PI * 2;
-        const jitter = 1 + (Math.sin(i * 12.9898) * 0.5 + 0.5) * 0.2; // 1.0–1.2x, deterministic per step
-        const dx = Math.cos(angle) * radius * jitter;
-        const dy = Math.sin(angle) * radius * jitter;
-        dilateCtx.drawImage(silhouetteCanvas, dx, dy);
-      }
-      ctx.drawImage(dilateCanvas, 0, 0);
     }
 
     function showMuteOverlay() {
@@ -281,7 +279,13 @@ export default function Scratch() {
       video.muted = false;
       hideMuteOverlay();
     }
-    unmuteLink.addEventListener("click", onUnmuteClick);
+    // Stored in a ref rather than addEventListener directly on the DOM
+    // node — the mute text (and its "UNMUTE" span) swaps between two
+    // different JSX variants depending on gate choice, which means React
+    // may replace that DOM node. A ref-based callback always calls
+    // whatever the current handler is, regardless of which node is
+    // currently rendered — no stale/detached listener risk.
+    unmuteHandlerRef.current = onUnmuteClick;
 
     function enterVideoPhase() {
       if (inVideoPhase) return;
@@ -290,14 +294,6 @@ export default function Scratch() {
       videoWrap.style.pointerEvents = "auto";
       canvas.style.opacity = "0";
       resizeCanvas();
-      // Retry sizing across the next several frames — on some mobile
-      // browsers the container's layout isn't fully settled at the exact
-      // instant we enter, so the first attempt can silently cache a 0x0
-      // box and leave the video stuck at its tiny placeholder size even
-      // though it's genuinely playing (audible but invisible). Calling
-      // resizeCanvas() (not just positionVideoBox()) each retry is what
-      // actually re-measures the real layout instead of reusing the same
-      // stale cached value.
       let retries = 10;
       function retryPositioning() {
         resizeCanvas();
@@ -321,7 +317,7 @@ export default function Scratch() {
     }
 
     let prevProgress = 0;
-    let gifVirtualProgress = 0; // single source of truth for gif frame — moves forward/backward symmetrically with scroll, in both directions
+    let gifVirtualProgress = 0;
 
     function startPlayingForward() {
       video.play().catch(() => {});
@@ -362,46 +358,36 @@ export default function Scratch() {
           const delta = progress - prevProgress;
 
           if (!inVideoPhase) {
-            // Gif is visible — accumulate the same way whether scrolling
-            // forward or backward, so reversing is a perfect mirror of
-            // playing forward, not a separate formula that can disagree
-            // with this one at some boundary.
             gifVirtualProgress = Math.max(0, Math.min(1, gifVirtualProgress + delta / CONFIG.gifScrubRate));
             state.frameIndex = gifVirtualProgress * (CONFIG.frameCount - 1);
             state.gapProgress = 1 - gifVirtualProgress;
             drawCurrentFrame();
 
             if (gifVirtualProgress >= 1 && delta > 0) {
-              // Fully assembled and still pushing forward — hand off to video.
               enterVideoPhase();
               startPlayingForward();
             }
           } else if (delta < 0) {
-            // Scrolling up while in the video — instant revert to the last
-            // gif frame, then immediately keep applying this same tick's
-            // movement so it starts decreasing right away, no held frame.
             exitVideoPhase();
             gifVirtualProgress = Math.max(0, Math.min(1, 1 + delta / CONFIG.gifScrubRate));
             state.frameIndex = gifVirtualProgress * (CONFIG.frameCount - 1);
             state.gapProgress = 1 - gifVirtualProgress;
             drawCurrentFrame();
           }
-          // else: in video phase, scrolling down (or still) — forward
-          // scroll is blocked by onWheel/onTouchMove anyway; video just
-          // keeps playing on its own.
 
           prevProgress = progress;
         },
         onRefresh: () => drawCurrentFrame()
       });
+      // Exposed via refs so code outside this effect (the gate buttons) can
+      // kill and recreate this pin around DOM structure changes — GSAP's
+      // pin physically wraps pinTarget in a "pin-spacer" node it inserts
+      // itself, which conflicts with React later inserting new siblings
+      // before it unless the pin is torn down first.
+      scrollTriggerRef.current = st;
+      initScrollTriggerRef.current = initScrollTrigger;
     }
 
-    // Debounced — iOS can fire visualViewport 'resize' repeatedly with
-    // intermediate values WHILE the address bar is still mid-animation
-    // (not just once at the end), and reacting to every single one causes
-    // visible resizing throughout the scroll gesture itself. Waiting for
-    // the events to actually stop before applying anything means only the
-    // final, settled size ever gets used.
     let resizeDebounce: ReturnType<typeof setTimeout> | null = null;
     const onResize = () => {
       if (resizeDebounce) clearTimeout(resizeDebounce);
@@ -411,22 +397,12 @@ export default function Scratch() {
       }, 200);
     };
 
-    // Mobile-only: allow the title to wrap onto multiple centered lines
-    // instead of overflowing off-screen. Desktop is untouched — this only
-    // kicks in below the breakpoint, so the wide-screen layout stays
-    // pixel-identical to before.
     function applyResponsiveTitle() {
       const isMobile = window.innerWidth <= 600;
       muteTitle.style.whiteSpace = isMobile ? "normal" : "nowrap";
       muteTitle.style.width = isMobile ? "92vw" : "80vw";
     }
     window.addEventListener("resize", onResize);
-    // Deliberately NOT listening to visualViewport 'resize' — on iOS that
-    // fires repeatedly with intermediate values WHILE the address bar is
-    // still mid-collapse during scroll, and reacting to those is exactly
-    // what caused the visible "growing" effect. Measuring size once at
-    // mount and only re-measuring on a genuine window resize (e.g. device
-    // rotation) keeps it perfectly stable through every scroll gesture.
 
     function onLoadedMetadata() {
       videoDuration = video.duration || 0;
@@ -455,13 +431,119 @@ export default function Scratch() {
       video.removeEventListener("loadedmetadata", onLoadedMetadata);
       video.removeEventListener("loadeddata", positionVideoBox);
       video.removeEventListener("canplay", positionVideoBox);
-      unmuteLink.removeEventListener("click", onUnmuteClick);
       st?.kill();
     };
   }, []);
 
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff" }}>
+      {gateChoice === "pending" && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "#369FDC",
+            overflow: "hidden"
+          }}
+        >
+          <div
+            ref={gateBgRef}
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat"
+            }}
+          />
+
+          <div
+            style={{
+              position: "relative",
+              zIndex: 1,
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 40,
+              padding: 24,
+              textAlign: "center"
+            }}
+          >
+            <div
+              style={{
+                maxWidth: 640,
+                fontSize: "clamp(28px, 5vw, 52px)",
+                lineHeight: 1.25,
+                color: "#000",
+                fontFamily: '"Gill Sans Ultra", "Gill Sans", "Gill Sans MT", Arial, sans-serif',
+                fontWeight: 800
+              }}
+            >
+              WHO ARE YOU?
+            </div>
+
+            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
+              <button
+                className="gate-btn"
+                onClick={() => setGateChoice("correct")}
+                style={{ ...arial, fontSize: 20 }}
+              >
+                I'M JOEL
+              </button>
+              <button
+                className="gate-btn"
+                onClick={() => {
+                  // Kill the pin BEFORE the state change inserts new
+                  // siblings before it — see note above the [gateChoice]
+                  // effect for why this ordering matters.
+                  scrollTriggerRef.current?.kill();
+                  scrollTriggerRef.current = null;
+                  setGateChoice("wrong");
+                }}
+                style={{ ...arial, fontSize: 20 }}
+              >
+                I'M BECCA
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {gateChoice === "wrong" && (
+        <div
+          style={{
+            height: "100vh",
+            background: "#ffffff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            padding: 24
+          }}
+        >
+          <div style={{ ...arial, maxWidth: 640 }}>
+            <div style={{ fontSize: "clamp(24px, 4vw, 44px)", fontWeight: 700, lineHeight: 1.25 }}>
+              YOU'RE NOT BECCA, BUT YOU CAN SEE WHAT I SENT TO HER IF YOU LIKE.
+            </div>
+            <div style={{ fontSize: "clamp(14px, 1.6vw, 20px)", marginTop: "0.6em" }}>
+              SCROLL DOWN AND{" "}
+              <span
+                style={{ textDecoration: "underline", cursor: "pointer" }}
+                onClick={() => {
+                  unmuteHandlerRef.current();
+                  setUnmuted(true);
+                }}
+              >
+                UNMUTE
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div
         ref={pinRef}
         style={{
@@ -513,7 +595,7 @@ export default function Scratch() {
           <div
             ref={muteTitleRef}
             style={{
-              ...sfPro,
+              ...arial,
               position: "absolute",
               top: "10vh",
               left: "50%",
@@ -521,24 +603,29 @@ export default function Scratch() {
               width: "80vw",
               fontWeight: 700,
               letterSpacing: "-0.02em",
-              color: "#000000",
+              color: "#000",
               fontSize: "clamp(24px, 5vw, 56px)",
               textAlign: "center",
               lineHeight: 1.2,
               whiteSpace: "nowrap",
-              pointerEvents: "none"
+              pointerEvents: "none",
+              display: gateChoice === "wrong" ? "none" : "block"
             }}
           >
             SID, YOU'RE ON MUTE. PRESS{" "}
             <span
-              ref={unmuteLinkRef}
               style={{ textDecoration: "underline", cursor: "pointer", pointerEvents: "auto" }}
+              onClick={() => unmuteHandlerRef.current()}
             >
               UNMUTE
             </span>
             .
           </div>
         </div>
+
+        {/* Wrong-path message now lives in a normal-flow section BEFORE
+            this pinned experience (see above) rather than as an overlay
+            on top of it. */}
 
         <div
           ref={stageRef}
@@ -585,7 +672,7 @@ export default function Scratch() {
             ref={loaderTextRef}
             style={{ fontSize: 13, letterSpacing: "0.04em", color: "#666" }}
           >
-            Loading… 0%
+            LOADING… 0%
           </div>
         </div>
       </div>
