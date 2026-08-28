@@ -19,8 +19,6 @@ export default function Scratch() {
   const muteOverlayRef = useRef<HTMLDivElement>(null);
   const muteTitleRef = useRef<HTMLDivElement>(null);
   const unmuteHandlerRef = useRef<() => void>(() => {});
-  const revealSectionRef = useRef<HTMLDivElement>(null);
-  const revealImgRef = useRef<HTMLImageElement>(null);
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
   const initScrollTriggerRef = useRef<() => void>(() => {});
 
@@ -100,59 +98,6 @@ export default function Scratch() {
     };
   }, []);
 
-  // Wrong-path only: as the person scrolls through the reveal section,
-  // slide the frozen first frame up from below the viewport into its
-  // exact "docked" position — the same cover-fit box the main experience
-  // uses — so by the time this section's top reaches the top of the
-  // viewport, it lines up pixel-perfect with where the pinned experience
-  // takes over immediately after it in the document.
-  useEffect(() => {
-    if (gateChoice !== "wrong") return;
-
-    gsap.registerPlugin(ScrollTrigger);
-
-    const section = revealSectionRef.current;
-    const img = revealImgRef.current;
-    if (!section || !img) return;
-
-    function sizeImage() {
-      if (!img) return;
-      const cw = window.innerWidth;
-      const ch = window.innerHeight;
-      // Hardcoded — all part3 frames are known to be exactly 1920x960.
-      // Sizing this way means the image is correctly scaled immediately
-      // on first render, with no dependency on waiting for its 'load'
-      // event to fire first. Waiting on that was the actual bug: if
-      // scrolling started before load fired, the browser briefly showed
-      // the image at its raw native 1920x960 size — much bigger than the
-      // viewport — which is exactly the oversized, cropped "stuck frame"
-      // that was visible before reaching the correctly-scaled figure.
-      const naturalW = 1920;
-      const naturalH = 960;
-      const scale = Math.max(cw / naturalW, ch / naturalH);
-      img.style.width = `${naturalW * scale}px`;
-      img.style.height = `${naturalH * scale}px`;
-    }
-
-    sizeImage();
-    window.addEventListener("resize", sizeImage);
-
-    const st = ScrollTrigger.create({
-      trigger: section,
-      start: "top bottom",
-      end: "top top",
-      scrub: true,
-      onUpdate: (self) => {
-        const offsetVh = (1 - self.progress) * 100;
-        img.style.transform = `translate(-50%, -50%) translateY(${offsetVh}vh)`;
-      }
-    });
-
-    return () => {
-      window.removeEventListener("resize", sizeImage);
-      st.kill();
-    };
-  }, [gateChoice]);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -531,61 +476,35 @@ export default function Scratch() {
       )}
 
       {gateChoice === "wrong" && (
-        <>
-          <div
-            style={{
-              height: "100vh",
-              background: "#ffffff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-              padding: 24
-            }}
-          >
-            <div style={{ ...arial, maxWidth: 640 }}>
-              <div style={{ fontSize: "clamp(24px, 4vw, 44px)", fontWeight: 700, lineHeight: 1.25 }}>
-                YOU'RE NOT BECCA, BUT YOU CAN SEE WHAT I SENT TO HER IF YOU LIKE.
-              </div>
-              <div style={{ fontSize: "clamp(14px, 1.6vw, 20px)", marginTop: "0.6em" }}>
-                SCROLL DOWN AND{" "}
-                <span
-                  style={{ textDecoration: "underline", cursor: "pointer" }}
-                  onClick={() => {
-                    unmuteHandlerRef.current();
-                    setUnmuted(true);
-                  }}
-                >
-                  UNMUTE
-                </span>
-              </div>
+        <div
+          style={{
+            height: "100vh",
+            background: "#ffffff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            padding: 24
+          }}
+        >
+          <div style={{ ...arial, maxWidth: 640 }}>
+            <div style={{ fontSize: "clamp(24px, 4vw, 44px)", fontWeight: 700, lineHeight: 1.25 }}>
+              YOU'RE NOT BECCA, BUT YOU CAN SEE WHAT I SENT TO HER IF YOU LIKE.
+            </div>
+            <div style={{ fontSize: "clamp(14px, 1.6vw, 20px)", marginTop: "0.6em" }}>
+              SCROLL DOWN AND{" "}
+              <span
+                style={{ textDecoration: "underline", cursor: "pointer" }}
+                onClick={() => {
+                  unmuteHandlerRef.current();
+                  setUnmuted(true);
+                }}
+              >
+                UNMUTE
+              </span>
             </div>
           </div>
-
-          <div
-            ref={revealSectionRef}
-            style={{
-              height: "100vh",
-              position: "relative",
-              background: "#ffffff",
-              overflow: "hidden"
-            }}
-          >
-            <img
-              ref={revealImgRef}
-              src="/part3/frame_0001.png"
-              alt=""
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                width: `${1920 * Math.max(window.innerWidth / 1920, window.innerHeight / 960)}px`,
-                height: `${960 * Math.max(window.innerWidth / 1920, window.innerHeight / 960)}px`,
-                transform: "translate(-50%, -50%) translateY(100vh)"
-              }}
-            />
-          </div>
-        </>
+        </div>
       )}
 
       <div
