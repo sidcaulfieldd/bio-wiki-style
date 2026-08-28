@@ -21,6 +21,7 @@ export default function Scratch() {
   const unmuteHandlerRef = useRef<() => void>(() => {});
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
   const initScrollTriggerRef = useRef<() => void>(() => {});
+  const gateBgRef = useRef<HTMLDivElement>(null);
 
   // "pending" = gate showing, not yet chosen. "correct" = Joel picked
   // Joel (current experience, unchanged). "wrong" = Joel picked Becca
@@ -53,6 +54,36 @@ export default function Scratch() {
     } else {
       ScrollTrigger.refresh();
     }
+  }, [gateChoice]);
+
+  // Gate background — cycles through 10 frames while the gate is showing.
+  // Fully independent of the main experience's own frame system below;
+  // just a simple interval swapping a CSS background-image.
+  useEffect(() => {
+    if (gateChoice !== "pending") return;
+    const el = gateBgRef.current;
+    if (!el) return;
+
+    const frameCount = 10;
+    const urls = Array.from(
+      { length: frameCount },
+      (_, i) => `/gatebg/frame_${String(i + 1).padStart(2, "0")}.png`
+    );
+    // Preload so each swap is instant, no flash/pop between frames.
+    urls.forEach((u) => {
+      const img = new Image();
+      img.src = u;
+    });
+
+    let idx = 0;
+    el.style.backgroundImage = `url(${urls[0]})`;
+    const intervalMs = 2600; // matches the ~2.6s spacing the frames were sampled at from the source video
+    const id = setInterval(() => {
+      idx = (idx + 1) % frameCount;
+      el.style.backgroundImage = `url(${urls[idx]})`;
+    }, intervalMs);
+
+    return () => clearInterval(id);
   }, [gateChoice]);
 
   useEffect(() => {
@@ -416,10 +447,16 @@ export default function Scratch() {
             overflow: "hidden"
           }}
         >
-          <div style={{ position: "absolute", top: "-8%", left: "-6%", width: "38vw", height: "38vw", borderRadius: "50%", background: "#FF99CC" }} />
-          <div style={{ position: "absolute", bottom: "-12%", right: "-8%", width: "44vw", height: "44vw", borderRadius: "50%", background: "#FFB400" }} />
-          <div style={{ position: "absolute", top: "18%", right: "6%", width: "16vw", height: "16vw", borderRadius: "12%", background: "#FF451F", transform: "rotate(12deg)" }} />
-          <div style={{ position: "absolute", bottom: "10%", left: "8%", width: "14vw", height: "14vw", borderRadius: "12%", background: "#C03380", transform: "rotate(-10deg)" }} />
+          <div
+            ref={gateBgRef}
+            style={{
+              position: "absolute",
+              inset: 0,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat"
+            }}
+          />
 
           <div
             style={{
