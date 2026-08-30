@@ -513,28 +513,35 @@ export default function Scratch() {
             padding: 24
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%", maxWidth: 1200 }}>
-            <div 
-              style={{ 
-                fontSize: "clamp(28px, 5.2vw, 58px)", 
-                fontWeight: 800, 
-                lineHeight: 1.1,
-                letterSpacing: "-0.01em",
-                width: "100%"
-              }}
-            >
-              YOU'RE NOT BECCA, BUT HERE'S WHAT I SENT HER
-            </div>
-            
+          {/* Inner block uses fit-content so the width shrink-wraps to the exact text length */}
+          <div style={{ ...sfPro, width: "fit-content", maxWidth: "90vw", display: "inline-block" }}>
             <div
               style={{
-                fontSize: "clamp(14px, 1.6vw, 20px)",
-                marginTop: "0.6em",
+                fontSize: "clamp(24px, 4.5vw, 48px)",
+                fontWeight: 800,
+                lineHeight: 1.15,
+                color: "#000000",
+                letterSpacing: "-0.02em",
+                textAlign: "center",
+                whiteSpace: "normal"
+              }}
+            >
+              <span>YOU'RE NOT BECCA, BUT</span>
+              <br />
+              <span>HERE'S WHAT I SENT HER</span>
+            </div>
+
+            <div
+              style={{
+                fontSize: "clamp(12px, 1.8vw, 18px)",
+                fontWeight: 700,
+                marginTop: "1.2em",
                 fontStyle: "italic",
                 textTransform: "uppercase",
                 display: "flex",
                 justifyContent: "space-between",
                 width: "100%",
+                color: "#000000",
                 opacity: unmuted ? 0 : 1,
                 visibility: unmuted ? "hidden" : "visible",
                 transition: "opacity 0.2s ease, visibility 0.2s ease"
