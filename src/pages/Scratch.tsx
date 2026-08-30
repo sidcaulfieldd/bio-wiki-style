@@ -134,8 +134,8 @@ export default function Scratch() {
     gsap.registerPlugin(ScrollTrigger);
 
     const CONFIG = {
-      frameFolder: "/part3",
-      frameCount: 61,
+      frameFolder: "/joel",
+      frameCount: 35,
       framePrefix: "frame_",
       frameDigits: 4,
       frameExt: "png",
@@ -412,6 +412,19 @@ export default function Scratch() {
     video.addEventListener("loadeddata", positionVideoBox);
     video.addEventListener("canplay", positionVideoBox);
 
+    (window as any).__applyPath = function applyPath(path: "joel" | "becca") {
+      CONFIG.frameFolder = path === "joel" ? "/joel" : "/becca";
+      CONFIG.frameCount = path === "joel" ? 35 : 34;
+      video.src = path === "joel" ? "/joel/scratch-video-joel.mp4" : "/becca/scratch-video-becca.mp4";
+      video.load();
+      frames.length = 0;
+      state.frameIndex = 0;
+      preloadFrames().then(() => {
+        resizeCanvas();
+        drawCurrentFrame();
+      });
+    };
+
     resizeCanvas();
     applyResponsiveTitle();
     drawCurrentFrame();
@@ -488,7 +501,10 @@ export default function Scratch() {
             <div style={{ display: "flex", gap: 20, flexWrap: "wrap", justifyContent: "center" }}>
               <button
                 className="gate-btn"
-                onClick={() => setGateChoice("correct")}
+                onClick={() => {
+                  (window as any).__applyPath?.("joel");
+                  setGateChoice("correct");
+                }}
                 style={{ ...arial, fontSize: 20 }}
               >
                 I'M JOEL
@@ -501,6 +517,7 @@ export default function Scratch() {
                   // effect for why this ordering matters.
                   scrollTriggerRef.current?.kill();
                   scrollTriggerRef.current = null;
+                  (window as any).__applyPath?.("becca");
                   setGateChoice("wrong");
                 }}
                 style={{ ...arial, fontSize: 20 }}
@@ -566,7 +583,7 @@ export default function Scratch() {
         >
           <video
             ref={videoRef}
-            src="/part2/scratch-video.mp4"
+            src="/joel/scratch-video-joel.mp4"
             playsInline
             preload="auto"
             muted
