@@ -6,7 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import EPortfolio from "./pages/EPortfolio";
-import Scratch from "./pages/Scratch";
+import BlackbirdApplication from "./pages/blackbirdapplication";
+import BlackbirdApplicationBecca from "./pages/blackbird-application";
 import NotFound from "./pages/NotFound";
 import CustomCursor from "./components/CustomCursor";
 import CursorTrail from "./components/CursorTrail";
@@ -23,7 +24,8 @@ const AppContent = () => {
           <Route path="/" element={<Index />} />
           <Route path="/LETSGETVISUAL" element={<About />} />
           <Route path="/E-PORTFOLIO" element={<EPortfolio />} />
-          <Route path="/scratch" element={<Scratch />} />
+          <Route path="/blackbirdapplication" element={<BlackbirdApplication />} />
+          <Route path="/blackbird-application" element={<BlackbirdApplicationBecca />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
