@@ -21,7 +21,6 @@ export default function Scratch() {
   const unmuteHandlerRef = useRef<() => void>(() => {});
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
   const initScrollTriggerRef = useRef<() => void>(() => {});
-  const gateBgRef = useRef<HTMLDivElement>(null);
 
   // "pending" = gate showing, not yet chosen. "correct" = Joel picked
   // Joel (current experience, unchanged). "wrong" = Joel picked Becca
@@ -54,36 +53,6 @@ export default function Scratch() {
     } else {
       ScrollTrigger.refresh();
     }
-  }, [gateChoice]);
-
-  // Gate background — cycles through 10 frames while the gate is showing.
-  // Fully independent of the main experience's own frame system below;
-  // just a simple interval swapping a CSS background-image.
-  useEffect(() => {
-    if (gateChoice !== "pending") return;
-    const el = gateBgRef.current;
-    if (!el) return;
-
-    const frameCount = 10;
-    const urls = Array.from(
-      { length: frameCount },
-      (_, i) => `/gatebg/frame_${String(i + 1).padStart(2, "0")}.png`
-    );
-    // Preload so each swap is instant, no flash/pop between frames.
-    urls.forEach((u) => {
-      const img = new Image();
-      img.src = u;
-    });
-
-    let idx = 0;
-    el.style.backgroundImage = `url(${urls[0]})`;
-    const intervalMs = 2600; // matches the ~2.6s spacing the frames were sampled at from the source video
-    const id = setInterval(() => {
-      idx = (idx + 1) % frameCount;
-      el.style.backgroundImage = `url(${urls[idx]})`;
-    }, intervalMs);
-
-    return () => clearInterval(id);
   }, [gateChoice]);
 
   useEffect(() => {
@@ -128,7 +97,6 @@ export default function Scratch() {
       style.remove();
     };
   }, []);
-
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -461,10 +429,10 @@ export default function Scratch() {
           }}
         >
           <div
-            ref={gateBgRef}
             style={{
               position: "absolute",
               inset: 0,
+              backgroundImage: 'url("/gatebg/frame_01.png")',
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat"
@@ -543,20 +511,22 @@ export default function Scratch() {
         >
           <div style={{ ...arial, maxWidth: 640 }}>
             <div style={{ fontSize: "clamp(24px, 4vw, 44px)", fontWeight: 700, lineHeight: 1.25 }}>
-              YOU'RE NOT BECCA, BUT YOU CAN SEE WHAT I SENT TO HER IF YOU LIKE.
+              YOU'RE NOT BECCA, BUT HERE'S WHAT I SENT HER
             </div>
-            <div style={{ fontSize: "clamp(14px, 1.6vw, 20px)", marginTop: "0.6em" }}>
-              SCROLL DOWN AND{" "}
-              <span
-                style={{ textDecoration: "underline", cursor: "pointer" }}
-                onClick={() => {
-                  unmuteHandlerRef.current();
-                  setUnmuted(true);
-                }}
-              >
-                UNMUTE
-              </span>
-            </div>
+            {!unmuted && (
+              <div style={{ fontSize: "clamp(14px, 1.6vw, 20px)", marginTop: "0.6em" }}>
+                SCROLL DOWN AND{" "}
+                <span
+                  style={{ textDecoration: "underline", cursor: "pointer" }}
+                  onClick={() => {
+                    unmuteHandlerRef.current();
+                    setUnmuted(true);
+                  }}
+                >
+                  UNMUTE
+                </span>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -687,7 +657,17 @@ export default function Scratch() {
         >
           <div
             ref={loaderTextRef}
-            style={{ fontSize: 13, letterSpacing: "0.04em", color: "#666" }}
+            style={{
+              ...arial,
+              background: "#ffffff",
+              color: "#000000",
+              border: "3px solid #000000",
+              borderRadius: "999px",
+              padding: "16px 36px",
+              fontWeight: 800,
+              fontSize: 20,
+              boxShadow: "0 4px 0 0 #000000"
+            }}
           >
             LOADING… 0%
           </div>
