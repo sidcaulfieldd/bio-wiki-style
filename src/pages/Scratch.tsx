@@ -513,8 +513,16 @@ export default function Scratch() {
             padding: 24
           }}
         >
-          <div style={{ ...sfPro, maxWidth: 640, width: "100%" }}>
-            <div style={{ fontSize: "clamp(24px, 4vw, 44px)", fontWeight: 700, lineHeight: 1.25 }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%", maxWidth: 1200 }}>
+            <div 
+              style={{ 
+                fontSize: "clamp(28px, 5.2vw, 58px)", 
+                fontWeight: 800, 
+                lineHeight: 1.1,
+                letterSpacing: "-0.01em",
+                width: "100%"
+              }}
+            >
               YOU'RE NOT BECCA, BUT HERE'S WHAT I SENT HER
             </div>
             
@@ -627,10 +635,6 @@ export default function Scratch() {
             .
           </div>
         </div>
-
-        {/* Wrong-path message now lives in a normal-flow section BEFORE
-            this pinned experience (see above) rather than as an overlay
-            on top of it. */}
 
         <div
           ref={stageRef}
