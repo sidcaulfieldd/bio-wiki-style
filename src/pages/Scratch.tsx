@@ -6,6 +6,10 @@ const arial = {
   fontFamily: 'Arial, "Helvetica Neue", Helvetica, sans-serif',
 };
 
+const sfPro = {
+  fontFamily: '-apple-system, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif',
+};
+
 // Standalone scratch page.
 // No links, nav, or references to any other page on the site.
 export default function Scratch() {
@@ -509,24 +513,38 @@ export default function Scratch() {
             padding: 24
           }}
         >
-          <div style={{ ...arial, maxWidth: 640 }}>
+          <div style={{ ...sfPro, maxWidth: 640, width: "100%" }}>
             <div style={{ fontSize: "clamp(24px, 4vw, 44px)", fontWeight: 700, lineHeight: 1.25 }}>
               YOU'RE NOT BECCA, BUT HERE'S WHAT I SENT HER
             </div>
-            {!unmuted && (
-              <div style={{ fontSize: "clamp(14px, 1.6vw, 20px)", marginTop: "0.6em" }}>
-                SCROLL DOWN AND{" "}
-                <span
-                  style={{ textDecoration: "underline", cursor: "pointer" }}
-                  onClick={() => {
-                    unmuteHandlerRef.current();
-                    setUnmuted(true);
-                  }}
-                >
-                  UNMUTE
-                </span>
-              </div>
-            )}
+            
+            <div
+              style={{
+                fontSize: "clamp(14px, 1.6vw, 20px)",
+                marginTop: "0.6em",
+                fontStyle: "italic",
+                textTransform: "uppercase",
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+                opacity: unmuted ? 0 : 1,
+                visibility: unmuted ? "hidden" : "visible",
+                transition: "opacity 0.2s ease, visibility 0.2s ease"
+              }}
+            >
+              <span>SCROLL</span>
+              <span>DOWN</span>
+              <span>AND</span>
+              <span
+                style={{ textDecoration: "underline", cursor: "pointer" }}
+                onClick={() => {
+                  unmuteHandlerRef.current();
+                  setUnmuted(true);
+                }}
+              >
+                UNMUTE
+              </span>
+            </div>
           </div>
         </div>
       )}
@@ -582,7 +600,7 @@ export default function Scratch() {
           <div
             ref={muteTitleRef}
             style={{
-              ...arial,
+              ...sfPro,
               position: "absolute",
               top: "10vh",
               left: "50%",
