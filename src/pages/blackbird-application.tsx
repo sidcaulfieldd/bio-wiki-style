@@ -32,6 +32,14 @@ export default function Scratch() {
   const [gateChoice, setGateChoice] = useState<"pending" | "correct" | "wrong">("pending");
   const [unmuted, setUnmuted] = useState(false);
 
+  // Force page to always start at the top on reload
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+  }, []);
+
   // Lock page scroll while the gate is up, so nobody can scroll into the
   // pinned experience invisibly behind it before choosing a name.
   useEffect(() => {
