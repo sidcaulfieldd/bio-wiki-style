@@ -391,7 +391,7 @@ export default function Scratch() {
       video.load();
       frames.length = 0;
       state.frameIndex = 0;
-      preloadFrames().then(() => {
+      Promise.all([preloadFrames(), preloadVideo()]).then(() => {
         resizeCanvas();
         drawCurrentFrame();
       });
