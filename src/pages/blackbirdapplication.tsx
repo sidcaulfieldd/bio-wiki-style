@@ -372,7 +372,18 @@ export default function ScratchReversed() {
     drawCurrentFrame();
     showMuteOverlay();
 
-    preloadFrames().then(() => {
+    function preloadVideo() {
+      return new Promise<void>((resolve) => {
+        if (video.readyState >= 2) {
+          resolve();
+          return;
+        }
+        video.addEventListener("loadeddata", () => resolve(), { once: true });
+        video.addEventListener("error", () => resolve(), { once: true });
+      });
+    }
+
+    Promise.all([preloadFrames(), preloadVideo()]).then(() => {
       resizeCanvas();
       hideLoader();
       initScrollTrigger();
