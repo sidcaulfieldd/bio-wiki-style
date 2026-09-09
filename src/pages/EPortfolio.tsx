@@ -296,7 +296,7 @@ const EPortfolio = () => {
           display: none !important;
         }
         body.eportfolio-page .cursor-trail-rect {
-          transform: scale(0.5);
+          display: none !important;
         }
       `}</style>
 
