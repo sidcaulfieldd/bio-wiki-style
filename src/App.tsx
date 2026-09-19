@@ -8,6 +8,7 @@ import About from "./pages/About";
 import EPortfolio from "./pages/EPortfolio";
 import BlackbirdApplication from "./pages/blackbirdapplication";
 import BlackbirdApplicationBecca from "./pages/blackbird-application";
+import Scratch from "./pages/Scratch";
 import NotFound from "./pages/NotFound";
 import CustomCursor from "./components/CustomCursor";
 import CursorTrail from "./components/CursorTrail";
@@ -26,6 +27,7 @@ const AppContent = () => {
           <Route path="/E-PORTFOLIO" element={<EPortfolio />} />
           <Route path="/blackbirdapplication" element={<BlackbirdApplication />} />
           <Route path="/blackbird-application" element={<BlackbirdApplicationBecca />} />
+          <Route path="/scratch" element={<Scratch />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
