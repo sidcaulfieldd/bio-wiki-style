@@ -129,7 +129,7 @@ export default function Scratch() {
       // Paper-behind-the-gif layer. See buildPaperJitters/applyPaperFrame
       // below — this is the "scanned collage" effect tested separately
       // as an artifact before being wired in here.
-      paperUrl: "/paper/paper-texture.jpg",
+      paperUrl: "/white-clean-crumpled-notebook-paper-with-lines-vector.jpg",
       paperZoom: 1.25 // 125% — how much overflow the paper has to pan within
     };
 
