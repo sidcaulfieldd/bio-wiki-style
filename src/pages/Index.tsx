@@ -307,14 +307,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Education</th>
             <td className="py-2 px-2 relative z-10">
-              
-                href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology"
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                RMIT University
-              </a>
+              <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a>
             </td>
           </tr>
           <tr className="border-t border-[#a2a9b1]">
@@ -328,14 +321,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Social</th>
             <td className="py-2 px-2 relative z-10">
-              
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://www.linkedin.com/in/sid-caulfield-27b838356/"
-              >
-                LinkedIn
-              </a>
+              <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/sid-caulfield-27b838356/">LinkedIn</a>
             </td>
           </tr>
           <tr className="border-t border-[#a2a9b1]">
