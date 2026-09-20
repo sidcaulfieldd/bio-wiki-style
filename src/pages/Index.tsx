@@ -208,18 +208,36 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
   const [leftGap, setLeftGap] = useState(0);
   // Gap between the card's right edge and the screen's right edge (px)
   const [rightGap, setRightGap] = useState(0);
+  // Top offset (relative to the card) that centers each video in the current viewport
+  const [leftTop, setLeftTop] = useState(0);
+  const [rightTop, setRightTop] = useState(0);
 
   useEffect(() => {
-    const measure = () => {
+    const update = () => {
       const rect = cardRef.current?.getBoundingClientRect();
       if (!rect) return;
-      setLeftGap(rect.left);
-      setRightGap(window.innerWidth - rect.right);
+
+      const nextLeftGap = rect.left;
+      const nextRightGap = window.innerWidth - rect.right;
+      setLeftGap(nextLeftGap);
+      setRightGap(nextRightGap);
+
+      const leftHeight = (nextLeftGap * 16) / 9;
+      const rightHeight = (nextRightGap * 16) / 9;
+
+      // Position each video's top (relative to the card) so its vertical
+      // center lands on the current viewport's vertical center.
+      setLeftTop(window.innerHeight / 2 - rect.top - leftHeight / 2);
+      setRightTop(window.innerHeight / 2 - rect.top - rightHeight / 2);
     };
 
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, { passive: true });
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update);
+    };
   }, [cardRef]);
 
   useEffect(() => {
@@ -236,8 +254,7 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
             width: `${leftGap}px`,
             aspectRatio: "9 / 16",
             right: "calc(100% + 1px)",
-            top: "50%",
-            transform: "translateY(-50%)",
+            top: `${leftTop}px`,
           }}
         >
           <video
@@ -262,8 +279,7 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
             width: `${rightGap}px`,
             aspectRatio: "9 / 16",
             left: "calc(100% + 1px)",
-            top: "50%",
-            transform: "translateY(-50%)",
+            top: `${rightTop}px`,
           }}
         >
           <video
