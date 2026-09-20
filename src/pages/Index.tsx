@@ -257,14 +257,8 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
             autoPlay
             muted
             playsInline
-            className="block object-cover"
-            style={{
-              position: "absolute",
-              top: "-2px",
-              left: "-2px",
-              width: "calc(100% + 4px)",
-              height: "calc(100% + 4px)",
-            }}
+            className="block w-full h-full object-cover"
+            style={{ transform: "scale(1.03)" }}
             onEnded={(e) => {
               e.currentTarget.pause();
               setShowLeft(false);
@@ -288,14 +282,8 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
             autoPlay
             muted
             playsInline
-            className="block object-cover"
-            style={{
-              position: "absolute",
-              top: "-2px",
-              left: "-2px",
-              width: "calc(100% + 4px)",
-              height: "calc(100% + 4px)",
-            }}
+            className="block w-full h-full object-cover"
+            style={{ transform: "scale(1.03)" }}
             onEnded={(e) => {
               e.currentTarget.pause();
               setShowRight(false);
