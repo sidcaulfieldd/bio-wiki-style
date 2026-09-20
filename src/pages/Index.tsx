@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import rightVid from "@/assets/right_side_website_vid.mp4";
 import leftVid from "@/assets/left_side_website_vid.mp4";
@@ -11,6 +11,8 @@ const MIC       = ["map","man","men","mop","mug","pod","cam","pen","cap","pan","
 const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbreaks","backyards","skateparks","houseplants","aftershocks","storybeats","timepieces","showpieces","soundwaves","blueprints","footprints","goldmines","nightfalls","rainstorms","shipwrecks","storefronts","boardrooms","campfires","flashdrives","doorframes","landmasses","starbursts","bookcases","motorways","skylights","newsbreaks","postcards","sandcastles","wildfires","turntables","drumrolls","backflips","hatchbacks","headlines","paintbrushes","storytales","afterhours","longreads","sidequests","breakthroughs","launches","projects","ventures","chapters","episodes","showcases"];
 
 const Index = () => {
+  const cardRef = useRef<HTMLDivElement>(null);
+
   // Preload the on-page gif + both videos in the background
   useEffect(() => {
     const assets = [profilePic, rightVid, leftVid];
@@ -41,7 +43,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="bg-white border border-[#a7d7f9] p-6 relative">
+        <div ref={cardRef} className="bg-white border border-[#a7d7f9] p-6 relative">
           {/* Title */}
           <h1 className="text-3xl font-serif border-b border-[#a2a9b1] pb-2 mb-4">
             Sid Caulfield
@@ -187,7 +189,7 @@ const Index = () => {
           </div>
 
           {/* Walking easter egg — desktop only, tethered to card edges */}
-          <WalkingSid />
+          <WalkingSid cardRef={cardRef} />
         </div>
       </main>
 
@@ -199,39 +201,54 @@ const Index = () => {
   );
 };
 
-const WalkingSid = () => {
-  const [showRight, setShowRight] = useState(false);
+const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
   const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(false);
+  // Gap between the card's left edge and the screen's left edge (px)
+  const [leftGap, setLeftGap] = useState(0);
+  // Gap between the card's right edge and the screen's right edge (px)
+  const [rightGap, setRightGap] = useState(0);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowRight(true), 5000);
+    const measure = () => {
+      const rect = cardRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setLeftGap(rect.left);
+      setRightGap(window.innerWidth - rect.right);
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [cardRef]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowLeft(true), 5000);
     return () => clearTimeout(t);
   }, []);
 
   return (
     <div className="hidden md:block pointer-events-none">
-      {showRight && (
-        <div className="absolute top-0 left-full" style={{ width: "80vw", aspectRatio: "9 / 16" }}>
-          <video
-            src={rightVid}
-            autoPlay
-            muted
-            playsInline
-            className="w-full h-full"
-            style={{ transform: "scale(0.47)", transformOrigin: "left top" }}
-            onEnded={() => setTimeout(() => setShowLeft(true), 3000)}
-          />
-        </div>
-      )}
       {showLeft && (
-        <div className="absolute top-0 right-full" style={{ width: "80vw", aspectRatio: "9 / 16" }}>
+        <div className="absolute top-0 right-full" style={{ width: `${leftGap}px`, aspectRatio: "9 / 16" }}>
           <video
             src={leftVid}
             autoPlay
             muted
             playsInline
             className="w-full h-full"
-            style={{ transform: "scale(0.45)", transformOrigin: "right top" }}
+            onEnded={() => setTimeout(() => setShowRight(true), 3000)}
+          />
+        </div>
+      )}
+      {showRight && (
+        <div className="absolute top-0 left-full" style={{ width: `${rightGap}px`, aspectRatio: "9 / 16" }}>
+          <video
+            src={rightVid}
+            autoPlay
+            muted
+            playsInline
+            className="w-full h-full"
           />
         </div>
       )}
