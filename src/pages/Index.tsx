@@ -1,5 +1,7 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import profilePic from "@/assets/profile_pic.gif";
+import rightVid from "@/assets/right_side_website_vid.mp4";
+import leftVid from "@/assets/left_side_website_vid.mp4";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 import { ScrollFlipWord } from "@/components/ScrollFlipWord";
@@ -9,6 +11,21 @@ const MIC       = ["map","man","men","mop","mug","pod","cam","pen","cap","pan","
 const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbreaks","backyards","skateparks","houseplants","aftershocks","storybeats","timepieces","showpieces","soundwaves","blueprints","footprints","goldmines","nightfalls","rainstorms","shipwrecks","storefronts","boardrooms","campfires","flashdrives","doorframes","landmasses","starbursts","bookcases","motorways","skylights","newsbreaks","postcards","sandcastles","wildfires","turntables","drumrolls","backflips","hatchbacks","headlines","paintbrushes","storytales","afterhours","longreads","sidequests","breakthroughs","launches","projects","ventures","chapters","episodes","showcases"];
 
 const Index = () => {
+  // Preload the on-page gif + both videos in the background
+  useEffect(() => {
+    const assets = [profilePic, rightVid, leftVid];
+    assets.forEach((src) => {
+      if (src.endsWith(".mp4")) {
+        const v = document.createElement("video");
+        v.preload = "auto";
+        v.src = src;
+      } else {
+        const img = new Image();
+        img.src = src;
+      }
+    });
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
@@ -24,7 +41,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="bg-white border border-[#a7d7f9] p-6">
+        <div className="bg-white border border-[#a7d7f9] p-6 relative">
           {/* Title */}
           <h1 className="text-3xl font-serif border-b border-[#a2a9b1] pb-2 mb-4">
             Sid Caulfield
@@ -53,7 +70,7 @@ const Index = () => {
 
               {/* Lead Section */}
               <p className="mb-4 leading-relaxed relative z-10">
-                Sid Caulfield is an Australian creative comms professional based in Melbourne, Victoria. His work spans copywriting, social strategy and execution, journalism and podcast production. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. He is currently a freelance journalist and the content syndication and social media manager at Flow Mountain Bike, Australia and New Zealand's largest digital mountain bike publication.
+                <strong>Sid Caulfield</strong> is an Australian creative comms professional based in <a href="https://en.wikipedia.org/wiki/Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>. His work spans copywriting, social strategy and execution, journalism and podcast production. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. He is currently a freelance journalist and the content syndication and social media manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a> and <a href="https://en.wikipedia.org/wiki/New_Zealand" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">New Zealand</a>'s largest digital mountain bike publication.
               </p>
 
               {/* Career Overview Section */}
@@ -168,24 +185,67 @@ const Index = () => {
               </div>
             </aside>
           </div>
+
+          {/* Walking easter egg — desktop only, tethered to card edges */}
+          <WalkingSid />
         </div>
       </main>
 
       {/* Visual link in grey area */}
-      <div className="text-center leading-none -mt-4">
-        <a
+      <div className="text-center leading-none -mt-4 pb-6">
+        
           href="/LETSGETVISUAL"
           className="text-[#0645ad] hover:underline text-base"
         >
           LET'S GET VISUAL
         </a>
       </div>
+    </div>
+  );
+};
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-[#a7d7f9] mt-2 py-6">
-        <div className="max-w-[1000px] mx-auto px-4 text-xs text-[#54595d]">
+const WalkingSid = () => {
+  const [showRight, setShowRight] = useState(false);
+  const [showLeft, setShowLeft] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowRight(true), 5000);
+    return () => clearTimeout(t);
+  }, []);
+
+  return (
+    <div className="hidden md:block pointer-events-none">
+      {showRight && (
+        <div
+          className="absolute top-0 left-full"
+          style={{ width: "80vw", aspectRatio: "9 / 16" }}
+        >
+          <video
+            src={rightVid}
+            autoPlay
+            muted
+            playsInline
+            className="w-full h-full"
+            style={{ transform: "scale(0.47)", transformOrigin: "left top" }}
+            onEnded={() => setTimeout(() => setShowLeft(true), 3000)}
+          />
         </div>
-      </footer>
+      )}
+      {showLeft && (
+        <div
+          className="absolute top-0 right-full"
+          style={{ width: "80vw", aspectRatio: "9 / 16" }}
+        >
+          <video
+            src={leftVid}
+            autoPlay
+            muted
+            playsInline
+            className="w-full h-full"
+            style={{ transform: "scale(0.45)", transformOrigin: "right top" }}
+          />
+        </div>
+      )}
     </div>
   );
 };
@@ -258,7 +318,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Education</th>
             <td className="py-2 px-2 relative z-10">
-              <a
+              
                 href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology"
                 className="text-[#0645ad] hover:underline"
                 target="_blank"
@@ -279,7 +339,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Social</th>
             <td className="py-2 px-2 relative z-10">
-              <a
+              
                 className="text-[#0645ad] hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
