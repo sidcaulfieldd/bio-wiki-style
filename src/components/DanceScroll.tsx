@@ -164,20 +164,33 @@ export default function DanceScroll() {
     }
     unmuteHandlerRef.current = onUnmuteClick;
 
+    let videoEnded = false;
+
     function enterVideoPhase() {
       if (inVideoPhase) return;
       inVideoPhase = true;
+      videoEnded = false;
       videoWrap.style.opacity = "1";
       videoWrap.style.pointerEvents = "auto";
       canvas.style.opacity = "0";
       if (!userUnmuted) video.muted = true;
-      video.play().catch(() => {});
+      video.currentTime = 0;
+      video.play()
+        .then(() => console.log("[DanceScroll] video.play() succeeded"))
+        .catch((err) => console.error("[DanceScroll] video.play() FAILED:", err));
       showMuteOverlay();
     }
+
+    function onVideoEnded() {
+      videoEnded = true;
+      console.log("[DanceScroll] video ended, unlocking scroll");
+    }
+    video.addEventListener("ended", onVideoEnded);
 
     function exitVideoPhase() {
       if (!inVideoPhase) return;
       inVideoPhase = false;
+      videoEnded = false;
       videoWrap.style.opacity = "0";
       videoWrap.style.pointerEvents = "none";
       canvas.style.opacity = "1";
@@ -240,6 +253,28 @@ export default function DanceScroll() {
     };
     window.addEventListener("resize", onResize);
 
+    // Lock forward scroll while the video is playing; release it once the
+    // video actually finishes so the person can continue down the page.
+    function onWheel(e: WheelEvent) {
+      if (inVideoPhase && !videoEnded && e.deltaY > 0) {
+        e.preventDefault();
+      }
+    }
+    let touchStartY = 0;
+    function onTouchStart(e: TouchEvent) {
+      touchStartY = e.touches[0].clientY;
+    }
+    function onTouchMove(e: TouchEvent) {
+      if (!inVideoPhase || videoEnded) return;
+      const dy = touchStartY - e.touches[0].clientY;
+      if (dy > 0) {
+        e.preventDefault();
+      }
+    }
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+
     resizeCanvas();
     drawCurrentFrame();
 
@@ -265,6 +300,10 @@ export default function DanceScroll() {
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("load", onWindowLoad);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      video.removeEventListener("ended", onVideoEnded);
       st?.kill();
     };
   }, []);
