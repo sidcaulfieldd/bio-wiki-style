@@ -50,7 +50,7 @@ const Index = () => {
             Sid Caulfield
           </h1>
 
-          <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex flex-col md:flex-row gap-6 items-start">
             {/* Main Content Column */}
             <div className="flex-1 order-2 md:order-1">
               {/* Table of Contents */}
