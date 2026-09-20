@@ -244,8 +244,8 @@ export default function DanceScroll() {
         ref={boxRef}
         style={{
           position: "relative",
-          width: "min(90vw, 800px)",
-          aspectRatio: "16 / 9",
+          width: "min(90vw, 450px)",
+          aspectRatio: "9 / 16",
           overflow: "hidden",
           background: "#000",
         }}
