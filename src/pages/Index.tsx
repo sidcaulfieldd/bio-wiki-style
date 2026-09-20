@@ -203,7 +203,7 @@ const Index = () => {
 
 const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
   // Positive pushes the videos further down from true viewport-center; negative pushes up.
-  const VERTICAL_OFFSET = 20;
+  const VERTICAL_OFFSET = 25;
 
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
