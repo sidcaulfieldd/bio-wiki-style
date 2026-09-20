@@ -53,7 +53,7 @@ const Index = () => {
 
               {/* Lead Section */}
               <p className="mb-4 leading-relaxed relative z-10">
-                <strong>Sid Caulfield</strong> is an Australian content and comms professional based in <a href="https://en.wikipedia.org/wiki/Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>. His work spans podcast production, digital journalism and social media strategy. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. Projects slated for 2026 include <em>How to Pull Off the Most Profitable Bunnings Sausage Sizzle of All Time</em>, <em>How to Ride Your Bike to the Pub/Club</em> and <em>Why the F*ck Does My Beer Cost 18 Bucks?</em> He is currently a freelance journalist and the content syndication and social media manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a> and <a href="https://en.wikipedia.org/wiki/New_Zealand" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">New Zealand</a>'s largest digital mountain bike publication.
+                Sid Caulfield is an Australian creative comms professional based in Melbourne, Victoria. His work spans copywriting, social strategy and execution, journalism and podcast production. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. He is currently a freelance journalist and the content syndication and social media manager at Flow Mountain Bike, Australia and New Zealand's largest digital mountain bike publication.
               </p>
 
               {/* Career Overview Section */}
@@ -184,17 +184,6 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-white border-t border-[#a7d7f9] mt-2 py-6">
         <div className="max-w-[1000px] mx-auto px-4 text-xs text-[#54595d]">
-          <p>
-            This page was last edited on{" "}
-            {new Date().toLocaleDateString("en-US", {
-              day: "numeric",
-              month: "long",
-              year: "numeric"
-            })}
-          </p>
-          <p className="mt-2">
-            Content is available under CC BY-SA 4.0 unless otherwise noted.
-          </p>
         </div>
       </footer>
     </div>
@@ -255,10 +244,11 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Occupation</th>
             <td className="py-2 px-2 relative z-10">
-              Freelance Journalist, Content Syndication and Social Media Manager, Podcast Producer
+              Freelance Creative
             </td>
           </tr>
           <tr className="border-t border-[#a2a9b1]">
+            <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Location</th>
             <td className="py-2 px-2 relative z-10">Greater Melbourne, Victoria, Australia</td>
           </tr>
@@ -297,15 +287,6 @@ const SidebarContent = () => {
                 href="https://www.linkedin.com/in/sid-caulfield-27b838356/"
               >
                 LinkedIn
-              </a>
-              <br />
-              <a
-                className="text-[#0645ad] hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://www.instagram.com/sidcaulfield/"
-              >
-                Instagram
               </a>
             </td>
           </tr>
