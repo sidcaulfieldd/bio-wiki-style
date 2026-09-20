@@ -230,7 +230,16 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
   return (
     <div className="hidden md:block pointer-events-none">
       {showLeft && (
-        <div className="absolute top-0 overflow-hidden" style={{ width: `${leftGap}px`, aspectRatio: "9 / 16", right: "calc(100% + 1px)" }}>
+        <div
+          className="absolute overflow-hidden"
+          style={{
+            width: `${leftGap}px`,
+            aspectRatio: "9 / 16",
+            right: "calc(100% + 1px)",
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        >
           <video
             src={leftVid}
             autoPlay
@@ -247,7 +256,16 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
         </div>
       )}
       {showRight && (
-        <div className="absolute top-0 overflow-hidden" style={{ width: `${rightGap}px`, aspectRatio: "9 / 16", left: "calc(100% + 1px)" }}>
+        <div
+          className="absolute overflow-hidden"
+          style={{
+            width: `${rightGap}px`,
+            aspectRatio: "9 / 16",
+            left: "calc(100% + 1px)",
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        >
           <video
             src={rightVid}
             autoPlay
