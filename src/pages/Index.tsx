@@ -193,7 +193,7 @@ const Index = () => {
 
       {/* Visual link in grey area */}
       <div className="text-center leading-none -mt-4 pb-6">
-        
+        <a
           href="/LETSGETVISUAL"
           className="text-[#0645ad] hover:underline text-base"
         >
@@ -318,7 +318,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Education</th>
             <td className="py-2 px-2 relative z-10">
-              
+              <a
                 href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology"
                 className="text-[#0645ad] hover:underline"
                 target="_blank"
@@ -339,7 +339,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Social</th>
             <td className="py-2 px-2 relative z-10">
-              
+              <a
                 className="text-[#0645ad] hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
