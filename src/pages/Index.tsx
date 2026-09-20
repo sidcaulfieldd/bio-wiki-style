@@ -3,6 +3,7 @@ import profilePic from "@/assets/profile_pic.gif";
 import rightVid from "@/assets/right_side_website_vid.mp4";
 import leftVid from "@/assets/left_side_website_vid.mp4";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
+import DanceScroll from "@/components/DanceScroll";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 import { ScrollFlipWord } from "@/components/ScrollFlipWord";
 
@@ -178,6 +179,12 @@ const Index = () => {
               <p className="mb-4 leading-relaxed relative z-10">
                 — Available upon request!!
               </p>
+
+              {/* Dance gif-scrub -> video, same pin/scrub effect as the Blackbird page,
+                  boxed to a centered 16:9 stage instead of a full-bleed portrait takeover. */}
+              <div className="my-6">
+                <DanceScroll />
+              </div>
             </div>
 
             {/* Desktop Sidebar */}
