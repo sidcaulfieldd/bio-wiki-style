@@ -183,7 +183,7 @@ const Index = () => {
               {/* Dance gif-scrub -> video, same pin/scrub effect as the Blackbird page,
                   boxed to a centered 16:9 stage instead of a full-bleed portrait takeover. */}
               <div className="my-6">
-                <div className="flex justify-center md:ml-[150px]">
+                <div className="flex justify-center md:translate-x-[150px]">
                   <DanceScroll />
                 </div>
               </div>

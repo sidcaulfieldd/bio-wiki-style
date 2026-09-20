@@ -219,10 +219,21 @@ export default function DanceScroll() {
       resizeCanvas();
       hideLoader();
       initScrollTrigger();
+      // Other async-loading content on the page (e.g. the Mons Monday gif)
+      // can still shift page height after this point, which would leave
+      // ScrollTrigger's cached start/end positions stale. Force a recheck
+      // once everything has actually settled.
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     });
+
+    const onWindowLoad = () => ScrollTrigger.refresh();
+    window.addEventListener("load", onWindowLoad);
+    // In case "load" already fired before this effect ran.
+    if (document.readyState === "complete") onWindowLoad();
 
     return () => {
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("load", onWindowLoad);
       st?.kill();
     };
   }, []);
@@ -246,7 +257,7 @@ export default function DanceScroll() {
           width: 270,
           height: 480,
           overflow: "hidden",
-          background: "#000",
+          background: "transparent",
         }}
       >
         <div
