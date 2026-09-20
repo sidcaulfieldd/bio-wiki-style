@@ -217,18 +217,18 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
       const rect = cardRef.current?.getBoundingClientRect();
       if (!rect) return;
 
-      const nextLeftGap = rect.left;
-      const nextRightGap = window.innerWidth - rect.right;
+      const nextLeftGap = Math.round(rect.left);
+      const nextRightGap = Math.round(window.innerWidth - rect.right);
       setLeftGap(nextLeftGap);
       setRightGap(nextRightGap);
 
-      const leftHeight = (nextLeftGap * 16) / 9;
-      const rightHeight = (nextRightGap * 16) / 9;
+      const leftHeight = Math.round((nextLeftGap * 16) / 9);
+      const rightHeight = Math.round((nextRightGap * 16) / 9);
 
       // Position each video's top (relative to the card) so its vertical
       // center lands on the current viewport's vertical center.
-      setLeftTop(window.innerHeight / 2 - rect.top - leftHeight / 2);
-      setRightTop(window.innerHeight / 2 - rect.top - rightHeight / 2);
+      setLeftTop(Math.round(window.innerHeight / 2 - rect.top - leftHeight / 2));
+      setRightTop(Math.round(window.innerHeight / 2 - rect.top - rightHeight / 2));
     };
 
     update();
@@ -245,6 +245,11 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
     return () => clearTimeout(t);
   }, []);
 
+  // Derive whole-pixel heights from the rounded gaps so the CSS box matches
+  // exactly what the top-offset math above assumed.
+  const leftHeight = Math.round((leftGap * 16) / 9);
+  const rightHeight = Math.round((rightGap * 16) / 9);
+
   return (
     <div className="hidden md:block pointer-events-none">
       {showLeft && (
@@ -252,7 +257,7 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
           className="absolute overflow-hidden"
           style={{
             width: `${leftGap}px`,
-            aspectRatio: "9 / 16",
+            height: `${leftHeight}px`,
             right: "calc(100% + 1px)",
             top: `${leftTop}px`,
           }}
@@ -277,7 +282,7 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
           className="absolute overflow-hidden"
           style={{
             width: `${rightGap}px`,
-            aspectRatio: "9 / 16",
+            height: `${rightHeight}px`,
             left: "calc(100% + 1px)",
             top: `${rightTop}px`,
           }}
