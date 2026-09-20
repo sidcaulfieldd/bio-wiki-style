@@ -201,6 +201,7 @@ export default function DanceScroll() {
         onUpdate: (self) => {
           const progress = self.progress;
           const delta = progress - prevProgress;
+          console.log("[DanceScroll] onUpdate progress=", progress.toFixed(3), "delta=", delta.toFixed(4), "inVideoPhase=", inVideoPhase);
 
           if (!inVideoPhase) {
             gifVirtualProgress = Math.max(0, Math.min(1, gifVirtualProgress + delta / CONFIG.gifScrubRate));
@@ -234,9 +235,11 @@ export default function DanceScroll() {
     drawCurrentFrame();
 
     Promise.all([preloadFrames(), preloadVideo()]).then(() => {
+      console.log("[DanceScroll] assets settled, initializing ScrollTrigger");
       resizeCanvas();
       hideLoader();
       initScrollTrigger();
+      console.log("[DanceScroll] ScrollTrigger created:", st);
       // Other async-loading content on the page (e.g. the Mons Monday gif)
       // can still shift page height after this point, which would leave
       // ScrollTrigger's cached start/end positions stale. Force a recheck
