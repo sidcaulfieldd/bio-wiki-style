@@ -187,6 +187,10 @@ const Index = () => {
                   <DanceScroll />
                 </div>
               </div>
+              {/* Guarantees real scroll room below the pin even though this is
+                  the last content on the page — GSAP's auto pin-spacer can be
+                  unreliable right at document end, so reserve it explicitly. */}
+              <div aria-hidden="true" style={{ height: "40vh" }} />
             </div>
 
             {/* Desktop Sidebar */}
