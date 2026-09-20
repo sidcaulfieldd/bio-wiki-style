@@ -1,7 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import profilePic from "@/assets/profile_pic.gif";
-import rightVid from "@/assets/right_side_website_vid.mp4";
-import leftVid from "@/assets/left_side_website_vid.mp4";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 import { ScrollFlipWord } from "@/components/ScrollFlipWord";
@@ -11,21 +9,6 @@ const MIC       = ["map","man","men","mop","mug","pod","cam","pen","cap","pan","
 const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbreaks","backyards","skateparks","houseplants","aftershocks","storybeats","timepieces","showpieces","soundwaves","blueprints","footprints","goldmines","nightfalls","rainstorms","shipwrecks","storefronts","boardrooms","campfires","flashdrives","doorframes","landmasses","starbursts","bookcases","motorways","skylights","newsbreaks","postcards","sandcastles","wildfires","turntables","drumrolls","backflips","hatchbacks","headlines","paintbrushes","storytales","afterhours","longreads","sidequests","breakthroughs","launches","projects","ventures","chapters","episodes","showcases"];
 
 const Index = () => {
-  // Preload the on-page gif + both videos in the background
-  useEffect(() => {
-    const assets = [profilePic, rightVid, leftVid];
-    assets.forEach((src) => {
-      if (src.endsWith(".mp4")) {
-        const v = document.createElement("video");
-        v.preload = "auto";
-        v.src = src;
-      } else {
-        const img = new Image();
-        img.src = src;
-      }
-    });
-  }, []);
-
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
       {/* Wikipedia Header */}
@@ -41,7 +24,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="bg-white border border-[#a7d7f9] p-6 relative">
+        <div className="bg-white border border-[#a7d7f9] p-6">
           {/* Title */}
           <h1 className="text-3xl font-serif border-b border-[#a2a9b1] pb-2 mb-4">
             Sid Caulfield
@@ -185,67 +168,18 @@ const Index = () => {
               </div>
             </aside>
           </div>
-
-          {/* Walking easter egg — desktop only, tethered to card edges */}
-          <WalkingSid />
         </div>
       </main>
 
       {/* Visual link in grey area */}
       <div className="text-center leading-none -mt-4 pb-6">
-        
+        <a
           href="/LETSGETVISUAL"
           className="text-[#0645ad] hover:underline text-base"
         >
           LET'S GET VISUAL
         </a>
       </div>
-    </div>
-  );
-};
-
-const WalkingSid = () => {
-  const [showRight, setShowRight] = useState(false);
-  const [showLeft, setShowLeft] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setShowRight(true), 5000);
-    return () => clearTimeout(t);
-  }, []);
-
-  return (
-    <div className="hidden md:block pointer-events-none">
-      {showRight && (
-        <div
-          className="absolute top-0 left-full"
-          style={{ width: "80vw", aspectRatio: "9 / 16" }}
-        >
-          <video
-            src={rightVid}
-            autoPlay
-            muted
-            playsInline
-            className="w-full h-full"
-            style={{ transform: "scale(0.47)", transformOrigin: "left top" }}
-            onEnded={() => setTimeout(() => setShowLeft(true), 3000)}
-          />
-        </div>
-      )}
-      {showLeft && (
-        <div
-          className="absolute top-0 right-full"
-          style={{ width: "80vw", aspectRatio: "9 / 16" }}
-        >
-          <video
-            src={leftVid}
-            autoPlay
-            muted
-            playsInline
-            className="w-full h-full"
-            style={{ transform: "scale(0.45)", transformOrigin: "right top" }}
-          />
-        </div>
-      )}
     </div>
   );
 };
@@ -318,7 +252,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Education</th>
             <td className="py-2 px-2 relative z-10">
-              
+              <a
                 href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology"
                 className="text-[#0645ad] hover:underline"
                 target="_blank"
@@ -339,7 +273,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Social</th>
             <td className="py-2 px-2 relative z-10">
-              
+              <a
                 className="text-[#0645ad] hover:underline"
                 target="_blank"
                 rel="noopener noreferrer"
