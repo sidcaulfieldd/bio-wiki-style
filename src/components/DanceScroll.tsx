@@ -109,8 +109,26 @@ export default function DanceScroll() {
           resolve();
           return;
         }
-        video.addEventListener("loadeddata", () => resolve(), { once: true });
-        video.addEventListener("error", () => resolve(), { once: true });
+        // If the video never fires loadeddata/error (seen on some mobile
+        // browsers/network conditions with large video files), don't let
+        // it block ScrollTrigger init forever — fall back after a timeout.
+        const timeout = setTimeout(() => resolve(), 4000);
+        video.addEventListener(
+          "loadeddata",
+          () => {
+            clearTimeout(timeout);
+            resolve();
+          },
+          { once: true }
+        );
+        video.addEventListener(
+          "error",
+          () => {
+            clearTimeout(timeout);
+            resolve();
+          },
+          { once: true }
+        );
       });
     }
 
