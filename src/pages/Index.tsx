@@ -237,7 +237,7 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
             muted
             playsInline
             className="block w-full h-full object-cover"
-            style={{ transform: "scale(1.001)" }}
+            style={{ transform: "scale(1.005)" }}
             onEnded={(e) => {
               e.currentTarget.pause();
               setShowLeft(false);
@@ -254,7 +254,7 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
             muted
             playsInline
             className="block w-full h-full object-cover"
-            style={{ transform: "scale(1.01)" }}
+            style={{ transform: "scale(1.005)" }}
             onEnded={(e) => {
               e.currentTarget.pause();
               setShowRight(false);
