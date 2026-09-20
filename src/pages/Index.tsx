@@ -202,6 +202,9 @@ const Index = () => {
 };
 
 const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
+  // Positive pushes the videos further down from true viewport-center; negative pushes up.
+  const VERTICAL_OFFSET = 20;
+
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
   // Gap between the card's left edge and the screen's left edge (px)
@@ -227,8 +230,8 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
 
       // Position each video's top (relative to the card) so its vertical
       // center lands on the current viewport's vertical center.
-      setLeftTop(Math.round(window.innerHeight / 2 - rect.top - leftHeight / 2));
-      setRightTop(Math.round(window.innerHeight / 2 - rect.top - rightHeight / 2));
+      setLeftTop(Math.round(window.innerHeight / 2 - rect.top - leftHeight / 2) + VERTICAL_OFFSET);
+      setRightTop(Math.round(window.innerHeight / 2 - rect.top - rightHeight / 2) + VERTICAL_OFFSET);
     };
 
     update();
