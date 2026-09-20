@@ -236,8 +236,12 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
             autoPlay
             muted
             playsInline
-            className="w-full h-full"
-            onEnded={() => setTimeout(() => setShowRight(true), 3000)}
+            className="block w-full h-full object-cover"
+            onEnded={(e) => {
+              e.currentTarget.pause();
+              setShowLeft(false);
+              setTimeout(() => setShowRight(true), 3000);
+            }}
           />
         </div>
       )}
@@ -248,7 +252,11 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
             autoPlay
             muted
             playsInline
-            className="w-full h-full"
+            className="block w-full h-full object-cover"
+            onEnded={(e) => {
+              e.currentTarget.pause();
+              setShowRight(false);
+            }}
           />
         </div>
       )}
