@@ -208,6 +208,8 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
   const [leftGap, setLeftGap] = useState(0);
   // Gap between the card's right edge and the screen's right edge (px)
   const [rightGap, setRightGap] = useState(0);
+  // Card height, used to center videos vertically in whole pixels
+  const [cardHeight, setCardHeight] = useState(0);
 
   useEffect(() => {
     const measure = () => {
@@ -215,6 +217,7 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
       if (!rect) return;
       setLeftGap(rect.left);
       setRightGap(window.innerWidth - rect.right);
+      setCardHeight(rect.height);
     };
 
     measure();
@@ -227,32 +230,72 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
     return () => clearTimeout(t);
   }, []);
 
+  // Whole-pixel dimensions avoid the subpixel rendering seam that fractional
+  // aspect-ratio heights + percentage transforms can produce.
+  const leftWidth = Math.round(leftGap);
+  const leftHeight = Math.round((leftWidth * 16) / 9);
+  const leftTop = Math.round((cardHeight - leftHeight) / 2);
+
+  const rightWidth = Math.round(rightGap);
+  const rightHeight = Math.round((rightWidth * 16) / 9);
+  const rightTop = Math.round((cardHeight - rightHeight) / 2);
+
   return (
     <div className="hidden md:block pointer-events-none">
       {showLeft && (
-        <div className="absolute top-0 right-full" style={{ width: `${leftGap}px`, aspectRatio: "9 / 16" }}>
+        <div
+          className="absolute overflow-hidden"
+          style={{
+            width: `${leftWidth}px`,
+            height: `${leftHeight}px`,
+            right: "calc(100% + 1px)",
+            top: `${leftTop}px`,
+          }}
+        >
           <video
             src={leftVid}
             autoPlay
             muted
             playsInline
-            className="block w-full h-full object-cover"
+            className="block object-cover"
+            style={{
+              position: "absolute",
+              top: "-2px",
+              left: "-2px",
+              width: "calc(100% + 4px)",
+              height: "calc(100% + 4px)",
+            }}
             onEnded={(e) => {
               e.currentTarget.pause();
               setShowLeft(false);
-              setTimeout(() => setShowRight(true), 3000);
+              setTimeout(() => setShowRight(true), 2400);
             }}
           />
         </div>
       )}
       {showRight && (
-        <div className="absolute top-0 left-full" style={{ width: `${rightGap}px`, aspectRatio: "9 / 16" }}>
+        <div
+          className="absolute overflow-hidden"
+          style={{
+            width: `${rightWidth}px`,
+            height: `${rightHeight}px`,
+            left: "calc(100% + 1px)",
+            top: `${rightTop}px`,
+          }}
+        >
           <video
             src={rightVid}
             autoPlay
             muted
             playsInline
-            className="block w-full h-full object-cover"
+            className="block object-cover"
+            style={{
+              position: "absolute",
+              top: "-2px",
+              left: "-2px",
+              width: "calc(100% + 4px)",
+              height: "calc(100% + 4px)",
+            }}
             onEnded={(e) => {
               e.currentTarget.pause();
               setShowRight(false);
