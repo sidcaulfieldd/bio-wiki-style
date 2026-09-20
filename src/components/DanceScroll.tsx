@@ -23,6 +23,7 @@ const CONFIG = {
 
 export default function DanceScroll() {
   const pinRef = useRef<HTMLDivElement>(null);
+  const spacerRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -38,6 +39,7 @@ export default function DanceScroll() {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
     const pinTarget = pinRef.current!;
+    const spacer = spacerRef.current!;
     const box = boxRef.current!;
     const video = videoRef.current!;
     const videoWrap = videoWrapRef.current!;
@@ -78,6 +80,15 @@ export default function DanceScroll() {
       canvas.style.height = cachedCh + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       drawCurrentFrame();
+    }
+
+    // Explicitly reserves exactly the scroll distance the pin needs
+    // (matching the "end" calculation below) as real, statically-present
+    // height — rather than relying on GSAP's auto pin-spacer, which has
+    // been unreliable here since this section sits at the very end of
+    // the page.
+    function updateSpacerHeight() {
+      spacer.style.height = `${window.innerHeight * CONFIG.pinSpacerMultiplier}px`;
     }
 
     function preloadFrames() {
@@ -249,7 +260,10 @@ export default function DanceScroll() {
     let resizeDebounce: ReturnType<typeof setTimeout> | null = null;
     const onResize = () => {
       if (resizeDebounce) clearTimeout(resizeDebounce);
-      resizeDebounce = setTimeout(resizeCanvas, 200);
+      resizeDebounce = setTimeout(() => {
+        resizeCanvas();
+        updateSpacerHeight();
+      }, 200);
     };
     window.addEventListener("resize", onResize);
 
@@ -277,10 +291,12 @@ export default function DanceScroll() {
 
     resizeCanvas();
     drawCurrentFrame();
+    updateSpacerHeight();
 
     Promise.all([preloadFrames(), preloadVideo()]).then(() => {
       console.log("[DanceScroll] assets settled, initializing ScrollTrigger");
       resizeCanvas();
+      updateSpacerHeight();
       hideLoader();
       initScrollTrigger();
       console.log("[DanceScroll] ScrollTrigger created:", st);
@@ -309,6 +325,7 @@ export default function DanceScroll() {
   }, []);
 
   return (
+    <>
     <div
       ref={pinRef}
       style={{
@@ -412,5 +429,7 @@ export default function DanceScroll() {
         </div>
       </div>
     </div>
+    <div ref={spacerRef} aria-hidden="true" />
+    </>
   );
 }
