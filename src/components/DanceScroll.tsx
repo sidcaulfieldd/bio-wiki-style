@@ -4,14 +4,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Frames + video live in /public/dance/
 //   /dance/frame_000.png ... /dance/frame_012.png  (13 frames, 3-digit padding)
-//   /dance/Dance Vid.mp4  (space in filename — encoded below as %20)
+//   /dance/dance-vid.mp4
 const CONFIG = {
   frameFolder: "/dance",
   frameCount: 13,
   framePrefix: "frame_",
   frameDigits: 3,
   frameExt: "png",
-  videoSrc: "/dance/Dance%20Vid.mp4",
+  videoSrc: "/dance/dance-vid.mp4",
 
   scrubSmoothness: 0.1,
   // How many viewport-heights of scroll the whole pin (gif-scrub + video) takes up.
