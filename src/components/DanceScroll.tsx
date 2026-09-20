@@ -201,7 +201,16 @@ export default function DanceScroll() {
         onUpdate: (self) => {
           const progress = self.progress;
           const delta = progress - prevProgress;
-          console.log("[DanceScroll] onUpdate progress=", progress.toFixed(3), "delta=", delta.toFixed(4), "inVideoPhase=", inVideoPhase);
+          if (!(window as any).__dsLogCount) (window as any).__dsLogCount = 0;
+          (window as any).__dsLogCount++;
+          if ((window as any).__dsLogCount % 10 === 0) {
+            console.log(
+              "[DanceScroll] progress=", progress.toFixed(4),
+              "gifVirtualProgress=", gifVirtualProgress.toFixed(4),
+              "frameIndex=", state.frameIndex.toFixed(2),
+              "inVideoPhase=", inVideoPhase
+            );
+          }
 
           if (!inVideoPhase) {
             gifVirtualProgress = Math.max(0, Math.min(1, gifVirtualProgress + delta / CONFIG.gifScrubRate));
@@ -240,6 +249,7 @@ export default function DanceScroll() {
       hideLoader();
       initScrollTrigger();
       console.log("[DanceScroll] ScrollTrigger created:", st);
+      console.log("[DanceScroll] start px:", st?.start, "end px:", st?.end, "range:", (st?.end ?? 0) - (st?.start ?? 0));
       // Other async-loading content on the page (e.g. the Mons Monday gif)
       // can still shift page height after this point, which would leave
       // ScrollTrigger's cached start/end positions stale. Force a recheck
