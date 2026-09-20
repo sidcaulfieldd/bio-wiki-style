@@ -244,7 +244,7 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
     <div className="hidden md:block pointer-events-none">
       {showLeft && (
         <div
-          className="absolute overflow-hidden"
+          className="absolute"
           style={{
             width: `${leftWidth}px`,
             height: `${leftHeight}px`,
@@ -258,7 +258,6 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
             muted
             playsInline
             className="block w-full h-full object-cover"
-            style={{ transform: "scale(1.03)" }}
             onEnded={(e) => {
               e.currentTarget.pause();
               setShowLeft(false);
@@ -269,7 +268,7 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
       )}
       {showRight && (
         <div
-          className="absolute overflow-hidden"
+          className="absolute"
           style={{
             width: `${rightWidth}px`,
             height: `${rightHeight}px`,
@@ -283,7 +282,6 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
             muted
             playsInline
             className="block w-full h-full object-cover"
-            style={{ transform: "scale(1.03)" }}
             onEnded={(e) => {
               e.currentTarget.pause();
               setShowRight(false);
