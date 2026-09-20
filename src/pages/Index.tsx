@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import rightVid from "@/assets/right_side_website_vid.mp4";
 import leftVid from "@/assets/left_side_website_vid.mp4";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
+import DanceScroll from "@/components/DanceScroll";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 import { ScrollFlipWord } from "@/components/ScrollFlipWord";
 
@@ -11,6 +12,8 @@ const MIC       = ["map","man","men","mop","mug","pod","cam","pen","cap","pan","
 const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbreaks","backyards","skateparks","houseplants","aftershocks","storybeats","timepieces","showpieces","soundwaves","blueprints","footprints","goldmines","nightfalls","rainstorms","shipwrecks","storefronts","boardrooms","campfires","flashdrives","doorframes","landmasses","starbursts","bookcases","motorways","skylights","newsbreaks","postcards","sandcastles","wildfires","turntables","drumrolls","backflips","hatchbacks","headlines","paintbrushes","storytales","afterhours","longreads","sidequests","breakthroughs","launches","projects","ventures","chapters","episodes","showcases"];
 
 const Index = () => {
+  const cardRef = useRef<HTMLDivElement>(null);
+
   // Preload the on-page gif + both videos in the background
   useEffect(() => {
     const assets = [profilePic, rightVid, leftVid];
@@ -41,7 +44,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="bg-white border border-[#a7d7f9] p-6 relative">
+        <div ref={cardRef} className="bg-white border border-[#a7d7f9] p-6 relative">
           {/* Title */}
           <h1 className="text-3xl font-serif border-b border-[#a2a9b1] pb-2 mb-4">
             Sid Caulfield
@@ -176,6 +179,12 @@ const Index = () => {
               <p className="mb-4 leading-relaxed relative z-10">
                 — Available upon request!!
               </p>
+
+              {/* Dance gif-scrub -> video, same pin/scrub effect as the Blackbird page,
+                  boxed to a centered 16:9 stage instead of a full-bleed portrait takeover. */}
+              <div className="my-6">
+                <DanceScroll />
+              </div>
             </div>
 
             {/* Desktop Sidebar */}
@@ -187,7 +196,7 @@ const Index = () => {
           </div>
 
           {/* Walking easter egg — desktop only, tethered to card edges */}
-          <WalkingSid />
+          <WalkingSid cardRef={cardRef} />
         </div>
       </main>
 
@@ -199,39 +208,106 @@ const Index = () => {
   );
 };
 
-const WalkingSid = () => {
-  const [showRight, setShowRight] = useState(false);
+const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
+  // Positive pushes the videos further down from true viewport-center; negative pushes up.
+  const VERTICAL_OFFSET = 25;
+
   const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(false);
+  // Gap between the card's left edge and the screen's left edge (px)
+  const [leftGap, setLeftGap] = useState(0);
+  // Gap between the card's right edge and the screen's right edge (px)
+  const [rightGap, setRightGap] = useState(0);
+  // Top offset (relative to the card) that centers each video in the current viewport
+  const [leftTop, setLeftTop] = useState(0);
+  const [rightTop, setRightTop] = useState(0);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowRight(true), 5000);
+    const update = () => {
+      const rect = cardRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      const nextLeftGap = Math.round(rect.left);
+      const nextRightGap = Math.round(window.innerWidth - rect.right);
+      setLeftGap(nextLeftGap);
+      setRightGap(nextRightGap);
+
+      const leftHeight = Math.round((nextLeftGap * 16) / 9);
+      const rightHeight = Math.round((nextRightGap * 16) / 9);
+
+      // Position each video's top (relative to the card) so its vertical
+      // center lands on the current viewport's vertical center.
+      setLeftTop(Math.round(window.innerHeight / 2 - rect.top - leftHeight / 2) + VERTICAL_OFFSET);
+      setRightTop(Math.round(window.innerHeight / 2 - rect.top - rightHeight / 2) + VERTICAL_OFFSET);
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, { passive: true });
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update);
+    };
+  }, [cardRef]);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowLeft(true), 5000);
     return () => clearTimeout(t);
   }, []);
 
+  // Derive whole-pixel heights from the rounded gaps so the CSS box matches
+  // exactly what the top-offset math above assumed.
+  const leftHeight = Math.round((leftGap * 16) / 9);
+  const rightHeight = Math.round((rightGap * 16) / 9);
+
   return (
     <div className="hidden md:block pointer-events-none">
-      {showRight && (
-        <div className="absolute top-0 left-full" style={{ width: "80vw", aspectRatio: "9 / 16" }}>
-          <video
-            src={rightVid}
-            autoPlay
-            muted
-            playsInline
-            className="w-full h-full"
-            style={{ transform: "scale(0.47)", transformOrigin: "left top" }}
-            onEnded={() => setTimeout(() => setShowLeft(true), 3000)}
-          />
-        </div>
-      )}
       {showLeft && (
-        <div className="absolute top-0 right-full" style={{ width: "80vw", aspectRatio: "9 / 16" }}>
+        <div
+          className="absolute overflow-hidden"
+          style={{
+            width: `${leftGap}px`,
+            height: `${leftHeight}px`,
+            right: "calc(100% + 1px)",
+            top: `${leftTop}px`,
+          }}
+        >
           <video
             src={leftVid}
             autoPlay
             muted
             playsInline
-            className="w-full h-full"
-            style={{ transform: "scale(0.45)", transformOrigin: "right top" }}
+            className="block w-full h-full object-cover"
+            style={{ transform: "scale(1.005)" }}
+            onEnded={(e) => {
+              e.currentTarget.pause();
+              setShowLeft(false);
+              setTimeout(() => setShowRight(true), 2400);
+            }}
+          />
+        </div>
+      )}
+      {showRight && (
+        <div
+          className="absolute overflow-hidden"
+          style={{
+            width: `${rightGap}px`,
+            height: `${rightHeight}px`,
+            left: "calc(100% + 1px)",
+            top: `${rightTop}px`,
+          }}
+        >
+          <video
+            src={rightVid}
+            autoPlay
+            muted
+            playsInline
+            className="block w-full h-full object-cover"
+            style={{ transform: "scale(1.005)" }}
+            onEnded={(e) => {
+              e.currentTarget.pause();
+              setShowRight(false);
+            }}
           />
         </div>
       )}
