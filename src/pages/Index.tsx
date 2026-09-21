@@ -5,7 +5,6 @@ import leftVid from "@/assets/left_side_website_vid.mp4";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import DanceScroll from "@/components/DanceScroll";
 import LoadingScreen from "@/components/LoadingScreen";
-import { usePushBelowElement } from "@/hooks/usePushBelowElement";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 // ScrollFlipWord is currently disabled (not deleted) — the Career Overview
 // intro line it was wired into has been removed for now. Kept here, along
@@ -18,12 +17,6 @@ const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbrea
 
 const Index = () => {
   const cardRef = useRef<HTMLDivElement>(null);
-  const monsMondayWrapRef = useRef<HTMLDivElement>(null);
-  const asideRef = useRef<HTMLDivElement>(null);
-
-  // Push the Mons Monday gif down so it never starts less than ~35px
-  // below the sidebar's bottom edge, on desktop (see hook for details).
-  usePushBelowElement(monsMondayWrapRef, asideRef, 35);
 
   // The page stays behind the LoadingScreen until the profile gif itself
   // has loaded (LoadingScreen owns that load and reports back here).
@@ -83,9 +76,18 @@ const Index = () => {
             Sid Caulfield
           </h1>
 
-          <div className="flex flex-col md:flex-row gap-6 items-start">
-            {/* Main Content Column */}
-            <div className="flex-1 order-2 md:order-1">
+          <div>
+            {/* Desktop Sidebar — floated right, like a real infobox, so
+                body content wraps it while they overlap vertically and
+                reclaims the card's full width once past its bottom edge. */}
+            <aside className="hidden md:block md:float-right md:w-[300px] md:ml-6 mb-6">
+              <div className="border border-[#a2a9b1] bg-[#f8f9fa]">
+                <SidebarContent />
+              </div>
+            </aside>
+
+            {/* Main Content */}
+            <div>
               {/* Table of Contents */}
               <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 mb-6 inline-block relative">
                 <div className="font-bold mb-2 relative z-10">Contents</div>
@@ -113,13 +115,9 @@ const Index = () => {
                 <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
               </ul>
 
-              {/* Mons Monday gif — left-aligned, pushed to start ~35px
-                  below the sidebar's bottom edge via usePushBelowElement.
-                  Paired with a text box on the right; extra vertical
-                  padding (py-8) on the gif wrapper brings its height
-                  closer to the text block beside it. */}
+              {/* Mons Monday gif, paired with a text box on the right. */}
               <div className="my-[35px] flex flex-col md:flex-row gap-6 items-center">
-                <div ref={monsMondayWrapRef} className="py-8">
+                <div className="py-8">
                   <NotableProjectsPixelation />
                 </div>
                 <div className="flex-1">
@@ -136,7 +134,7 @@ const Index = () => {
                   vertical padding (py-8) on the video wrapper brings its
                   height closer to the text block beside it. */}
               <div className="my-[35px] flex flex-col md:flex-row gap-6 items-center" data-cursor-trail-zone="bottom-dance-video">
-                <div className="flex-1 order-2 md:order-1">
+                <div className="flex-1 order-2 md:order-1 text-center">
                   <h3 className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">Generalist by Nature</h3>
                   <p className="mb-4 leading-relaxed relative z-10">
                     I'm a self-taught generalist by necessity, not design. No formal training in design, animation or music — just an itch to learn something for no good reason and see it through. A trained designer would probably spot everything wrong with my design work, and a trained musician would hear the amateur in my songs, but that's not really the point. The point is building, trying, failing, and coming out the other side with skills I didn't have going in.
@@ -192,13 +190,6 @@ const Index = () => {
                 He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a> and will graduate with a Bachelor of Communication (Journalism) in 2026.
               </p>
             </div>
-
-            {/* Desktop Sidebar */}
-            <aside ref={asideRef} className="hidden md:block w-[300px] flex-shrink-0 order-1 md:order-2">
-              <div className="border border-[#a2a9b1] bg-[#f8f9fa]">
-                <SidebarContent />
-              </div>
-            </aside>
           </div>
 
           {/* Walking easter egg — desktop only, tethered to card edges */}
