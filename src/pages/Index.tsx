@@ -92,7 +92,7 @@ const Index = () => {
               <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 mb-6 inline-block relative">
                 <div className="font-bold mb-2 relative z-10">Contents</div>
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
-                  <li><a href="#notable-projects" className="hover:underline">What He's Proud Of</a></li>
+                  <li><a href="#notable-projects" className="hover:underline">What = He's Proud Of</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
                   <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
                 </ol>
@@ -105,7 +105,7 @@ const Index = () => {
 
               {/* Notable Projects Section */}
               <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                What He's Proud Of
+                What = He's Proud Of
               </ScrollTypeHeading>
 
               <ul className="list-disc ml-6 leading-relaxed mb-4 relative z-10">
@@ -115,13 +115,17 @@ const Index = () => {
                 <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
               </ul>
 
-              {/* Mons Monday gif, paired with a text box on the right. */}
-              <div className="my-[35px] flex flex-col md:flex-row gap-6 items-center">
+              {/* Mons Monday gif, paired with a text box on the right.
+                  clear-both forces this row to start below the floated
+                  sidebar (not beside it), then mt-[35px] adds the gap. */}
+              <div className="clear-both mt-[35px] mb-[35px] flex flex-col md:flex-row gap-6 items-center">
                 <div className="py-8">
                   <NotableProjectsPixelation />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">The Mons Monday Podcast</h3>
+                  <ScrollTypeHeading id="mons-monday-caption" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                    The Mons Monday Podcast
+                  </ScrollTypeHeading>
                   <p className="mb-4 leading-relaxed relative z-10">
                     Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based podcast launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy, managing end-to-end production — research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with <a href="https://www.lbdo.com/collections/all-products" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LBDO</a> and <a href="https://krushorganics.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Krush Organics</a>. Caulfield also created and edited video promotional material to support the launch and ongoing audience growth.
                   </p>
@@ -134,7 +138,7 @@ const Index = () => {
                   vertical padding (py-8) on the video wrapper brings its
                   height closer to the text block beside it. */}
               <div className="my-[35px] flex flex-col md:flex-row gap-6 items-center" data-cursor-trail-zone="bottom-dance-video">
-                <div className="flex-1 order-2 md:order-1 text-center">
+                <div className="md:w-1/2 order-2 md:order-1">
                   <h3 className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">Generalist by Nature</h3>
                   <p className="mb-4 leading-relaxed relative z-10">
                     I'm a self-taught generalist by necessity, not design. No formal training in design, animation or music — just an itch to learn something for no good reason and see it through. A trained designer would probably spot everything wrong with my design work, and a trained musician would hear the amateur in my songs, but that's not really the point. The point is building, trying, failing, and coming out the other side with skills I didn't have going in.
@@ -151,44 +155,49 @@ const Index = () => {
                 <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
               </div>
 
-              {/* Skills and Areas of Expertise Section */}
-              <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Skills and Areas of Expertise
-              </ScrollTypeHeading>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {[
-                  "Copywriting and editing",
-                  "Concept and campaign development",
-                  "Social and long-form storytelling",
-                  "Podcast writing and production",
-                  "Video editing and animation",
-                  "Adobe Creative Suite",
-                  "Canva (visual systems and templates)",
-                  "Audience profiling and insights",
-                  "Content strategy and scheduling",
-                  "Cross-platform syndication",
-                  "eDM planning, delivery and performance analysis",
-                  "SEO and metadata optimisation"
-                ].map((skill) => (
-                  <span key={skill} className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded cursor-pointer hover:bg-[#c8ccd1] hover:border-[#72777d] transition-colors duration-150">
-                    {skill}
-                  </span>
-                ))}
-              </div>
+              {/* Skills and Early Life sections — kept at the old main-
+                  column width (card width minus sidebar + gap) so the
+                  float restructure above doesn't change how these look. */}
+              <div className="max-w-[628px]">
+                {/* Skills and Areas of Expertise Section */}
+                <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+                  Skills and Areas of Expertise
+                </ScrollTypeHeading>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {[
+                    "Copywriting and editing",
+                    "Concept and campaign development",
+                    "Social and long-form storytelling",
+                    "Podcast writing and production",
+                    "Video editing and animation",
+                    "Adobe Creative Suite",
+                    "Canva (visual systems and templates)",
+                    "Audience profiling and insights",
+                    "Content strategy and scheduling",
+                    "Cross-platform syndication",
+                    "eDM planning, delivery and performance analysis",
+                    "SEO and metadata optimisation"
+                  ].map((skill) => (
+                    <span key={skill} className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded cursor-pointer hover:bg-[#c8ccd1] hover:border-[#72777d] transition-colors duration-150">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
 
-              {/* Early Life and Education Section — last */}
-              <ScrollTypeHeading id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Early Life and Education
-              </ScrollTypeHeading>
-              <p className="mb-4 leading-relaxed relative z-10">
-                Sidney Joseph Caulfield was born on July 27, 2003, in <a href="https://en.wikipedia.org/wiki/East_Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">East Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a>.
-              </p>
-              <p className="mb-4 leading-relaxed relative z-10">
-                Caulfield completed his secondary education at <a href="https://en.wikipedia.org/wiki/Belmont_High_School_(Victoria)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Belmont High School</a> in <a href="https://en.wikipedia.org/wiki/Geelong" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Geelong</a>, where he studied Media, Linguistics and Indonesian.
-              </p>
-              <p className="mb-4 leading-relaxed relative z-10">
-                He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a> and will graduate with a Bachelor of Communication (Journalism) in 2026.
-              </p>
+                {/* Early Life and Education Section — last */}
+                <ScrollTypeHeading id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+                  Early Life and Education
+                </ScrollTypeHeading>
+                <p className="mb-4 leading-relaxed relative z-10">
+                  Sidney Joseph Caulfield was born on July 27, 2003, in <a href="https://en.wikipedia.org/wiki/East_Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">East Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a>.
+                </p>
+                <p className="mb-4 leading-relaxed relative z-10">
+                  Caulfield completed his secondary education at <a href="https://en.wikipedia.org/wiki/Belmont_High_School_(Victoria)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Belmont High School</a> in <a href="https://en.wikipedia.org/wiki/Geelong" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Geelong</a>, where he studied Media, Linguistics and Indonesian.
+                </p>
+                <p className="mb-4 leading-relaxed relative z-10">
+                  He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a> and will graduate with a Bachelor of Communication (Journalism) in 2026.
+                </p>
+              </div>
             </div>
           </div>
 
