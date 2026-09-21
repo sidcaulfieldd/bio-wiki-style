@@ -270,7 +270,7 @@ const NotableProjectsPixelation = () => {
   return (
     <div
       ref={containerRef}
-      className="relative overflow-hidden rounded-lg mx-auto"
+      className="relative overflow-hidden rounded-lg"
       style={{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }}
     >
       <canvas
