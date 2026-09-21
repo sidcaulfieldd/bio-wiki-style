@@ -1,5 +1,4 @@
 import { useEffect, useRef, type RefObject } from "react";
-import { useAlignOnCard } from "@/hooks/useAlignOnCard";
 
 // Frames + video live in /public/dance/
 //   /dance/frame_000.png ... /dance/frame_012.png  (13 frames, 3-digit padding)
@@ -29,10 +28,6 @@ const CONFIG = {
 
 export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElement> }) {
   const boxRef = useRef<HTMLDivElement>(null);
-  // paddingPx bumped from the 24px default to 40px to match the extra
-  // left clearance added to the Mons Monday pixel-art image, so both
-  // portrait media pieces sit an equal distance from the card's edges.
-  useAlignOnCard(boxRef, cardRef, "right", 40);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoWrapRef = useRef<HTMLDivElement>(null);
