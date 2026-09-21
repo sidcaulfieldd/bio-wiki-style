@@ -83,14 +83,8 @@ const Index = () => {
               <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 mb-6 inline-block relative">
                 <div className="font-bold mb-2 relative z-10">Contents</div>
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
-                  <li><a href="#career-overview" className="hover:underline">Career Overview</a>
-                    <ol className="list-decimal ml-4 text-[#0645ad]">
-                      <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
-                      <li><a href="#mons-monday-podcast" className="hover:underline">The Mons Monday Podcast</a></li>
-                      <li><a href="#freelance-work" className="hover:underline">Freelance Work</a></li>
-                    </ol>
-                  </li>
                   <li><a href="#notable-projects" className="hover:underline">Notable Projects</a></li>
+                  <li><a href="#career-overview" className="hover:underline">Career Overview</a></li>
                   <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
                   <li><a href="#references" className="hover:underline">References</a></li>
@@ -99,16 +93,35 @@ const Index = () => {
 
               {/* Lead Section */}
               <p className="mb-4 leading-relaxed relative z-10">
-                <strong>Sid Caulfield</strong> is an Australian creative comms professional based in <a href="https://en.wikipedia.org/wiki/Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>. His work spans copywriting, social strategy and execution, journalism and podcast production. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. He is currently a freelance journalist and the content syndication and social media manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a> and <a href="https://en.wikipedia.org/wiki/New_Zealand" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">New Zealand</a>'s largest digital mountain bike publication.
+                <strong>Sid Caulfield</strong> is an Australian copywriter based in <a href="https://en.wikipedia.org/wiki/Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, working in words and pictures. His output spans copywriting, concepting, social storytelling, podcast production and the odd bit of interactive digital design — this page included. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. He is currently a freelance journalist and the Content Syndication and Social Media Manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a> and <a href="https://en.wikipedia.org/wiki/New_Zealand" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">New Zealand</a>'s largest digital mountain bike publication — where the day job is strategy, and the after-hours job is everything else on this page.
               </p>
 
+              {/* Notable Projects Section with GIF */}
+              <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+                Notable Projects
+              </ScrollTypeHeading>
+
+              <ul className="list-disc ml-6 leading-relaxed mb-4 relative z-10">
+                <li><strong>Flow Mountain Bike</strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
+                <li><strong>The Mons Monday Podcast</strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video teaser/launch</a>.</li>
+                <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
+                <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
+              </ul>
+
+              {/* GIF centered between sections with canvas pixelation effect */}
+              <div className="my-6">
+                <div ref={monsMondayWrapRef} className="flex justify-center">
+                  <NotableProjectsPixelation />
+                </div>
+              </div>
+
               {/* Career Overview Section */}
-<ScrollTypeHeading id="career-overview" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-  Career Overview
-</ScrollTypeHeading>
-<p className="mb-4 leading-relaxed relative z-10">
-  Whether it's bringing a group of 30 strangers together for an arvo on the bike or helping influencers lay down some dating lore on the mic, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the highlights!!
-</p>
+              <ScrollTypeHeading id="career-overview" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+                Career Overview
+              </ScrollTypeHeading>
+              <p className="mb-4 leading-relaxed relative z-10">
+                Whether it's bringing a group of 30 <ScrollFlipWord heroWord="strangers" list={STRANGERS} /> together for an arvo on the bike or helping influencers lay down some dating lore on the <ScrollFlipWord heroWord="mic" list={MIC} />, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the <ScrollFlipWord heroWord="highlights" list={HIGHLIGHTS} />!!
+              </p>
 
               {/* Flow Mountain Bike */}
               <h3 id="flow-mountain-bike" className="text-xl font-serif mt-4 mb-2">
@@ -137,27 +150,8 @@ const Index = () => {
                 Freelance Work
               </h3>
               <p className="mb-4 leading-relaxed relative z-10">
-                Alongside his staff role, Caulfield undertakes freelance projects across journalism, content strategy and digital media. His work includes feature writing, interview-based storytelling, social media management and campaign support for publications and organisations. He has contributed to outlets including <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a> and <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, and regularly works with brands and community partners on content development and distribution.
+                Alongside his staff role, Caulfield undertakes freelance projects across journalism, content strategy and digital media. His work includes feature writing, interview-based storytelling, social media management and campaign support for publications and organisations. He has contributed to outlets including <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a> and <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, and regularly works with brands and community partners on content development and distribution.
               </p>
-
-              {/* Notable Projects Section with GIF */}
-              <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Notable Projects
-              </ScrollTypeHeading>
-
-              <ul className="list-disc ml-6 leading-relaxed mb-4 relative z-10">
-                <li><strong>Flow Mountain Bike</strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
-                <li><strong>The Mons Monday Podcast</strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video teaser/launch</a>.</li>
-                <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
-                <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
-              </ul>
-
-              {/* GIF centered between sections with canvas pixelation effect */}
-              <div className="my-6">
-                <div ref={monsMondayWrapRef} className="flex justify-center">
-                  <NotableProjectsPixelation />
-                </div>
-              </div>
 
               {/* Early Life and Education Section */}
               <ScrollTypeHeading id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
@@ -179,18 +173,18 @@ const Index = () => {
               </ScrollTypeHeading>
               <div className="flex flex-wrap gap-2 mb-4">
                 {[
+                  "Copywriting and editing",
+                  "Concept and campaign development",
+                  "Social and long-form storytelling",
+                  "Podcast writing and production",
+                  "Video editing and animation",
                   "Adobe Creative Suite",
+                  "Canva (visual systems and templates)",
+                  "Audience profiling and insights",
                   "Content strategy and scheduling",
                   "Cross-platform syndication",
-                  "Tailored vertical content distribution",
-                  "SEO and metadata optimisation",
-                  "Copywriting and editing",
                   "eDM planning, delivery and performance analysis",
-                  "Audience profiling and insights",
-                  "Integrated publishing and analytics tools",
-                  "Asana and workflow design",
-                  "Sprout Social",
-                  "Canva (team templates and system design)"
+                  "SEO and metadata optimisation"
                 ].map((skill) => (
                   <span key={skill} className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded cursor-pointer hover:bg-[#c8ccd1] hover:border-[#72777d] transition-colors duration-150">
                     {skill}
