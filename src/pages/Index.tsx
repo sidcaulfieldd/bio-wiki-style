@@ -4,6 +4,7 @@ import rightVid from "@/assets/right_side_website_vid.mp4";
 import leftVid from "@/assets/left_side_website_vid.mp4";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import DanceScroll from "@/components/DanceScroll";
+import { useCenterOnCard } from "@/hooks/useCenterOnCard";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 import { ScrollFlipWord } from "@/components/ScrollFlipWord";
 
@@ -13,6 +14,8 @@ const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbrea
 
 const Index = () => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const monsMondayWrapRef = useRef<HTMLDivElement>(null);
+  useCenterOnCard(monsMondayWrapRef, cardRef);
 
   // Preload the on-page gif + both videos in the background
   useEffect(() => {
@@ -128,7 +131,7 @@ const Index = () => {
 
               {/* GIF centered between sections with canvas pixelation effect */}
               <div className="my-6">
-                <div className="flex justify-center md:translate-x-[174px]">
+                <div ref={monsMondayWrapRef} className="flex justify-center">
                   <NotableProjectsPixelation />
                 </div>
               </div>
@@ -185,7 +188,7 @@ const Index = () => {
                   further wheel/touch input scrubs the frames directly
                   instead of growing the page (see DanceScroll.tsx). */}
               <div className="my-6">
-                <DanceScroll />
+                <DanceScroll cardRef={cardRef} />
               </div>
             </div>
 
