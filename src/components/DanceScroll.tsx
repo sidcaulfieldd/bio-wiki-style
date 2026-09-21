@@ -16,16 +16,6 @@ const CONFIG = {
   // frames once the box has scrolled up to the pin line.
   scrubDistancePx: 900,
 
-  // Viewport-relative Y (px from the top) at which the box "locks" in
-  // place — once its top reaches this line while scrolling down, further
-  // wheel/touch input scrubs through the frames directly instead of
-  // continuing to scroll the page. Once scrubbing preventDefaults the
-  // scroll, the page can't move, so the box's top just stays pinned here
-  // for the rest of the scrub — no actual position:sticky needed.
-  // Replaces the old "wait until the literal bottom of the document"
-  // trigger, which stopped firing once this component moved up the page.
-  pinTopPx: 120,
-
   // Hidden Spotify track played (audio only) once the person hits UNMUTE.
   spotifyTrackId: "5kDLJIAApnLKgdiTdAsd6P",
 
@@ -286,12 +276,16 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       userUnmuted = false;
     }
 
-    // True once the box has scrolled up to the pin line — the cue to
-    // start intercepting scroll input for the frame scrub instead of
-    // letting the page keep scrolling.
+    // True once the box has scrolled up far enough that locking now would
+    // land it centered in the current viewport — the cue to start
+    // intercepting scroll input for the frame scrub instead of letting
+    // the page keep scrolling. Computed live off window.innerHeight
+    // (rather than a fixed px constant) so it centers correctly whatever
+    // the viewport height happens to be, including on resize.
     function reachedPinLine() {
       const rect = box.getBoundingClientRect();
-      return rect.top <= CONFIG.pinTopPx;
+      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
+      return rect.top <= centeredTop;
     }
 
     function advanceScrub(deltaPx: number) {
