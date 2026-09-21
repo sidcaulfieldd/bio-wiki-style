@@ -35,12 +35,10 @@ const Index = () => {
     });
   }, []);
 
-  if (!isProfileLoaded) {
-    return <LoadingScreen onLoaded={handleProfileLoaded} />;
-  }
-
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
+      {!isProfileLoaded && <LoadingScreen onLoaded={handleProfileLoaded} />}
+
       {/* Wikipedia Header */}
       <header className="bg-white border-b border-[#a7d7f9]">
       </header>
@@ -137,7 +135,7 @@ const Index = () => {
               </ul>
 
               {/* GIF centered between sections with canvas pixelation effect */}
-              <div className="my-6" data-cursor-trail-zone="bottom-notable-gif">
+              <div className="my-6">
                 <div ref={monsMondayWrapRef} className="flex justify-center">
                   <NotableProjectsPixelation />
                 </div>
@@ -214,7 +212,7 @@ const Index = () => {
         {/* Visual link — centered relative to the card's own width (this
             container), not the full page, so it stays aligned with the
             card regardless of viewport width. */}
-        <div className="text-center leading-none pt-6 pb-6">
+        <div className="text-center leading-none pt-6">
           <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
         </div>
       </main>
