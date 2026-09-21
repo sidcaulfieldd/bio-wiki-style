@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
+import { useCenterOnCard } from "@/hooks/useCenterOnCard";
 
 // Frames + video live in /public/dance/
 //   /dance/frame_000.png ... /dance/frame_012.png  (13 frames, 3-digit padding)
@@ -23,8 +24,9 @@ const CONFIG = {
   spotifyTrackId: "5kDLJIAApnLKgdiTdAsd6P",
 };
 
-export default function DanceScroll() {
+export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElement> }) {
   const boxRef = useRef<HTMLDivElement>(null);
+  useCenterOnCard(boxRef, cardRef);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoWrapRef = useRef<HTMLDivElement>(null);
@@ -343,7 +345,7 @@ export default function DanceScroll() {
     >
       <div
         ref={boxRef}
-        className="md:translate-x-[174px] rounded-lg"
+        className="rounded-lg"
         style={{
           position: "relative",
           width: 270,
