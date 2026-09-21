@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import profilePic from "@/assets/profile_pic.gif";
 import rightVid from "@/assets/right_side_website_vid.mp4";
 import leftVid from "@/assets/left_side_website_vid.mp4";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import DanceScroll from "@/components/DanceScroll";
+import LoadingScreen from "@/components/LoadingScreen";
 import { useCenterOnCard } from "@/hooks/useCenterOnCard";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 import { ScrollFlipWord } from "@/components/ScrollFlipWord";
@@ -17,20 +18,26 @@ const Index = () => {
   const monsMondayWrapRef = useRef<HTMLDivElement>(null);
   useCenterOnCard(monsMondayWrapRef, cardRef);
 
-  // Preload the on-page gif + both videos in the background
+  // The page stays behind the LoadingScreen until the profile gif itself
+  // has loaded (LoadingScreen owns that load and reports back here).
+  const [isProfileLoaded, setIsProfileLoaded] = useState(false);
+  const handleProfileLoaded = useCallback(() => setIsProfileLoaded(true), []);
+
+  // Preload the two side videos in the background (the profile gif is
+  // handled by LoadingScreen, so it's left out here to avoid a duplicate
+  // fetch).
   useEffect(() => {
-    const assets = [profilePic, rightVid, leftVid];
+    const assets = [rightVid, leftVid];
     assets.forEach((src) => {
-      if (src.endsWith(".mp4")) {
-        const v = document.createElement("video");
-        v.preload = "auto";
-        v.src = src;
-      } else {
-        const img = new Image();
-        img.src = src;
-      }
+      const v = document.createElement("video");
+      v.preload = "auto";
+      v.src = src;
     });
   }, []);
+
+  if (!isProfileLoaded) {
+    return <LoadingScreen onLoaded={handleProfileLoaded} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
@@ -47,7 +54,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div ref={cardRef} className="bg-white border border-[#a7d7f9] p-6 relative">
+        <div ref={cardRef} data-cursor-trail-card className="bg-white border border-[#a7d7f9] p-6 relative">
           {/* Title */}
           <h1 className="text-3xl font-serif border-b border-[#a2a9b1] pb-2 mb-4">
             Sid Caulfield
@@ -130,7 +137,7 @@ const Index = () => {
               </ul>
 
               {/* GIF centered between sections with canvas pixelation effect */}
-              <div className="my-6">
+              <div className="my-6" data-cursor-trail-zone="bottom-notable-gif">
                 <div ref={monsMondayWrapRef} className="flex justify-center">
                   <NotableProjectsPixelation />
                 </div>
@@ -187,7 +194,7 @@ const Index = () => {
                   bottom of the page; once scrolled to the literal end,
                   further wheel/touch input scrubs the frames directly
                   instead of growing the page (see DanceScroll.tsx). */}
-              <div className="my-6">
+              <div className="my-6" data-cursor-trail-zone="bottom-dance-video">
                 <DanceScroll cardRef={cardRef} />
               </div>
             </div>
@@ -334,7 +341,7 @@ const SidebarContent = () => {
 
       {/* Infobox image */}
       <div className="text-center p-3 pb-0">
-        <div className="relative w-full aspect-square">
+        <div className="relative w-full aspect-square" data-cursor-trail-zone="pink-behind-gif">
           <div className="absolute inset-0 bg-[#FF69B4]" style={{ zIndex: 2 }} />
           <img
             src={profilePic}
