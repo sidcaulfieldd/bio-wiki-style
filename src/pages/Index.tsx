@@ -91,9 +91,6 @@ const Index = () => {
                 <div className="font-bold mb-2 relative z-10">Contents</div>
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
                   <li><a href="#notable-projects" className="hover:underline">Notable Projects</a></li>
-                  <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
-                  <li><a href="#mons-monday-podcast" className="hover:underline">The Mons Monday Podcast</a></li>
-                  <li><a href="#freelance-work" className="hover:underline">Freelance Work</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
                   <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
                 </ol>
@@ -124,49 +121,19 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Dance gif-scrub -> looping video, now sitting directly
-                  below the Mons Monday gif instead of at the page bottom.
-                  Right-aligned against the full card width via the
-                  useAlignOnCard call inside DanceScroll itself. */}
+              {/* Dance gif-scrub -> looping video, sitting directly below
+                  the Mons Monday gif. Right-aligned against the full card
+                  width via the useAlignOnCard call inside DanceScroll
+                  itself. */}
               <div className="my-6" data-cursor-trail-zone="bottom-dance-video">
                 <DanceScroll cardRef={cardRef} />
               </div>
 
-              {/* Visual link — now sits on the card itself, directly under
+              {/* Visual link — sits on the card itself, directly under
                   the gif + dance block above. */}
               <div className="text-center leading-none my-6">
                 <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
               </div>
-
-              {/* Flow Mountain Bike */}
-              <h3 id="flow-mountain-bike" className="text-xl font-serif mt-4 mb-2">
-                Flow Mountain Bike
-              </h3>
-              <p className="mb-2 leading-relaxed relative z-10">
-                In 2025, Caulfield joined <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a> as Content Syndication and Social Media Manager. In this role, he oversees the publication's social media presence and cross-platform content distribution, reaching a cumulative audience of ~360,000.
-              </p>
-              <p className="mb-4 leading-relaxed relative z-10">
-                He redesigned Flow's syndication systems and introduced new workflow tools, including <a href="https://en.wikipedia.org/wiki/Canva" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Canva</a> and <a href="https://en.wikipedia.org/wiki/Sprout_Social" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Sprout Social</a>, to improve efficiency and brand consistency. His work involves repurposing long-form editorial content for multiple platforms, coordinating campaign launches, managing email marketing to a subscriber base of ~30,000 and analysing audience performance data to guide editorial strategy. Caulfield also collaborates with commercial partners on campaigns, events and giveaways, and contributes freelance writing to the publication.
-              </p>
-
-              {/* The Mons Monday Podcast */}
-              <h3 id="mons-monday-podcast" className="text-xl font-serif mt-4 mb-2">
-                The Mons Monday Podcast
-              </h3>
-              <p className="mb-2 leading-relaxed relative z-10">
-                Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based podcast launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy.
-              </p>
-              <p className="mb-4 leading-relaxed relative z-10">
-                He manages end-to-end production, including research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with <a href="https://www.lbdo.com/collections/all-products?gad_source=1&gad_campaignid=14826148030&gbraid=0AAAAABSqxZj_P5N44ioeWjMXbmD8E1HzK&gclid=Cj0KCQiAsY3LBhCwARIsAF6O6XhjFMB4m2JTkrRLBdgIY8Us7hSLQOuoitgvvYl-0BgYuKkWok4dEYoaAm5fEALw_wcB" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LBDO</a> and <a href="https://krushorganics.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Krush Organics</a>. Caulfield also created and edited video promotional material to support the launch and ongoing audience growth.
-              </p>
-
-              {/* Freelance Work */}
-              <h3 id="freelance-work" className="text-xl font-serif mt-4 mb-2">
-                Freelance Work
-              </h3>
-              <p className="mb-4 leading-relaxed relative z-10">
-                Alongside his staff role, Caulfield undertakes freelance projects across journalism, content strategy and digital media. His work includes feature writing, interview-based storytelling, social media management and campaign support for publications and organisations. He has contributed to outlets including <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a> and <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, and regularly works with brands and community partners on content development and distribution.
-              </p>
 
               {/* Skills and Areas of Expertise Section */}
               <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
@@ -193,7 +160,7 @@ const Index = () => {
                 ))}
               </div>
 
-              {/* Early Life and Education Section — now last */}
+              {/* Early Life and Education Section — last */}
               <ScrollTypeHeading id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Early Life and Education
               </ScrollTypeHeading>
