@@ -1,6 +1,5 @@
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef, type RefObject } from "react";
+import { useAlignOnCard } from "@/hooks/useAlignOnCard";
 
 // Frames + video live in /public/dance/
 //   /dance/frame_000.png ... /dance/frame_012.png  (13 frames, 3-digit padding)
@@ -13,33 +12,24 @@ const CONFIG = {
   frameExt: "png",
   videoSrc: "/dance/dance-vid.mp4",
 
-  boxWidth: 270,
-  boxHeight: 480,
-
-  // How much real scroll distance (px) it takes to scrub through all the
-  // frames once locked. Driven by GSAP ScrollTrigger's own scroll-position
-  // tracking rather than accumulated wheel/touch deltas, which is what
-  // made the old lock inconsistent across browsers/devices.
+  // How many px of wheel/touch input it takes to scrub through all the
+  // frames once the box has scrolled up to the pin line.
   scrubDistancePx: 900,
-
-  // Extra scroll distance (px), on top of scrubDistancePx, required
-  // after the video starts before it releases and the page is free to
-  // keep scrolling. ~300px is roughly two normal wheel/trackpad gestures'
-  // worth — a real, fixed scroll distance, not a timer guess.
-  bufferDistancePx: 300,
-
-  // GSAP's scrub smoothing factor (seconds) — ties frame/video progress
-  // to scroll position with a slight lag instead of a raw 1:1 mapping,
-  // matching the feel used on the blackbird application pages.
-  scrubSmoothness: 0.1,
 
   // Hidden Spotify track played (audio only) once the person hits UNMUTE.
   spotifyTrackId: "5kDLJIAApnLKgdiTdAsd6P",
+
+  // How long a gap in forward-scroll input has to be, once the video
+  // starts, before the buffered gesture is considered "finished" and the
+  // next scroll is allowed to move the page. A single physical wheel/
+  // trackpad swipe fires many small events in a burst, so this swallows
+  // the whole burst rather than just its first event.
+  bufferGestureGapMs: 150,
 };
 
-export default function DanceScroll() {
-  const pinRef = useRef<HTMLDivElement>(null);
+export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElement> }) {
   const boxRef = useRef<HTMLDivElement>(null);
+  useAlignOnCard(boxRef, cardRef, "right");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoWrapRef = useRef<HTMLDivElement>(null);
@@ -50,9 +40,6 @@ export default function DanceScroll() {
   const unmuteHandlerRef = useRef<() => void>(() => {});
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
-    const pinTarget = pinRef.current!; // never transformed/fixed itself — always a trustworthy rect
     const box = boxRef.current!;
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
@@ -67,11 +54,24 @@ export default function DanceScroll() {
     let inVideoPhase = false;
     let cachedCw = 0;
     let cachedCh = 0;
-    let isLocked = false;
+    let scrubProgress = 0; // 0 to 1, driven directly by wheel/touch input once pinned
+    let assetsReady = false;
+
+    // True right after the video starts, until forward-scroll input has
+    // gone quiet for bufferGestureGapMs — swallows exactly one scroll
+    // gesture so the page can't jump the instant the video begins.
+    let awaitingBufferScroll = false;
+    let bufferGestureTimer: ReturnType<typeof setTimeout> | null = null;
+
+    // While locked (mid-scrub or in the video's up-reverse/buffer window),
+    // every iframe on the page loses pointer-events via this body class,
+    // so a cursor sitting over e.g. the sidebar's Spotify embed can't
+    // swallow the wheel event before it ever reaches our listeners.
+    function updateBodyLockClass() {
+      document.body.classList.toggle("dance-lock-active", scrubProgress > 0 || inVideoPhase);
+    }
 
     const state = { frameIndex: 0 };
-    let prevProgress = 0;
-    let gifVirtualProgress = 0;
 
     function padNumber(n: number, digits: number) {
       return String(n).padStart(digits, "0");
@@ -88,11 +88,10 @@ export default function DanceScroll() {
       return { drawW, drawH, offsetX: (cw - drawW) / 2, offsetY: (ch - drawH) / 2 };
     }
 
-    // The box itself is a fixed 270x480 — this only needs to run once
-    // (plus on resize, for DPR changes), not on every scroll update.
     function resizeCanvas() {
-      cachedCw = CONFIG.boxWidth;
-      cachedCh = CONFIG.boxHeight;
+      const rect = box.getBoundingClientRect();
+      cachedCw = rect.width;
+      cachedCh = rect.height;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.round(cachedCw * dpr);
       canvas.height = Math.round(cachedCh * dpr);
@@ -100,58 +99,6 @@ export default function DanceScroll() {
       canvas.style.height = cachedCh + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       drawCurrentFrame();
-    }
-
-    // Vertical offset (from the top of a single viewport) that centers
-    // the box — used identically whether the box is resting (absolute,
-    // relative to pinTarget) or locked (fixed, relative to the viewport),
-    // so there's no jump switching between the two.
-    function centeredTopPx() {
-      return Math.round((window.innerHeight - CONFIG.boxHeight) / 2);
-    }
-
-    // Resting state: box sits inside pinTarget's own box, positioned at
-    // exactly the offset it'll need once locked — so the instant
-    // pinTarget's top reaches the top of the viewport, it's already
-    // sitting in the right spot and switching to position:fixed doesn't
-    // visibly move it at all.
-    function applyRestingPosition() {
-      box.style.position = "absolute";
-      box.style.top = `${centeredTopPx()}px`;
-      box.style.left = "auto";
-      box.style.right = "0px";
-    }
-
-    // Locked state: real position:fixed, computed from pinTarget's own
-    // current rect. pinTarget is never itself transformed or fixed, so
-    // this rect is always an accurate read of the column's actual
-    // on-screen position — unlike trusting a percentage width under
-    // position:fixed (which resolves against the viewport, not the
-    // original parent, and was the actual cause of it centering on the
-    // whole page instead of the column).
-    function applyLockedPosition() {
-      const rect = pinTarget.getBoundingClientRect();
-      box.style.position = "fixed";
-      box.style.top = `${centeredTopPx()}px`;
-      box.style.left = `${Math.round(rect.right - CONFIG.boxWidth)}px`;
-      box.style.right = "auto";
-    }
-
-    function syncBoxPosition(locked: boolean) {
-      isLocked = locked;
-      if (locked) applyLockedPosition();
-      else applyRestingPosition();
-    }
-
-    // Reserves enough document space for the whole interaction: one
-    // viewport's worth so the box can sit centered when pinTarget's top
-    // first reaches the top of the viewport, plus the full scrub+buffer
-    // distance so the page doesn't run out of room to scroll through
-    // before that distance is used up.
-    function resizePinTarget() {
-      const totalPx = CONFIG.scrubDistancePx + CONFIG.bufferDistancePx;
-      pinTarget.style.height = `${window.innerHeight + totalPx}px`;
-      syncBoxPosition(isLocked);
     }
 
     function preloadFrames() {
@@ -295,18 +242,26 @@ export default function DanceScroll() {
     function enterVideoPhase() {
       if (inVideoPhase) return;
       inVideoPhase = true;
+      awaitingBufferScroll = true;
       videoWrap.style.opacity = "1";
       videoWrap.style.pointerEvents = "auto";
       canvas.style.opacity = "0";
       if (!userUnmuted) video.muted = true;
       video.currentTime = 0;
-      video.play().catch((err) => console.error("[DanceScroll] video.play() FAILED:", err));
+      video.play()
+        .then(() => console.log("[DanceScroll] video.play() succeeded"))
+        .catch((err) => console.error("[DanceScroll] video.play() FAILED:", err));
       showMuteOverlay();
     }
 
     function exitVideoPhase() {
       if (!inVideoPhase) return;
       inVideoPhase = false;
+      awaitingBufferScroll = false;
+      if (bufferGestureTimer !== null) {
+        clearTimeout(bufferGestureTimer);
+        bufferGestureTimer = null;
+      }
       videoWrap.style.opacity = "0";
       videoWrap.style.pointerEvents = "none";
       canvas.style.opacity = "1";
@@ -321,204 +276,307 @@ export default function DanceScroll() {
       userUnmuted = false;
     }
 
-    let st: ScrollTrigger | null = null;
-
-    function initScrollTrigger() {
-      const totalPx = CONFIG.scrubDistancePx + CONFIG.bufferDistancePx;
-
-      st = ScrollTrigger.create({
-        trigger: pinTarget,
-        start: "top top",
-        end: () => `+=${totalPx}`,
-        // No pin:true — see the comments on applyLockedPosition/
-        // applyRestingPosition for why: GSAP's own pin+spacer captures
-        // dimensions in a way that fought this layout (nested flex
-        // column next to a sidebar). GSAP is only used here for its
-        // reliable scroll-position tracking; the actual fixed/absolute
-        // positioning is computed and applied by us.
-        scrub: CONFIG.scrubSmoothness,
-        onToggle: (self) => {
-          document.body.classList.toggle("dance-lock-active", self.isActive);
-          syncBoxPosition(self.isActive);
-        },
-        onUpdate: (self) => {
-          // Keep left/top correct if the window is resized mid-scrub.
-          if (self.isActive) syncBoxPosition(true);
-
-          const progress = self.progress; // 0 to 1 across totalPx
-          const deltaPx = (progress - prevProgress) * totalPx;
-
-          if (!inVideoPhase) {
-            gifVirtualProgress = Math.max(0, Math.min(1, gifVirtualProgress + deltaPx / CONFIG.scrubDistancePx));
-            state.frameIndex = gifVirtualProgress * (CONFIG.frameCount - 1);
-            drawCurrentFrame();
-            if (gifVirtualProgress >= 1 && deltaPx > 0) {
-              enterVideoPhase();
-            }
-          } else if (deltaPx < 0) {
-            exitVideoPhase();
-            gifVirtualProgress = Math.max(0, Math.min(1, 1 + deltaPx / CONFIG.scrubDistancePx));
-            state.frameIndex = gifVirtualProgress * (CONFIG.frameCount - 1);
-            drawCurrentFrame();
-          }
-          // else: inVideoPhase && deltaPx > 0 — the buffer zone. Scroll
-          // distance is still being consumed (moving progress toward 1,
-          // which is what eventually releases the lock) but nothing else
-          // happens until it does.
-
-          prevProgress = progress;
-        },
-        onRefresh: () => {
-          drawCurrentFrame();
-          syncBoxPosition(isLocked);
-        },
-      });
+    // True once the box has scrolled up far enough that locking now would
+    // land it centered in the current viewport — the cue to start
+    // intercepting scroll input for the frame scrub instead of letting
+    // the page keep scrolling. Computed live off window.innerHeight
+    // (rather than a fixed px constant) so it centers correctly whatever
+    // the viewport height happens to be, including on resize.
+    function reachedPinLine() {
+      const rect = box.getBoundingClientRect();
+      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
+      return rect.top <= centeredTop;
     }
+
+    function advanceScrub(deltaPx: number) {
+      if (inVideoPhase) {
+        if (deltaPx < 0) exitVideoPhase();
+        else return; // scrolling down during video: no lock, let the page scroll
+      }
+      scrubProgress = Math.max(0, Math.min(1, scrubProgress + deltaPx / CONFIG.scrubDistancePx));
+      state.frameIndex = scrubProgress * (CONFIG.frameCount - 1);
+      drawCurrentFrame();
+      if (scrubProgress >= 1 && deltaPx > 0) {
+        enterVideoPhase();
+      }
+      updateBodyLockClass();
+    }
+
+    // Inertia: once the person stops actively scrolling/swiping, keep
+    // scrubbing for a bit at a decaying "velocity" instead of stopping
+    // dead, the way normal page-scroll momentum feels.
+    let velocity = 0;
+    let momentumFrame: number | null = null;
+    let momentumIdleTimer: ReturnType<typeof setTimeout> | null = null;
+    const MOMENTUM_FRICTION = 0.94;
+    const MOMENTUM_MIN_VELOCITY = 0.05;
+    const MOMENTUM_IDLE_MS = 70;
+
+    function cancelMomentum() {
+      if (momentumFrame !== null) {
+        cancelAnimationFrame(momentumFrame);
+        momentumFrame = null;
+      }
+      if (momentumIdleTimer !== null) {
+        clearTimeout(momentumIdleTimer);
+        momentumIdleTimer = null;
+      }
+    }
+
+    function runMomentum() {
+      if (momentumFrame !== null) return; // already coasting
+      function step() {
+        if (inVideoPhase || Math.abs(velocity) < MOMENTUM_MIN_VELOCITY) {
+          momentumFrame = null;
+          return;
+        }
+        if (scrubProgress <= 0 && velocity < 0) {
+          momentumFrame = null;
+          return;
+        }
+        if (scrubProgress >= 1 && velocity > 0) {
+          momentumFrame = null;
+          return;
+        }
+        advanceScrub(velocity);
+        velocity *= MOMENTUM_FRICTION;
+        momentumFrame = requestAnimationFrame(step);
+      }
+      momentumFrame = requestAnimationFrame(step);
+    }
+
+    // Called after every real wheel/touch input: records velocity and
+    // (re)schedules momentum to kick in once input goes quiet.
+    function registerInput(deltaPx: number, kickOffMomentumNow: boolean) {
+      velocity = deltaPx;
+      if (momentumIdleTimer !== null) clearTimeout(momentumIdleTimer);
+      if (kickOffMomentumNow) {
+        momentumIdleTimer = null;
+        runMomentum();
+      } else {
+        momentumIdleTimer = setTimeout(runMomentum, MOMENTUM_IDLE_MS);
+      }
+    }
+
+    // Only intercept scroll input once assets are loaded, and either:
+    //  - the frames aren't finished yet and the box has scrolled up to
+    //    the pin line (or we're already mid-scrub), or
+    //  - we're in the video phase and the person is scrolling UP, which
+    //    should reverse back into the frames instead of scrolling the page.
+    function shouldIntercept(deltaPositive: boolean) {
+      if (!assetsReady) return false;
+      if (inVideoPhase) {
+        if (!deltaPositive) return true; // scrolling up always reverses back into the frames immediately
+        return awaitingBufferScroll; // forward scroll: keep swallowing until the buffered gesture goes quiet
+      }
+      if (scrubProgress <= 0 && !deltaPositive) return false; // let them scroll back up, away from the pin line
+      if (!reachedPinLine() && scrubProgress <= 0) return false;
+      return true;
+    }
+
+    // Called for every forward-scroll event swallowed by the buffer.
+    // Keeps re-arming the quiet-gap timer, so a whole burst of wheel/
+    // touch events from one physical gesture gets absorbed together —
+    // only once input actually stops for bufferGestureGapMs does the
+    // buffer clear and let the next gesture through.
+    function noteBufferedInput() {
+      if (bufferGestureTimer !== null) clearTimeout(bufferGestureTimer);
+      bufferGestureTimer = setTimeout(() => {
+        awaitingBufferScroll = false;
+        bufferGestureTimer = null;
+      }, CONFIG.bufferGestureGapMs);
+    }
+
+    function onWheel(e: WheelEvent) {
+      const deltaPositive = e.deltaY > 0;
+      if (!shouldIntercept(deltaPositive)) return;
+      e.preventDefault();
+      if (inVideoPhase && deltaPositive) {
+        noteBufferedInput();
+        return;
+      }
+      cancelMomentum();
+      advanceScrub(e.deltaY);
+      registerInput(e.deltaY, false);
+    }
+
+    let touchStartY = 0;
+    function onTouchStart(e: TouchEvent) {
+      touchStartY = e.touches[0].clientY;
+      cancelMomentum();
+    }
+    function onTouchMove(e: TouchEvent) {
+      const currentY = e.touches[0].clientY;
+      const dy = touchStartY - currentY; // positive = finger moving up = scrolling down
+      const deltaPositive = dy > 0;
+      if (!shouldIntercept(deltaPositive)) return;
+      e.preventDefault();
+      if (inVideoPhase && deltaPositive) {
+        noteBufferedInput();
+        touchStartY = currentY;
+        return;
+      }
+      advanceScrub(dy);
+      registerInput(dy, false);
+      touchStartY = currentY;
+    }
+    function onTouchEnd() {
+      // Finger lifted — coast immediately rather than waiting out the idle timer.
+      registerInput(velocity, true);
+    }
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
 
     let resizeDebounce: ReturnType<typeof setTimeout> | null = null;
     const onResize = () => {
       if (resizeDebounce) clearTimeout(resizeDebounce);
-      resizeDebounce = setTimeout(() => {
-        resizePinTarget();
-        ScrollTrigger.refresh();
-      }, 200);
+      resizeDebounce = setTimeout(resizeCanvas, 200);
     };
     window.addEventListener("resize", onResize);
 
-    resizePinTarget();
     resizeCanvas();
     drawCurrentFrame();
 
     Promise.all([preloadFrames(), preloadVideo()]).then(() => {
       resizeCanvas();
       hideLoader();
-      initScrollTrigger();
+      assetsReady = true;
     });
 
     return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("resize", onResize);
-      st?.kill();
+      cancelMomentum();
+      if (bufferGestureTimer !== null) clearTimeout(bufferGestureTimer);
       document.body.classList.remove("dance-lock-active");
     };
   }, []);
 
   return (
     <>
-      {/* While dance-lock-active is set on <body>, every iframe on the
-          page (chiefly the sidebar's Spotify embed) stops receiving
-          pointer events — a safety net alongside the scroll lock itself. */}
-      <style>{`body.dance-lock-active iframe { pointer-events: none !important; }`}</style>
+    {/* While dance-lock-active is set on <body>, every iframe on the page
+        (chiefly the sidebar's Spotify embed) stops receiving pointer
+        events, so hovering it can't swallow a wheel/touch event before
+        it ever reaches this component's window-level listeners. */}
+    <style>{`body.dance-lock-active iframe { pointer-events: none !important; }`}</style>
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#ffffff",
+      }}
+    >
       <div
-        ref={pinRef}
+        ref={boxRef}
+        className="rounded-lg"
         style={{
           position: "relative",
-          width: "100%",
+          width: 270,
+          height: 480,
           overflow: "hidden",
-          background: "#ffffff",
+          background: "transparent",
         }}
       >
         <div
-          ref={boxRef}
-          className="rounded-lg"
+          ref={videoWrapRef}
+          style={{ position: "absolute", inset: 0, opacity: 0, pointerEvents: "none", zIndex: 10 }}
+        >
+          <video
+            ref={videoRef}
+            src={CONFIG.videoSrc}
+            playsInline
+            preload="auto"
+            muted
+            loop
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </div>
+
+        {/* Hidden Spotify embed — audio only. The IFrame API injects its own
+            iframe into this container with a real internal size (needed
+            for it to actually init/play), clipped invisible by the
+            zero-size overflow-hidden wrapper. Started on UNMUTE via a
+            real click, using the API's controller.play(). */}
+        <div style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}>
+          <div ref={spotifyContainerRef} style={{ width: 300, height: 80 }} />
+        </div>
+
+        <div
+          ref={muteOverlayRef}
           style={{
+            display: "none",
             position: "absolute",
-            width: 270,
-            height: 480,
-            overflow: "hidden",
-            background: "transparent",
+            inset: 0,
+            zIndex: 20,
+            alignItems: "flex-end",
+            justifyContent: "center",
+            paddingBottom: 16,
           }}
         >
           <div
-            ref={videoWrapRef}
-            style={{ position: "absolute", inset: 0, opacity: 0, pointerEvents: "none", zIndex: 10 }}
-          >
-            <video
-              ref={videoRef}
-              src={CONFIG.videoSrc}
-              playsInline
-              preload="auto"
-              muted
-              loop
-              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          </div>
-
-          {/* Hidden Spotify embed — audio only. The IFrame API injects its own
-              iframe into this container with a real internal size (needed
-              for it to actually init/play), clipped invisible by the
-              zero-size overflow-hidden wrapper. Started on UNMUTE via a
-              real click, using the API's controller.play(). */}
-          <div style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}>
-            <div ref={spotifyContainerRef} style={{ width: 300, height: 80 }} />
-          </div>
-
-          <div
-            ref={muteOverlayRef}
             style={{
-              display: "none",
-              position: "absolute",
-              inset: 0,
-              zIndex: 20,
-              alignItems: "flex-end",
-              justifyContent: "center",
-              paddingBottom: 16,
+              background: "rgba(0,0,0,0.6)",
+              color: "#fff",
+              padding: "8px 18px",
+              borderRadius: 999,
+              fontWeight: 700,
+              fontSize: 14,
+              textDecoration: "underline",
+              cursor: "pointer",
+              pointerEvents: "auto",
             }}
+            onClick={() => unmuteHandlerRef.current()}
           >
-            <div
-              style={{
-                background: "rgba(0,0,0,0.6)",
-                color: "#fff",
-                padding: "8px 18px",
-                borderRadius: 999,
-                fontWeight: 700,
-                fontSize: 14,
-                textDecoration: "underline",
-                cursor: "pointer",
-                pointerEvents: "auto",
-              }}
-              onClick={() => unmuteHandlerRef.current()}
-            >
-              UNMUTE
-            </div>
+            UNMUTE
           </div>
+        </div>
 
-          <canvas
-            ref={canvasRef}
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", display: "block" }}
-          />
+        <canvas
+          ref={canvasRef}
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", display: "block" }}
+        />
 
+        <div
+          ref={loaderRef}
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "#ffffff",
+            transition: "opacity 0.4s ease",
+            zIndex: 40,
+          }}
+        >
           <div
-            ref={loaderRef}
+            ref={loaderTextRef}
             style={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              fontFamily: 'Arial, "Helvetica Neue", Helvetica, sans-serif',
               background: "#ffffff",
-              transition: "opacity 0.4s ease",
-              zIndex: 40,
+              color: "#000000",
+              border: "3px solid #000000",
+              borderRadius: "999px",
+              padding: "12px 28px",
+              fontWeight: 800,
+              fontSize: 16,
+              boxShadow: "0 4px 0 0 #000000",
             }}
           >
-            <div
-              ref={loaderTextRef}
-              style={{
-                fontFamily: 'Arial, "Helvetica Neue", Helvetica, sans-serif',
-                background: "#ffffff",
-                color: "#000000",
-                border: "3px solid #000000",
-                borderRadius: "999px",
-                padding: "12px 28px",
-                fontWeight: 800,
-                fontSize: 16,
-                boxShadow: "0 4px 0 0 #000000",
-              }}
-            >
-              LOADING… 0%
-            </div>
+            LOADING… 0%
           </div>
         </div>
       </div>
+    </div>
     </>
   );
 }
