@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
+import { Link } from "react-router-dom";
 import profilePic from "@/assets/profile_pic.gif";
 import rightVid from "@/assets/right_side_website_vid.mp4";
 import leftVid from "@/assets/left_side_website_vid.mp4";
@@ -213,7 +214,7 @@ const Index = () => {
             container), not the full page, so it stays aligned with the
             card regardless of viewport width. */}
         <div className="text-center leading-none pt-6">
-          <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
+          <Link to="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</Link>
         </div>
       </main>
     </div>
