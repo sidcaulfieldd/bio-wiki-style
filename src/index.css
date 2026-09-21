@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Stop iOS Safari's rubber-band overscroll bounce past the true top/bottom
+   of the page — it was momentarily exposing rendering artifacts from
+   content that sits just past the document's real boundaries. */
+html, body {
+  overscroll-behavior-y: none;
+}
+
 /* Hide default cursor - using JavaScript custom cursor instead */
 html, body, * {
   cursor: none !important;
