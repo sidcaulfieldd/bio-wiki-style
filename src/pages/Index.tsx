@@ -12,7 +12,7 @@ import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
 // with the word banks below, in case it gets reused later.
 import { ScrollFlipWord } from "@/components/ScrollFlipWord";
 
-const STRANGERS = ["neighbors","newcomers","observers","travellers","passersby","backpackers","adventurers","volunteers","creatives","explorers","founders","designers","builders","teachers","planners","thinkers","dreamers","runners","riders","surfers","skaters","painters","writers","readers","dancers","singers","coders","gamers","traders","brokers","dealers","editors","bloggers","vloggers","leaders","workers","artists","drivers","campers","climbers","hikers","paddlers","cyclists","joggers","sailors","rafters","brewers","bakers","farmers","doctors"];
+const STRANGERS = ["neighbors","newcomers","observers","travellers","backpackers","adventurers","volunteers","creatives","explorers","founders","designers","builders","teachers","planners","thinkers","dreamers","runners","riders","surfers","skaters","painters","writers","readers","dancers","singers","coders","gamers","traders","brokers","dealers","editors","bloggers","vloggers","leaders","workers","artists","drivers","campers","climbers","hikers","paddlers","cyclists","joggers","sailors","rafters","brewers","bakers","farmers","doctors"];
 const MIC       = ["map","man","men","mop","mug","pod","cam","pen","cap","pan","tap","set","net","web","app","air","hub","box","lab","den","bay","bar","pub","gym","jet","pit","mat","bed","sun","van","rod","bin","tub","can","tin","lid","key","log","rug","hat","fig","jam","wax","arc","dam","keg","owl","ant","ram","bug"];
 const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbreaks","backyards","skateparks","houseplants","aftershocks","storybeats","timepieces","showpieces","soundwaves","blueprints","footprints","goldmines","nightfalls","rainstorms","shipwrecks","storefronts","boardrooms","campfires","flashdrives","doorframes","landmasses","starbursts","bookcases","motorways","skylights","newsbreaks","postcards","sandcastles","wildfires","turntables","drumrolls","backflips","hatchbacks","headlines","paintbrushes","storytales","afterhours","longreads","sidequests","breakthroughs","launches","projects","ventures","chapters","episodes","showcases"];
 
@@ -114,19 +114,37 @@ const Index = () => {
               </ul>
 
               {/* Mons Monday gif — left-aligned, pushed to start ~35px
-                  below the sidebar's bottom edge via usePushBelowElement. */}
-              <div className="my-[35px]">
-                <div ref={monsMondayWrapRef}>
+                  below the sidebar's bottom edge via usePushBelowElement.
+                  Paired with a text box on the right; extra vertical
+                  padding (py-8) on the gif wrapper brings its height
+                  closer to the text block beside it. */}
+              <div className="my-[35px] flex flex-col md:flex-row gap-6 items-center">
+                <div ref={monsMondayWrapRef} className="py-8">
                   <NotableProjectsPixelation />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-serif font-bold mb-2">Header Goes Here</h3>
+                  <p className="leading-relaxed text-sm text-[#333]">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                  </p>
                 </div>
               </div>
 
               {/* Dance gif-scrub -> looping video, sitting directly below
-                  the Mons Monday gif. Right-aligned against the full card
-                  width via the useAlignOnCard call inside DanceScroll
-                  itself. */}
-              <div className="my-[35px]" data-cursor-trail-zone="bottom-dance-video">
-                <DanceScroll cardRef={cardRef} />
+                  the Mons Monday gif. Paired with a text box on the left
+                  this time so the two rows alternate sides. Extra
+                  vertical padding (py-8) on the video wrapper brings its
+                  height closer to the text block beside it. */}
+              <div className="my-[35px] flex flex-col md:flex-row gap-6 items-center" data-cursor-trail-zone="bottom-dance-video">
+                <div className="flex-1 order-2 md:order-1">
+                  <h3 className="text-xl font-serif font-bold mb-2">Another Header</h3>
+                  <p className="leading-relaxed text-sm text-[#333]">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                  </p>
+                </div>
+                <div className="py-8 order-1 md:order-2">
+                  <DanceScroll cardRef={cardRef} />
+                </div>
               </div>
 
               {/* Visual link — sits on the card itself, directly under
