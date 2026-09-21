@@ -13,18 +13,20 @@ const CONFIG = {
   frameExt: "png",
   videoSrc: "/dance/dance-vid.mp4",
 
+  boxWidth: 270,
+  boxHeight: 480,
+
   // How much real scroll distance (px) it takes to scrub through all the
-  // frames once the pin engages. Unlike the old wheel-delta approach,
-  // this is driven by GSAP ScrollTrigger's own scroll-position tracking,
-  // not by accumulating raw wheel/touch deltas — which is what made the
-  // old lock inconsistent across browsers/devices in the first place.
+  // frames once locked. Driven by GSAP ScrollTrigger's own scroll-position
+  // tracking rather than accumulated wheel/touch deltas, which is what
+  // made the old lock inconsistent across browsers/devices.
   scrubDistancePx: 900,
 
   // Extra scroll distance (px), on top of scrubDistancePx, required
-  // after the video starts before the pin releases and the page is free
-  // to keep scrolling. This is the "buffer" — a real, fixed amount of
-  // scroll the person has to physically get through, not a timer guess.
-  bufferDistancePx: 150,
+  // after the video starts before it releases and the page is free to
+  // keep scrolling. ~300px is roughly two normal wheel/trackpad gestures'
+  // worth — a real, fixed scroll distance, not a timer guess.
+  bufferDistancePx: 300,
 
   // GSAP's scrub smoothing factor (seconds) — ties frame/video progress
   // to scroll position with a slight lag instead of a raw 1:1 mapping,
@@ -50,7 +52,7 @@ export default function DanceScroll() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    const pinTarget = pinRef.current!;
+    const pinTarget = pinRef.current!; // never transformed/fixed itself — always a trustworthy rect
     const box = boxRef.current!;
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
@@ -65,6 +67,7 @@ export default function DanceScroll() {
     let inVideoPhase = false;
     let cachedCw = 0;
     let cachedCh = 0;
+    let isLocked = false;
 
     const state = { frameIndex: 0 };
     let prevProgress = 0;
@@ -88,9 +91,8 @@ export default function DanceScroll() {
     // The box itself is a fixed 270x480 — this only needs to run once
     // (plus on resize, for DPR changes), not on every scroll update.
     function resizeCanvas() {
-      const rect = box.getBoundingClientRect();
-      cachedCw = rect.width;
-      cachedCh = rect.height;
+      cachedCw = CONFIG.boxWidth;
+      cachedCh = CONFIG.boxHeight;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.round(cachedCw * dpr);
       canvas.height = Math.round(cachedCh * dpr);
@@ -100,11 +102,56 @@ export default function DanceScroll() {
       drawCurrentFrame();
     }
 
-    // Keeps the pin target exactly one viewport tall, so the box —
-    // centered inside it via CSS — is centered in the viewport the
-    // instant the pin engages, on whatever screen size it happens to be.
+    // Vertical offset (from the top of a single viewport) that centers
+    // the box — used identically whether the box is resting (absolute,
+    // relative to pinTarget) or locked (fixed, relative to the viewport),
+    // so there's no jump switching between the two.
+    function centeredTopPx() {
+      return Math.round((window.innerHeight - CONFIG.boxHeight) / 2);
+    }
+
+    // Resting state: box sits inside pinTarget's own box, positioned at
+    // exactly the offset it'll need once locked — so the instant
+    // pinTarget's top reaches the top of the viewport, it's already
+    // sitting in the right spot and switching to position:fixed doesn't
+    // visibly move it at all.
+    function applyRestingPosition() {
+      box.style.position = "absolute";
+      box.style.top = `${centeredTopPx()}px`;
+      box.style.left = "auto";
+      box.style.right = "0px";
+    }
+
+    // Locked state: real position:fixed, computed from pinTarget's own
+    // current rect. pinTarget is never itself transformed or fixed, so
+    // this rect is always an accurate read of the column's actual
+    // on-screen position — unlike trusting a percentage width under
+    // position:fixed (which resolves against the viewport, not the
+    // original parent, and was the actual cause of it centering on the
+    // whole page instead of the column).
+    function applyLockedPosition() {
+      const rect = pinTarget.getBoundingClientRect();
+      box.style.position = "fixed";
+      box.style.top = `${centeredTopPx()}px`;
+      box.style.left = `${Math.round(rect.right - CONFIG.boxWidth)}px`;
+      box.style.right = "auto";
+    }
+
+    function syncBoxPosition(locked: boolean) {
+      isLocked = locked;
+      if (locked) applyLockedPosition();
+      else applyRestingPosition();
+    }
+
+    // Reserves enough document space for the whole interaction: one
+    // viewport's worth so the box can sit centered when pinTarget's top
+    // first reaches the top of the viewport, plus the full scrub+buffer
+    // distance so the page doesn't run out of room to scroll through
+    // before that distance is used up.
     function resizePinTarget() {
-      pinTarget.style.height = `${window.innerHeight}px`;
+      const totalPx = CONFIG.scrubDistancePx + CONFIG.bufferDistancePx;
+      pinTarget.style.height = `${window.innerHeight + totalPx}px`;
+      syncBoxPosition(isLocked);
     }
 
     function preloadFrames() {
@@ -283,19 +330,21 @@ export default function DanceScroll() {
         trigger: pinTarget,
         start: "top top",
         end: () => `+=${totalPx}`,
-        pin: true,
-        anticipatePin: 1,
+        // No pin:true — see the comments on applyLockedPosition/
+        // applyRestingPosition for why: GSAP's own pin+spacer captures
+        // dimensions in a way that fought this layout (nested flex
+        // column next to a sidebar). GSAP is only used here for its
+        // reliable scroll-position tracking; the actual fixed/absolute
+        // positioning is computed and applied by us.
         scrub: CONFIG.scrubSmoothness,
         onToggle: (self) => {
-          // Belt-and-suspenders: while pinned, disable pointer-events on
-          // every iframe on the page (chiefly the sidebar's Spotify
-          // embed), so a cursor sitting over one can't get in the way.
-          // GSAP itself keys off real scroll position rather than raw
-          // wheel events, so this shouldn't be load-bearing the way it
-          // was with the old implementation — just a safety net.
           document.body.classList.toggle("dance-lock-active", self.isActive);
+          syncBoxPosition(self.isActive);
         },
         onUpdate: (self) => {
+          // Keep left/top correct if the window is resized mid-scrub.
+          if (self.isActive) syncBoxPosition(true);
+
           const progress = self.progress; // 0 to 1 across totalPx
           const deltaPx = (progress - prevProgress) * totalPx;
 
@@ -314,12 +363,15 @@ export default function DanceScroll() {
           }
           // else: inVideoPhase && deltaPx > 0 — the buffer zone. Scroll
           // distance is still being consumed (moving progress toward 1,
-          // which is what eventually releases the pin) but nothing else
+          // which is what eventually releases the lock) but nothing else
           // happens until it does.
 
           prevProgress = progress;
         },
-        onRefresh: () => drawCurrentFrame(),
+        onRefresh: () => {
+          drawCurrentFrame();
+          syncBoxPosition(isLocked);
+        },
       });
     }
 
@@ -327,7 +379,6 @@ export default function DanceScroll() {
     const onResize = () => {
       if (resizeDebounce) clearTimeout(resizeDebounce);
       resizeDebounce = setTimeout(() => {
-        resizeCanvas();
         resizePinTarget();
         ScrollTrigger.refresh();
       }, 200);
@@ -355,7 +406,7 @@ export default function DanceScroll() {
     <>
       {/* While dance-lock-active is set on <body>, every iframe on the
           page (chiefly the sidebar's Spotify embed) stops receiving
-          pointer events — a safety net alongside the GSAP pin itself. */}
+          pointer events — a safety net alongside the scroll lock itself. */}
       <style>{`body.dance-lock-active iframe { pointer-events: none !important; }`}</style>
       <div
         ref={pinRef}
@@ -371,9 +422,6 @@ export default function DanceScroll() {
           className="rounded-lg"
           style={{
             position: "absolute",
-            top: "50%",
-            right: 0,
-            transform: "translateY(-50%)",
             width: 270,
             height: 480,
             overflow: "hidden",
