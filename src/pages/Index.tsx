@@ -122,10 +122,11 @@ const Index = () => {
               </div>
 
               {/* Dance gif-scrub -> looping video, sitting directly below
-                  the Mons Monday gif. GSAP ScrollTrigger pins and centers
-                  it in the viewport, right-aligned within this column. */}
+                  the Mons Monday gif. Right-aligned against the full card
+                  width via the useAlignOnCard call inside DanceScroll
+                  itself. */}
               <div className="my-[35px]" data-cursor-trail-zone="bottom-dance-video">
-                <DanceScroll />
+                <DanceScroll cardRef={cardRef} />
               </div>
 
               {/* Visual link — sits on the card itself, directly under
