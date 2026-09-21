@@ -206,7 +206,7 @@ const Index = () => {
           </div>
 
           {/* Walking easter egg — desktop only, tethered to card edges */}
-          <WalkingSid cardRef={cardRef} />
+          <WalkingSid cardRef={cardRef} isProfileLoaded={isProfileLoaded} />
         </div>
 
         {/* Visual link — centered relative to the card's own width (this
@@ -220,7 +220,13 @@ const Index = () => {
   );
 };
 
-const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
+const WalkingSid = ({
+  cardRef,
+  isProfileLoaded,
+}: {
+  cardRef: RefObject<HTMLDivElement>;
+  isProfileLoaded: boolean;
+}) => {
   // Positive pushes the videos further down from true viewport-center; negative pushes up.
   const VERTICAL_OFFSET = 25;
 
@@ -263,9 +269,10 @@ const WalkingSid = ({ cardRef }: { cardRef: RefObject<HTMLDivElement> }) => {
   }, [cardRef]);
 
   useEffect(() => {
+    if (!isProfileLoaded) return;
     const t = setTimeout(() => setShowLeft(true), 5000);
     return () => clearTimeout(t);
-  }, []);
+  }, [isProfileLoaded]);
 
   // Derive whole-pixel heights from the rounded gaps so the CSS box matches
   // exactly what the top-offset math above assumed.
