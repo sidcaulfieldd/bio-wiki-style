@@ -272,6 +272,62 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       }
     }
 
+    // Inertia: once the person stops actively scrolling/swiping, keep
+    // scrubbing for a bit at a decaying "velocity" instead of stopping
+    // dead, the way normal page-scroll momentum feels.
+    let velocity = 0;
+    let momentumFrame: number | null = null;
+    let momentumIdleTimer: ReturnType<typeof setTimeout> | null = null;
+    const MOMENTUM_FRICTION = 0.94;
+    const MOMENTUM_MIN_VELOCITY = 0.05;
+    const MOMENTUM_IDLE_MS = 70;
+
+    function cancelMomentum() {
+      if (momentumFrame !== null) {
+        cancelAnimationFrame(momentumFrame);
+        momentumFrame = null;
+      }
+      if (momentumIdleTimer !== null) {
+        clearTimeout(momentumIdleTimer);
+        momentumIdleTimer = null;
+      }
+    }
+
+    function runMomentum() {
+      if (momentumFrame !== null) return; // already coasting
+      function step() {
+        if (inVideoPhase || Math.abs(velocity) < MOMENTUM_MIN_VELOCITY) {
+          momentumFrame = null;
+          return;
+        }
+        if (scrubProgress <= 0 && velocity < 0) {
+          momentumFrame = null;
+          return;
+        }
+        if (scrubProgress >= 1 && velocity > 0) {
+          momentumFrame = null;
+          return;
+        }
+        advanceScrub(velocity);
+        velocity *= MOMENTUM_FRICTION;
+        momentumFrame = requestAnimationFrame(step);
+      }
+      momentumFrame = requestAnimationFrame(step);
+    }
+
+    // Called after every real wheel/touch input: records velocity and
+    // (re)schedules momentum to kick in once input goes quiet.
+    function registerInput(deltaPx: number, kickOffMomentumNow: boolean) {
+      velocity = deltaPx;
+      if (momentumIdleTimer !== null) clearTimeout(momentumIdleTimer);
+      if (kickOffMomentumNow) {
+        momentumIdleTimer = null;
+        runMomentum();
+      } else {
+        momentumIdleTimer = setTimeout(runMomentum, MOMENTUM_IDLE_MS);
+      }
+    }
+
     // Only intercept scroll input once assets are loaded, and either:
     //  - the frames aren't finished yet and we're at the literal bottom of
     //    the page (or already mid-scrub), or
@@ -288,12 +344,15 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     function onWheel(e: WheelEvent) {
       if (!shouldIntercept(e.deltaY > 0)) return;
       e.preventDefault();
+      cancelMomentum();
       advanceScrub(e.deltaY);
+      registerInput(e.deltaY, false);
     }
 
     let touchStartY = 0;
     function onTouchStart(e: TouchEvent) {
       touchStartY = e.touches[0].clientY;
+      cancelMomentum();
     }
     function onTouchMove(e: TouchEvent) {
       const currentY = e.touches[0].clientY;
@@ -301,12 +360,18 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       if (!shouldIntercept(dy > 0)) return;
       e.preventDefault();
       advanceScrub(dy);
+      registerInput(dy, false);
       touchStartY = currentY;
+    }
+    function onTouchEnd() {
+      // Finger lifted — coast immediately rather than waiting out the idle timer.
+      registerInput(velocity, true);
     }
 
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
 
     let resizeDebounce: ReturnType<typeof setTimeout> | null = null;
     const onResize = () => {
@@ -328,7 +393,9 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("resize", onResize);
+      cancelMomentum();
     };
   }, []);
 
