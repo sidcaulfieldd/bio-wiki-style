@@ -14,11 +14,16 @@ const CONFIG = {
   videoSrc: "/dance/dance-vid.mp4",
 
   scrubSmoothness: 0.1,
-  // How many viewport-heights of scroll the whole pin (gif-scrub + video) takes up.
-  pinSpacerMultiplier: 2.5,
-  // Fraction of the pin's scroll distance spent scrubbing through the gif
-  // frames before the video takes over (0.4 = first 40%).
-  gifScrubRate: 0.4,
+  // How many viewport-heights of scroll it takes to scrub through all the
+  // gif frames. The pin releases immediately once this completes and the
+  // video starts, so this only needs to cover the scrub itself.
+  pinSpacerMultiplier: 1.1,
+
+  // Positive value nudges the box down the screen; negative moves it up.
+  verticalOffset: 120,
+
+  // Hidden Spotify track played (audio only) once the person hits UNMUTE.
+  spotifyTrackId: "5kDLJIAApnLKgdiTdAsd6P",
 };
 
 export default function DanceScroll() {
@@ -31,6 +36,7 @@ export default function DanceScroll() {
   const muteOverlayRef = useRef<HTMLDivElement>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
   const loaderTextRef = useRef<HTMLDivElement>(null);
+  const spotifyIframeRef = useRef<HTMLIFrameElement>(null);
   const unmuteHandlerRef = useRef<() => void>(() => {});
 
   useEffect(() => {
@@ -44,6 +50,7 @@ export default function DanceScroll() {
     const video = videoRef.current!;
     const videoWrap = videoWrapRef.current!;
     const muteOverlay = muteOverlayRef.current!;
+    const spotifyIframe = spotifyIframeRef.current!;
 
     const frames: HTMLImageElement[] = [];
     let framesLoaded = 0;
@@ -172,15 +179,18 @@ export default function DanceScroll() {
       userUnmuted = true;
       video.muted = false;
       hideMuteOverlay();
+      // Start the hidden Spotify track (audio only, invisibly sized) —
+      // only set the src now, on a real user gesture, so autoplay isn't
+      // blocked by the browser.
+      if (spotifyIframe && !spotifyIframe.src) {
+        spotifyIframe.src = `https://open.spotify.com/embed/track/${CONFIG.spotifyTrackId}?utm_source=generator&theme=0&autoplay=1`;
+      }
     }
     unmuteHandlerRef.current = onUnmuteClick;
-
-    let videoEnded = false;
 
     function enterVideoPhase() {
       if (inVideoPhase) return;
       inVideoPhase = true;
-      videoEnded = false;
       videoWrap.style.opacity = "1";
       videoWrap.style.pointerEvents = "auto";
       canvas.style.opacity = "0";
@@ -190,24 +200,9 @@ export default function DanceScroll() {
         .then(() => console.log("[DanceScroll] video.play() succeeded"))
         .catch((err) => console.error("[DanceScroll] video.play() FAILED:", err));
       showMuteOverlay();
-    }
-
-    function onVideoEnded() {
-      videoEnded = true;
-      console.log("[DanceScroll] video ended, unlocking scroll");
-    }
-    video.addEventListener("ended", onVideoEnded);
-
-    function exitVideoPhase() {
-      if (!inVideoPhase) return;
-      inVideoPhase = false;
-      videoEnded = false;
-      videoWrap.style.opacity = "0";
-      videoWrap.style.pointerEvents = "none";
-      canvas.style.opacity = "1";
-      video.pause();
-      video.currentTime = 0;
-      hideMuteOverlay();
+      // No scroll-lock: the video loops indefinitely, so release the pin
+      // immediately and let the page scroll normally from here on.
+      st?.kill();
     }
 
     let prevProgress = 0;
@@ -226,30 +221,15 @@ export default function DanceScroll() {
         onUpdate: (self) => {
           const progress = self.progress;
           const delta = progress - prevProgress;
-          if (!(window as any).__dsLogCount) (window as any).__dsLogCount = 0;
-          (window as any).__dsLogCount++;
-          if ((window as any).__dsLogCount % 10 === 0) {
-            console.log(
-              "[DanceScroll] progress=", progress.toFixed(4),
-              "gifVirtualProgress=", gifVirtualProgress.toFixed(4),
-              "frameIndex=", state.frameIndex.toFixed(2),
-              "inVideoPhase=", inVideoPhase
-            );
-          }
 
           if (!inVideoPhase) {
-            gifVirtualProgress = Math.max(0, Math.min(1, gifVirtualProgress + delta / CONFIG.gifScrubRate));
+            gifVirtualProgress = Math.max(0, Math.min(1, gifVirtualProgress + delta));
             state.frameIndex = gifVirtualProgress * (CONFIG.frameCount - 1);
             drawCurrentFrame();
 
             if (gifVirtualProgress >= 1 && delta > 0) {
               enterVideoPhase();
             }
-          } else if (delta < 0) {
-            exitVideoPhase();
-            gifVirtualProgress = Math.max(0, Math.min(1, 1 + delta / CONFIG.gifScrubRate));
-            state.frameIndex = gifVirtualProgress * (CONFIG.frameCount - 1);
-            drawCurrentFrame();
           }
 
           prevProgress = progress;
@@ -268,40 +248,15 @@ export default function DanceScroll() {
     };
     window.addEventListener("resize", onResize);
 
-    // Lock forward scroll while the video is playing; release it once the
-    // video actually finishes so the person can continue down the page.
-    function onWheel(e: WheelEvent) {
-      if (inVideoPhase && !videoEnded && e.deltaY > 0) {
-        e.preventDefault();
-      }
-    }
-    let touchStartY = 0;
-    function onTouchStart(e: TouchEvent) {
-      touchStartY = e.touches[0].clientY;
-    }
-    function onTouchMove(e: TouchEvent) {
-      if (!inVideoPhase || videoEnded) return;
-      const dy = touchStartY - e.touches[0].clientY;
-      if (dy > 0) {
-        e.preventDefault();
-      }
-    }
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-
     resizeCanvas();
     drawCurrentFrame();
     updateSpacerHeight();
 
     Promise.all([preloadFrames(), preloadVideo()]).then(() => {
-      console.log("[DanceScroll] assets settled, initializing ScrollTrigger");
       resizeCanvas();
       updateSpacerHeight();
       hideLoader();
       initScrollTrigger();
-      console.log("[DanceScroll] ScrollTrigger created:", st);
-      console.log("[DanceScroll] start px:", st?.start, "end px:", st?.end, "range:", (st?.end ?? 0) - (st?.start ?? 0));
       // Other async-loading content on the page (e.g. the Mons Monday gif)
       // can still shift page height after this point, which would leave
       // ScrollTrigger's cached start/end positions stale. Force a recheck
@@ -317,10 +272,6 @@ export default function DanceScroll() {
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("load", onWindowLoad);
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      video.removeEventListener("ended", onVideoEnded);
       st?.kill();
     };
   }, []);
@@ -347,6 +298,7 @@ export default function DanceScroll() {
           height: 480,
           overflow: "hidden",
           background: "transparent",
+          marginTop: CONFIG.verticalOffset,
         }}
       >
         <div
@@ -359,9 +311,28 @@ export default function DanceScroll() {
             playsInline
             preload="auto"
             muted
+            loop
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
           />
         </div>
+
+        {/* Hidden Spotify embed — audio only, invisibly sized so it doesn't
+            show under the video, started on UNMUTE via a real user gesture. */}
+        <iframe
+          ref={spotifyIframeRef}
+          title="background track"
+          style={{
+            position: "absolute",
+            width: 1,
+            height: 1,
+            opacity: 0,
+            pointerEvents: "none",
+            border: 0,
+            overflow: "hidden",
+          }}
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"
+        />
 
         <div
           ref={muteOverlayRef}
