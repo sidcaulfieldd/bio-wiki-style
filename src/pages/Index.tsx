@@ -5,8 +5,11 @@ import leftVid from "@/assets/left_side_website_vid.mp4";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import DanceScroll from "@/components/DanceScroll";
 import LoadingScreen from "@/components/LoadingScreen";
-import { useCenterOnCard } from "@/hooks/useCenterOnCard";
+import { usePushBelowElement } from "@/hooks/usePushBelowElement";
 import { ScrollTypeHeading } from "@/components/ScrollTypeHeading";
+// ScrollFlipWord is currently disabled (not deleted) — the Career Overview
+// intro line it was wired into has been removed for now. Kept here, along
+// with the word banks below, in case it gets reused later.
 import { ScrollFlipWord } from "@/components/ScrollFlipWord";
 
 const STRANGERS = ["neighbors","newcomers","observers","travellers","passersby","backpackers","adventurers","volunteers","creatives","explorers","founders","designers","builders","teachers","planners","thinkers","dreamers","runners","riders","surfers","skaters","painters","writers","readers","dancers","singers","coders","gamers","traders","brokers","dealers","editors","bloggers","vloggers","leaders","workers","artists","drivers","campers","climbers","hikers","paddlers","cyclists","joggers","sailors","rafters","brewers","bakers","farmers","doctors"];
@@ -16,7 +19,11 @@ const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbrea
 const Index = () => {
   const cardRef = useRef<HTMLDivElement>(null);
   const monsMondayWrapRef = useRef<HTMLDivElement>(null);
-  useCenterOnCard(monsMondayWrapRef, cardRef);
+  const asideRef = useRef<HTMLDivElement>(null);
+
+  // Push the Mons Monday gif down so it never starts less than ~35px
+  // below the sidebar's bottom edge, on desktop (see hook for details).
+  usePushBelowElement(monsMondayWrapRef, asideRef, 35);
 
   // The page stays behind the LoadingScreen until the profile gif itself
   // has loaded (LoadingScreen owns that load and reports back here).
@@ -84,10 +91,11 @@ const Index = () => {
                 <div className="font-bold mb-2 relative z-10">Contents</div>
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
                   <li><a href="#notable-projects" className="hover:underline">Notable Projects</a></li>
-                  <li><a href="#career-overview" className="hover:underline">Career Overview</a></li>
-                  <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
+                  <li><a href="#flow-mountain-bike" className="hover:underline">Flow Mountain Bike</a></li>
+                  <li><a href="#mons-monday-podcast" className="hover:underline">The Mons Monday Podcast</a></li>
+                  <li><a href="#freelance-work" className="hover:underline">Freelance Work</a></li>
                   <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
-                  <li><a href="#references" className="hover:underline">References</a></li>
+                  <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
                 </ol>
               </div>
 
@@ -96,7 +104,7 @@ const Index = () => {
                 <strong>Sid Caulfield</strong> is an Australian copywriter based in <a href="https://en.wikipedia.org/wiki/Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, working in words and pictures. His output spans copywriting, concepting, social storytelling, podcast production and the odd bit of interactive digital design — this page included. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. He is currently a freelance journalist and the Content Syndication and Social Media Manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a> and <a href="https://en.wikipedia.org/wiki/New_Zealand" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">New Zealand</a>'s largest digital mountain bike publication — where the day job is strategy, and the after-hours job is everything else on this page.
               </p>
 
-              {/* Notable Projects Section with GIF */}
+              {/* Notable Projects Section */}
               <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Notable Projects
               </ScrollTypeHeading>
@@ -108,20 +116,27 @@ const Index = () => {
                 <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
               </ul>
 
-              {/* GIF centered between sections with canvas pixelation effect */}
+              {/* Mons Monday gif — left-aligned, pushed to start ~35px
+                  below the sidebar's bottom edge via usePushBelowElement. */}
               <div className="my-6">
-                <div ref={monsMondayWrapRef} className="flex justify-center">
+                <div ref={monsMondayWrapRef}>
                   <NotableProjectsPixelation />
                 </div>
               </div>
 
-              {/* Career Overview Section */}
-              <ScrollTypeHeading id="career-overview" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Career Overview
-              </ScrollTypeHeading>
-              <p className="mb-4 leading-relaxed relative z-10">
-                Whether it's bringing a group of 30 <ScrollFlipWord heroWord="strangers" list={STRANGERS} /> together for an arvo on the bike or helping influencers lay down some dating lore on the <ScrollFlipWord heroWord="mic" list={MIC} />, Caulfield's career, thus far, has been one of following his nose and creative urges. Here are the <ScrollFlipWord heroWord="highlights" list={HIGHLIGHTS} />!!
-              </p>
+              {/* Dance gif-scrub -> looping video, now sitting directly
+                  below the Mons Monday gif instead of at the page bottom.
+                  Right-aligned against the full card width via the
+                  useAlignOnCard call inside DanceScroll itself. */}
+              <div className="my-6" data-cursor-trail-zone="bottom-dance-video">
+                <DanceScroll cardRef={cardRef} />
+              </div>
+
+              {/* Visual link — now sits on the card itself, directly under
+                  the gif + dance block above. */}
+              <div className="text-center leading-none my-6">
+                <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
+              </div>
 
               {/* Flow Mountain Bike */}
               <h3 id="flow-mountain-bike" className="text-xl font-serif mt-4 mb-2">
@@ -153,20 +168,6 @@ const Index = () => {
                 Alongside his staff role, Caulfield undertakes freelance projects across journalism, content strategy and digital media. His work includes feature writing, interview-based storytelling, social media management and campaign support for publications and organisations. He has contributed to outlets including <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a> and <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, and regularly works with brands and community partners on content development and distribution.
               </p>
 
-              {/* Early Life and Education Section */}
-              <ScrollTypeHeading id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                Early Life and Education
-              </ScrollTypeHeading>
-              <p className="mb-4 leading-relaxed relative z-10">
-                Sidney Joseph Caulfield was born on July 27, 2003, in <a href="https://en.wikipedia.org/wiki/East_Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">East Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a>.
-              </p>
-              <p className="mb-4 leading-relaxed relative z-10">
-                Caulfield completed his secondary education at <a href="https://en.wikipedia.org/wiki/Belmont_High_School_(Victoria)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Belmont High School</a> in <a href="https://en.wikipedia.org/wiki/Geelong" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Geelong</a>, where he studied Media, Linguistics and Indonesian.
-              </p>
-              <p className="mb-4 leading-relaxed relative z-10">
-                He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a> and will graduate with a Bachelor of Communication (Journalism) in 2026.
-              </p>
-
               {/* Skills and Areas of Expertise Section */}
               <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
                 Skills and Areas of Expertise
@@ -192,25 +193,23 @@ const Index = () => {
                 ))}
               </div>
 
-              {/* References Section */}
-              <ScrollTypeHeading id="references" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                References
+              {/* Early Life and Education Section — now last */}
+              <ScrollTypeHeading id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
+                Early Life and Education
               </ScrollTypeHeading>
               <p className="mb-4 leading-relaxed relative z-10">
-                — Available upon request!!
+                Sidney Joseph Caulfield was born on July 27, 2003, in <a href="https://en.wikipedia.org/wiki/East_Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">East Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a>.
               </p>
-
-              {/* Dance gif-scrub -> looping video. Sits statically near the
-                  bottom of the page; once scrolled to the literal end,
-                  further wheel/touch input scrubs the frames directly
-                  instead of growing the page (see DanceScroll.tsx). */}
-              <div className="my-6" data-cursor-trail-zone="bottom-dance-video">
-                <DanceScroll cardRef={cardRef} />
-              </div>
+              <p className="mb-4 leading-relaxed relative z-10">
+                Caulfield completed his secondary education at <a href="https://en.wikipedia.org/wiki/Belmont_High_School_(Victoria)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Belmont High School</a> in <a href="https://en.wikipedia.org/wiki/Geelong" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Geelong</a>, where he studied Media, Linguistics and Indonesian.
+              </p>
+              <p className="mb-4 leading-relaxed relative z-10">
+                He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a> and will graduate with a Bachelor of Communication (Journalism) in 2026.
+              </p>
             </div>
 
             {/* Desktop Sidebar */}
-            <aside className="hidden md:block w-[300px] flex-shrink-0 order-1 md:order-2">
+            <aside ref={asideRef} className="hidden md:block w-[300px] flex-shrink-0 order-1 md:order-2">
               <div className="border border-[#a2a9b1] bg-[#f8f9fa]">
                 <SidebarContent />
               </div>
@@ -219,13 +218,6 @@ const Index = () => {
 
           {/* Walking easter egg — desktop only, tethered to card edges */}
           <WalkingSid cardRef={cardRef} isProfileLoaded={isProfileLoaded} />
-        </div>
-
-        {/* Visual link — centered relative to the card's own width (this
-            container), not the full page, so it stays aligned with the
-            card regardless of viewport width. */}
-        <div className="text-center leading-none pt-6">
-          <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
         </div>
       </main>
     </div>
