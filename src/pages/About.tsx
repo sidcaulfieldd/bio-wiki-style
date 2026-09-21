@@ -132,39 +132,50 @@ const SEPARATION = 3; // px nudged out of overlap per frame while touching
 const COLLISION_SAMPLES = 6; // NxN sample grid inside any overlap box
 const MAX_SPEED = 40; // velocity clamp so a hard hit can't blow up
 
-function resolveCollision(dragged: PhysicsGif, other: PhysicsGif) {
-  const overlapLeft = Math.max(dragged.x, other.x);
-  const overlapTop = Math.max(dragged.y, other.y);
-  const overlapRight = Math.min(dragged.x + dragged.width, other.x + other.width);
-  const overlapBottom = Math.min(dragged.y + dragged.height, other.y + other.height);
-  if (overlapRight <= overlapLeft || overlapBottom <= overlapTop) return;
+// Shared mask-aware contact test: returns the unit direction to push `b`
+// away from `a` if their visible (opaque) silhouettes actually touch,
+// or null if they don't overlap at all, or only overlap in transparent
+// padding.
+function getContactDirection(a: PhysicsGif, b: PhysicsGif): { dx: number; dy: number } | null {
+  const overlapLeft = Math.max(a.x, b.x);
+  const overlapTop = Math.max(a.y, b.y);
+  const overlapRight = Math.min(a.x + a.width, b.x + b.width);
+  const overlapBottom = Math.min(a.y + a.height, b.y + b.height);
+  if (overlapRight <= overlapLeft || overlapBottom <= overlapTop) return null;
 
   let touched = false;
   for (let sx = 0; sx < COLLISION_SAMPLES && !touched; sx++) {
     for (let sy = 0; sy < COLLISION_SAMPLES; sy++) {
       const px = overlapLeft + ((sx + 0.5) / COLLISION_SAMPLES) * (overlapRight - overlapLeft);
       const py = overlapTop + ((sy + 0.5) / COLLISION_SAMPLES) * (overlapBottom - overlapTop);
-      const au = (px - dragged.x) / dragged.width;
-      const av = (py - dragged.y) / dragged.height;
-      const bu = (px - other.x) / other.width;
-      const bv = (py - other.y) / other.height;
+      const au = (px - a.x) / a.width;
+      const av = (py - a.y) / a.height;
+      const bu = (px - b.x) / b.width;
+      const bv = (py - b.y) / b.height;
       if (isOpaqueAtUV(au, av) && isOpaqueAtUV(bu, bv)) {
         touched = true;
         break;
       }
     }
   }
-  if (!touched) return;
+  if (!touched) return null;
 
-  const acx = dragged.x + dragged.width / 2;
-  const acy = dragged.y + dragged.height / 2;
-  const bcx = other.x + other.width / 2;
-  const bcy = other.y + other.height / 2;
+  const acx = a.x + a.width / 2;
+  const acy = a.y + a.height / 2;
+  const bcx = b.x + b.width / 2;
+  const bcy = b.y + b.height / 2;
   let dx = bcx - acx;
   let dy = bcy - acy;
   const dist = Math.hypot(dx, dy) || 1;
-  dx /= dist;
-  dy /= dist;
+  return { dx: dx / dist, dy: dy / dist };
+}
+
+// The "knock": only the actively-dragged gif shoves others with real
+// force, scaled by how fast it's moving.
+function resolveCollision(dragged: PhysicsGif, other: PhysicsGif) {
+  const contact = getContactDirection(dragged, other);
+  if (!contact) return;
+  const { dx, dy } = contact;
 
   const dragSpeed = Math.hypot(dragged.vx, dragged.vy);
   const kick = MIN_PUSH + dragSpeed * PUSH_STRENGTH;
@@ -175,6 +186,31 @@ function resolveCollision(dragged: PhysicsGif, other: PhysicsGif) {
   // visually pass through it before the velocity kick catches up.
   other.x += dx * SEPARATION;
   other.y += dy * SEPARATION;
+}
+
+// Runs every frame, for every pair, regardless of drag state. This is
+// what makes a gif springing back toward its home settle at the nearest
+// free spot instead of drifting straight through whatever (including the
+// actively-dragged gif) happens to be sitting in its way. The dragged
+// gif itself never gets moved by this — it stays pinned to the pointer —
+// only the other one gets nudged clear.
+function preventOverlap(a: PhysicsGif, b: PhysicsGif, aIsDragged: boolean, bIsDragged: boolean) {
+  const contact = getContactDirection(a, b);
+  if (!contact) return;
+  const { dx, dy } = contact;
+
+  if (aIsDragged) {
+    b.x += dx * SEPARATION;
+    b.y += dy * SEPARATION;
+  } else if (bIsDragged) {
+    a.x -= dx * SEPARATION;
+    a.y -= dy * SEPARATION;
+  } else {
+    a.x -= dx * (SEPARATION / 2);
+    a.y -= dy * (SEPARATION / 2);
+    b.x += dx * (SEPARATION / 2);
+    b.y += dy * (SEPARATION / 2);
+  }
 }
 
 const About = () => {
@@ -318,6 +354,18 @@ const About = () => {
           for (const other of next) {
             if (other === dragged) continue;
             resolveCollision(dragged, other);
+          }
+        }
+
+        // Always-on overlap prevention, for every pair, whether or not
+        // anything is currently being dragged — this is what stops a
+        // returning gif from passing straight through an obstacle instead
+        // of settling against it.
+        for (let i = 0; i < next.length; i++) {
+          for (let j = i + 1; j < next.length; j++) {
+            const a = next[i];
+            const b = next[j];
+            preventOverlap(a, b, a === dragged, b === dragged);
           }
         }
 
