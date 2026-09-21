@@ -28,7 +28,6 @@ const CONFIG = {
 
 export default function DanceScroll() {
   const pinRef = useRef<HTMLDivElement>(null);
-  const spacerRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -45,7 +44,6 @@ export default function DanceScroll() {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
     const pinTarget = pinRef.current!;
-    const spacer = spacerRef.current!;
     const box = boxRef.current!;
     const video = videoRef.current!;
     const videoWrap = videoWrapRef.current!;
@@ -87,15 +85,6 @@ export default function DanceScroll() {
       canvas.style.height = cachedCh + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       drawCurrentFrame();
-    }
-
-    // Explicitly reserves exactly the scroll distance the pin needs
-    // (matching the "end" calculation below) as real, statically-present
-    // height — rather than relying on GSAP's auto pin-spacer, which has
-    // been unreliable here since this section sits at the very end of
-    // the page.
-    function updateSpacerHeight() {
-      spacer.style.height = `${window.innerHeight * CONFIG.pinSpacerMultiplier}px`;
     }
 
     function preloadFrames() {
@@ -215,7 +204,6 @@ export default function DanceScroll() {
         start: "center center",
         end: () => `+=${window.innerHeight * CONFIG.pinSpacerMultiplier}`,
         pin: true,
-        pinSpacing: false,
         anticipatePin: 1,
         scrub: CONFIG.scrubSmoothness,
         onUpdate: (self) => {
@@ -243,18 +231,15 @@ export default function DanceScroll() {
       if (resizeDebounce) clearTimeout(resizeDebounce);
       resizeDebounce = setTimeout(() => {
         resizeCanvas();
-        updateSpacerHeight();
       }, 200);
     };
     window.addEventListener("resize", onResize);
 
     resizeCanvas();
     drawCurrentFrame();
-    updateSpacerHeight();
 
     Promise.all([preloadFrames(), preloadVideo()]).then(() => {
       resizeCanvas();
-      updateSpacerHeight();
       hideLoader();
       initScrollTrigger();
       // Other async-loading content on the page (e.g. the Mons Monday gif)
@@ -277,7 +262,6 @@ export default function DanceScroll() {
   }, []);
 
   return (
-    <>
     <div
       ref={pinRef}
       style={{
@@ -316,23 +300,22 @@ export default function DanceScroll() {
           />
         </div>
 
-        {/* Hidden Spotify embed — audio only, invisibly sized so it doesn't
-            show under the video, started on UNMUTE via a real user gesture. */}
-        <iframe
-          ref={spotifyIframeRef}
-          title="background track"
-          style={{
-            position: "absolute",
-            width: 1,
-            height: 1,
-            opacity: 0,
-            pointerEvents: "none",
-            border: 0,
-            overflow: "hidden",
-          }}
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          loading="lazy"
-        />
+        {/* Hidden Spotify embed — audio only. The iframe needs real
+            dimensions internally for Spotify's player script to init and
+            actually play, so it's given a real size but clipped to
+            invisible by the zero-size overflow-hidden wrapper around it.
+            Started on UNMUTE via a real user gesture. */}
+        <div style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}>
+          <iframe
+            ref={spotifyIframeRef}
+            title="background track"
+            width="300"
+            height="80"
+            style={{ border: 0 }}
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          />
+        </div>
 
         <div
           ref={muteOverlayRef}
@@ -401,7 +384,5 @@ export default function DanceScroll() {
         </div>
       </div>
     </div>
-    <div ref={spacerRef} aria-hidden="true" />
-    </>
   );
 }
