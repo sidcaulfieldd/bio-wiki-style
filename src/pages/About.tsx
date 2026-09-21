@@ -116,10 +116,15 @@ type PhysicsGif = {
   vy: number;
   width: number;
   height: number;
+  // Its own personal "rest" point — where it spawned, or the last place it
+  // was dropped after a drag. Gravity pulls it back here, not to the
+  // screen's centre.
+  homeX: number;
+  homeY: number;
 };
 
 // Tunable feel — all in px/frame terms at ~60fps.
-const GRAVITY = 0.004; // pull toward screen centre, per frame
+const GRAVITY = 0.004; // pull toward its own home point, per frame
 const DAMPING = 0.9; // velocity kept per frame (friction/settling)
 const PUSH_STRENGTH = 0.5; // how much of the dragger's speed transfers as a shove
 const MIN_PUSH = 2; // guaranteed minimum nudge even on a slow bump
@@ -197,7 +202,8 @@ const About = () => {
   const lastPointerRef = useRef<Pos>({ x: 0, y: 0 });
 
   // Once the mask (and with it, the real aspect ratio) is ready, place the
-  // title and spawn the hero gif centred on screen.
+  // title and spawn the hero gif centred on screen. The hero's spawn spot
+  // becomes its home too.
   useEffect(() => {
     if (!maskReady || titleInitialized) return;
     const titleEl = title.ref.current;
@@ -207,15 +213,19 @@ const About = () => {
 
     const heroWidth = Math.min(window.innerWidth * 0.8, (window.innerHeight * 0.7) / maskAspect);
     const heroHeight = heroWidth * maskAspect;
+    const heroX = (window.innerWidth - heroWidth) / 2;
+    const heroY = (window.innerHeight - heroHeight) / 2;
     setGifs([
       {
         id: 0,
-        x: (window.innerWidth - heroWidth) / 2,
-        y: (window.innerHeight - heroHeight) / 2,
+        x: heroX,
+        y: heroY,
         vx: 0,
         vy: 0,
         width: heroWidth,
         height: heroHeight,
+        homeX: heroX,
+        homeY: heroY,
       },
     ]);
     nextId.current = 1;
@@ -223,12 +233,20 @@ const About = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maskReady, titleInitialized]);
 
-  // Pointer tracking for whichever gif is currently grabbed.
+  // Pointer tracking for whichever gif is currently grabbed. On release,
+  // the dragged gif's home updates to wherever it was just dropped — so
+  // gravity from then on pulls it back there, not to its original spawn.
   useEffect(() => {
     const onPointerMove = (e: PointerEvent) => {
       lastPointerRef.current = { x: e.clientX, y: e.clientY };
     };
     const onPointerUp = () => {
+      const droppedId = draggingIdRef.current;
+      if (droppedId !== null) {
+        setGifs((prev) =>
+          prev.map((g) => (g.id === droppedId ? { ...g, homeX: g.x, homeY: g.y } : g))
+        );
+      }
       draggingIdRef.current = null;
     };
     window.addEventListener("pointermove", onPointerMove);
@@ -246,9 +264,9 @@ const About = () => {
     lastPointerRef.current = { x: e.clientX, y: e.clientY };
   }, []);
 
-  // Main physics loop: gravity + damping for everything, direct pointer
-  // control for whichever gif is grabbed, and collision only from the
-  // grabbed gif outward onto the rest.
+  // Main physics loop: gravity (toward each gif's own home point) + damping
+  // for everything, direct pointer control for whichever gif is grabbed,
+  // and collision only from the grabbed gif outward onto the rest.
   useEffect(() => {
     let rafId: number;
 
@@ -261,8 +279,6 @@ const About = () => {
 
         const next = prev.map((g) => ({ ...g }));
         const draggingId = draggingIdRef.current;
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
 
         let dragged: PhysicsGif | undefined;
         if (draggingId !== null) {
@@ -280,10 +296,9 @@ const About = () => {
         for (const g of next) {
           if (g === dragged) continue;
 
-          const cx = g.x + g.width / 2;
-          const cy = g.y + g.height / 2;
-          g.vx += (centerX - cx) * GRAVITY;
-          g.vy += (centerY - cy) * GRAVITY;
+          // Spring toward its own home position, not the screen centre.
+          g.vx += (g.homeX - g.x) * GRAVITY;
+          g.vy += (g.homeY - g.y) * GRAVITY;
 
           g.vx *= DAMPING;
           g.vy *= DAMPING;
@@ -326,12 +341,14 @@ const About = () => {
 
     const width = Math.round(minW + Math.random() * (maxW - minW));
     const height = width * maskAspect;
+    // Random spawn point — this becomes its home, so gravity always
+    // settles it back here (until it's dragged somewhere new).
     const x = Math.round(skewedRandom() * (vw - width));
     const y = Math.round(skewedRandom() * (vh - height));
 
     setGifs((prev) => [
       ...prev,
-      { id: nextId.current++, x, y, vx: 0, vy: 0, width, height },
+      { id: nextId.current++, x, y, vx: 0, vy: 0, width, height, homeX: x, homeY: y },
     ]);
   };
 
