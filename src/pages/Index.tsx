@@ -115,7 +115,7 @@ const Index = () => {
 
               {/* Mons Monday gif — left-aligned, pushed to start ~35px
                   below the sidebar's bottom edge via usePushBelowElement. */}
-              <div className="my-6">
+              <div className="my-[35px]">
                 <div ref={monsMondayWrapRef}>
                   <NotableProjectsPixelation />
                 </div>
@@ -125,13 +125,13 @@ const Index = () => {
                   the Mons Monday gif. Right-aligned against the full card
                   width via the useAlignOnCard call inside DanceScroll
                   itself. */}
-              <div className="my-6" data-cursor-trail-zone="bottom-dance-video">
+              <div className="my-[35px]" data-cursor-trail-zone="bottom-dance-video">
                 <DanceScroll cardRef={cardRef} />
               </div>
 
               {/* Visual link — sits on the card itself, directly under
                   the gif + dance block above. */}
-              <div className="text-center leading-none my-6">
+              <div className="text-center leading-none my-[35px]">
                 <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
               </div>
 
