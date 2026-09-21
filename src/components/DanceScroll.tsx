@@ -160,7 +160,25 @@ export default function DanceScroll() {
     // Spotify IFrame Embed API — gives us a real controller.play() call
     // instead of relying on the "&autoplay=1" URL param, which browsers
     // don't reliably honor for a hidden cross-origin iframe.
-    let spotifyController: { play: () => void } | null = null;
+    let spotifyController: { play: () => void; pause: () => void; addListener?: (event: string, cb: (e: any) => void) => void } | null = null;
+    let spotifyHasStartedPlaying = false;
+    function onSpotifyPlaybackUpdate(e: any) {
+      const { isPaused, position } = e?.data ?? {};
+      if (!isPaused && position > 0) {
+        spotifyHasStartedPlaying = true;
+        return;
+      }
+      // Spotify's embed pauses itself and resets position to 0 once a
+      // single track finishes with nothing queued after it — treat that
+      // as "ended" and let the person replay it via UNMUTE again.
+      if (spotifyHasStartedPlaying && isPaused && position === 0) {
+        spotifyHasStartedPlaying = false;
+        if (inVideoPhase) {
+          userUnmuted = false;
+          muteOverlay.style.display = "flex";
+        }
+      }
+    }
     function setUpSpotify() {
       const w = window as any;
       const createController = (IFrameAPI: any) => {
@@ -169,6 +187,7 @@ export default function DanceScroll() {
           { uri: `spotify:track:${CONFIG.spotifyTrackId}` },
           (EmbedController: any) => {
             spotifyController = EmbedController;
+            EmbedController.addListener?.("playback_update", onSpotifyPlaybackUpdate);
           }
         );
       };
@@ -215,6 +234,18 @@ export default function DanceScroll() {
       showMuteOverlay();
     }
 
+    function exitVideoPhase() {
+      if (!inVideoPhase) return;
+      inVideoPhase = false;
+      videoWrap.style.opacity = "0";
+      videoWrap.style.pointerEvents = "none";
+      canvas.style.opacity = "1";
+      video.pause();
+      video.currentTime = 0;
+      hideMuteOverlay();
+      spotifyController?.pause();
+    }
+
     function isAtBottom() {
       const scrollY = window.scrollY || window.pageYOffset;
       const docH = document.documentElement.scrollHeight;
@@ -222,6 +253,10 @@ export default function DanceScroll() {
     }
 
     function advanceScrub(deltaPx: number) {
+      if (inVideoPhase) {
+        if (deltaPx < 0) exitVideoPhase();
+        else return; // scrolling down during video: no lock, let the page scroll
+      }
       scrubProgress = Math.max(0, Math.min(1, scrubProgress + deltaPx / CONFIG.scrubDistancePx));
       state.frameIndex = scrubProgress * (CONFIG.frameCount - 1);
       drawCurrentFrame();
@@ -230,11 +265,14 @@ export default function DanceScroll() {
       }
     }
 
-    // Only intercept scroll input once: assets are loaded, the frames
-    // haven't finished yet, and the person is at the literal bottom of the
-    // page (so there's nowhere else for a normal scroll to go anyway).
+    // Only intercept scroll input once assets are loaded, and either:
+    //  - the frames aren't finished yet and we're at the literal bottom of
+    //    the page (or already mid-scrub), or
+    //  - we're in the video phase and the person is scrolling UP, which
+    //    should reverse back into the frames instead of scrolling the page.
     function shouldIntercept(deltaPositive: boolean) {
-      if (!assetsReady || inVideoPhase) return false;
+      if (!assetsReady) return false;
+      if (inVideoPhase) return !deltaPositive;
       if (scrubProgress <= 0 && !deltaPositive) return false; // let them scroll back up away from bottom
       if (!isAtBottom() && scrubProgress <= 0) return false;
       return true;
