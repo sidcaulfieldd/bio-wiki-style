@@ -26,7 +26,7 @@ const CONFIG = {
 
 export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElement> }) {
   const boxRef = useRef<HTMLDivElement>(null);
-  useCenterOnCard(boxRef, cardRef);
+  useAlignOnCard(boxRef, cardRef, "right");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoWrapRef = useRef<HTMLDivElement>(null);
