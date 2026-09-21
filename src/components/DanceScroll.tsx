@@ -13,12 +13,18 @@ const CONFIG = {
   videoSrc: "/dance/dance-vid.mp4",
 
   // How many px of wheel/touch input it takes to scrub through all the
-  // frames once the person is at the bottom of the page.
+  // frames once the box has scrolled up to the pin line.
   scrubDistancePx: 900,
 
-  // How close to the literal bottom of the document counts as "at bottom"
-  // (px of slack, since sub-pixel scroll math is rarely exact).
-  bottomThresholdPx: 2,
+  // Viewport-relative Y (px from the top) at which the box "locks" in
+  // place — once its top reaches this line while scrolling down, further
+  // wheel/touch input scrubs through the frames directly instead of
+  // continuing to scroll the page. Once scrubbing preventDefaults the
+  // scroll, the page can't move, so the box's top just stays pinned here
+  // for the rest of the scrub — no actual position:sticky needed.
+  // Replaces the old "wait until the literal bottom of the document"
+  // trigger, which stopped firing once this component moved up the page.
+  pinTopPx: 120,
 
   // Hidden Spotify track played (audio only) once the person hits UNMUTE.
   spotifyTrackId: "5kDLJIAApnLKgdiTdAsd6P",
@@ -51,7 +57,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     let inVideoPhase = false;
     let cachedCw = 0;
     let cachedCh = 0;
-    let scrubProgress = 0; // 0 to 1, driven directly by wheel/touch input at page bottom
+    let scrubProgress = 0; // 0 to 1, driven directly by wheel/touch input once pinned
     let assetsReady = false;
 
     const state = { frameIndex: 0 };
@@ -253,10 +259,12 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       userUnmuted = false;
     }
 
-    function isAtBottom() {
-      const scrollY = window.scrollY || window.pageYOffset;
-      const docH = document.documentElement.scrollHeight;
-      return scrollY + window.innerHeight >= docH - CONFIG.bottomThresholdPx;
+    // True once the box has scrolled up to the pin line — the cue to
+    // start intercepting scroll input for the frame scrub instead of
+    // letting the page keep scrolling.
+    function reachedPinLine() {
+      const rect = box.getBoundingClientRect();
+      return rect.top <= CONFIG.pinTopPx;
     }
 
     function advanceScrub(deltaPx: number) {
@@ -329,15 +337,15 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     }
 
     // Only intercept scroll input once assets are loaded, and either:
-    //  - the frames aren't finished yet and we're at the literal bottom of
-    //    the page (or already mid-scrub), or
+    //  - the frames aren't finished yet and the box has scrolled up to
+    //    the pin line (or we're already mid-scrub), or
     //  - we're in the video phase and the person is scrolling UP, which
     //    should reverse back into the frames instead of scrolling the page.
     function shouldIntercept(deltaPositive: boolean) {
       if (!assetsReady) return false;
       if (inVideoPhase) return !deltaPositive;
-      if (scrubProgress <= 0 && !deltaPositive) return false; // let them scroll back up away from bottom
-      if (!isAtBottom() && scrubProgress <= 0) return false;
+      if (scrubProgress <= 0 && !deltaPositive) return false; // let them scroll back up, away from the pin line
+      if (!reachedPinLine() && scrubProgress <= 0) return false;
       return true;
     }
 
