@@ -242,8 +242,13 @@ export default function DanceScroll() {
       canvas.style.opacity = "1";
       video.pause();
       video.currentTime = 0;
+      video.muted = true;
       hideMuteOverlay();
       spotifyController?.pause();
+      // Treat every fresh entry into the video as a clean state — re-prompt
+      // for UNMUTE next time rather than silently staying "unmuted" from a
+      // previous pass.
+      userUnmuted = false;
     }
 
     function isAtBottom() {
@@ -338,7 +343,7 @@ export default function DanceScroll() {
     >
       <div
         ref={boxRef}
-        className="md:translate-x-[150px]"
+        className="md:translate-x-[174px]"
         style={{
           position: "relative",
           width: 270,
