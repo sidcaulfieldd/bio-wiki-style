@@ -1,6 +1,4 @@
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Frames + video live in /public/dance/
 //   /dance/frame_000.png ... /dance/frame_012.png  (13 frames, 3-digit padding)
@@ -13,11 +11,13 @@ const CONFIG = {
   frameExt: "png",
   videoSrc: "/dance/dance-vid.mp4",
 
-  scrubSmoothness: 0.1,
-  // How many viewport-heights of scroll it takes to scrub through all the
-  // gif frames. The pin releases immediately once this completes and the
-  // video starts, so this only needs to cover the scrub itself.
-  pinSpacerMultiplier: 1.1,
+  // How many px of wheel/touch input it takes to scrub through all the
+  // frames once the person is at the bottom of the page.
+  scrubDistancePx: 900,
+
+  // How close to the literal bottom of the document counts as "at bottom"
+  // (px of slack, since sub-pixel scroll math is rarely exact).
+  bottomThresholdPx: 2,
 
   // Positive value nudges the box down the screen; negative moves it up.
   verticalOffset: 120,
@@ -27,7 +27,6 @@ const CONFIG = {
 };
 
 export default function DanceScroll() {
-  const pinRef = useRef<HTMLDivElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -39,12 +38,9 @@ export default function DanceScroll() {
   const unmuteHandlerRef = useRef<() => void>(() => {});
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
+    const box = boxRef.current!;
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d")!;
-    const pinTarget = pinRef.current!;
-    const box = boxRef.current!;
     const video = videoRef.current!;
     const videoWrap = videoWrapRef.current!;
     const muteOverlay = muteOverlayRef.current!;
@@ -56,6 +52,8 @@ export default function DanceScroll() {
     let inVideoPhase = false;
     let cachedCw = 0;
     let cachedCh = 0;
+    let scrubProgress = 0; // 0 to 1, driven directly by wheel/touch input at page bottom
+    let assetsReady = false;
 
     const state = { frameIndex: 0 };
 
@@ -116,9 +114,6 @@ export default function DanceScroll() {
           resolve();
           return;
         }
-        // If the video never fires loadeddata/error (seen on some mobile
-        // browsers/network conditions with large video files), don't let
-        // it block ScrollTrigger init forever — fall back after a timeout.
         const timeout = setTimeout(() => resolve(), 4000);
         video.addEventListener(
           "loadeddata",
@@ -168,9 +163,6 @@ export default function DanceScroll() {
       userUnmuted = true;
       video.muted = false;
       hideMuteOverlay();
-      // Start the hidden Spotify track (audio only, invisibly sized) —
-      // only set the src now, on a real user gesture, so autoplay isn't
-      // blocked by the browser.
       if (spotifyIframe && !spotifyIframe.src) {
         spotifyIframe.src = `https://open.spotify.com/embed/track/${CONFIG.spotifyTrackId}?utm_source=generator&theme=0&autoplay=1`;
       }
@@ -189,49 +181,60 @@ export default function DanceScroll() {
         .then(() => console.log("[DanceScroll] video.play() succeeded"))
         .catch((err) => console.error("[DanceScroll] video.play() FAILED:", err));
       showMuteOverlay();
-      // No scroll-lock: the video loops indefinitely, so release the pin
-      // immediately and let the page scroll normally from here on.
-      st?.kill();
     }
 
-    let prevProgress = 0;
-    let gifVirtualProgress = 0;
-    let st: ScrollTrigger | null = null;
-
-    function initScrollTrigger() {
-      st = ScrollTrigger.create({
-        trigger: pinTarget,
-        start: "center center",
-        end: () => `+=${window.innerHeight * CONFIG.pinSpacerMultiplier}`,
-        pin: true,
-        anticipatePin: 1,
-        scrub: CONFIG.scrubSmoothness,
-        onUpdate: (self) => {
-          const progress = self.progress;
-          const delta = progress - prevProgress;
-
-          if (!inVideoPhase) {
-            gifVirtualProgress = Math.max(0, Math.min(1, gifVirtualProgress + delta));
-            state.frameIndex = gifVirtualProgress * (CONFIG.frameCount - 1);
-            drawCurrentFrame();
-
-            if (gifVirtualProgress >= 1 && delta > 0) {
-              enterVideoPhase();
-            }
-          }
-
-          prevProgress = progress;
-        },
-        onRefresh: () => drawCurrentFrame(),
-      });
+    function isAtBottom() {
+      const scrollY = window.scrollY || window.pageYOffset;
+      const docH = document.documentElement.scrollHeight;
+      return scrollY + window.innerHeight >= docH - CONFIG.bottomThresholdPx;
     }
+
+    function advanceScrub(deltaPx: number) {
+      scrubProgress = Math.max(0, Math.min(1, scrubProgress + deltaPx / CONFIG.scrubDistancePx));
+      state.frameIndex = scrubProgress * (CONFIG.frameCount - 1);
+      drawCurrentFrame();
+      if (scrubProgress >= 1 && deltaPx > 0) {
+        enterVideoPhase();
+      }
+    }
+
+    // Only intercept scroll input once: assets are loaded, the frames
+    // haven't finished yet, and the person is at the literal bottom of the
+    // page (so there's nowhere else for a normal scroll to go anyway).
+    function shouldIntercept(deltaPositive: boolean) {
+      if (!assetsReady || inVideoPhase) return false;
+      if (scrubProgress <= 0 && !deltaPositive) return false; // let them scroll back up away from bottom
+      if (!isAtBottom() && scrubProgress <= 0) return false;
+      return true;
+    }
+
+    function onWheel(e: WheelEvent) {
+      if (!shouldIntercept(e.deltaY > 0)) return;
+      e.preventDefault();
+      advanceScrub(e.deltaY);
+    }
+
+    let touchStartY = 0;
+    function onTouchStart(e: TouchEvent) {
+      touchStartY = e.touches[0].clientY;
+    }
+    function onTouchMove(e: TouchEvent) {
+      const currentY = e.touches[0].clientY;
+      const dy = touchStartY - currentY; // positive = finger moving up = scrolling down
+      if (!shouldIntercept(dy > 0)) return;
+      e.preventDefault();
+      advanceScrub(dy);
+      touchStartY = currentY;
+    }
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
 
     let resizeDebounce: ReturnType<typeof setTimeout> | null = null;
     const onResize = () => {
       if (resizeDebounce) clearTimeout(resizeDebounce);
-      resizeDebounce = setTimeout(() => {
-        resizeCanvas();
-      }, 200);
+      resizeDebounce = setTimeout(resizeCanvas, 200);
     };
     window.addEventListener("resize", onResize);
 
@@ -241,29 +244,19 @@ export default function DanceScroll() {
     Promise.all([preloadFrames(), preloadVideo()]).then(() => {
       resizeCanvas();
       hideLoader();
-      initScrollTrigger();
-      // Other async-loading content on the page (e.g. the Mons Monday gif)
-      // can still shift page height after this point, which would leave
-      // ScrollTrigger's cached start/end positions stale. Force a recheck
-      // once everything has actually settled.
-      requestAnimationFrame(() => ScrollTrigger.refresh());
+      assetsReady = true;
     });
 
-    const onWindowLoad = () => ScrollTrigger.refresh();
-    window.addEventListener("load", onWindowLoad);
-    // In case "load" already fired before this effect ran.
-    if (document.readyState === "complete") onWindowLoad();
-
     return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("resize", onResize);
-      window.removeEventListener("load", onWindowLoad);
-      st?.kill();
     };
   }, []);
 
   return (
     <div
-      ref={pinRef}
       style={{
         position: "relative",
         width: "100%",
@@ -300,11 +293,9 @@ export default function DanceScroll() {
           />
         </div>
 
-        {/* Hidden Spotify embed — audio only. The iframe needs real
-            dimensions internally for Spotify's player script to init and
-            actually play, so it's given a real size but clipped to
-            invisible by the zero-size overflow-hidden wrapper around it.
-            Started on UNMUTE via a real user gesture. */}
+        {/* Hidden Spotify embed — audio only. Real internal size so its
+            player script can init, clipped invisible by the zero-size
+            overflow-hidden wrapper. Started on UNMUTE via a real click. */}
         <div style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}>
           <iframe
             ref={spotifyIframeRef}
