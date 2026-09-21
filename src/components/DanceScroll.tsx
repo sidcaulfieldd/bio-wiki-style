@@ -19,9 +19,6 @@ const CONFIG = {
   // (px of slack, since sub-pixel scroll math is rarely exact).
   bottomThresholdPx: 2,
 
-  // Positive value nudges the box down the screen; negative moves it up.
-  verticalOffset: 120,
-
   // Hidden Spotify track played (audio only) once the person hits UNMUTE.
   spotifyTrackId: "5kDLJIAApnLKgdiTdAsd6P",
 };
@@ -34,7 +31,7 @@ export default function DanceScroll() {
   const muteOverlayRef = useRef<HTMLDivElement>(null);
   const loaderRef = useRef<HTMLDivElement>(null);
   const loaderTextRef = useRef<HTMLDivElement>(null);
-  const spotifyIframeRef = useRef<HTMLIFrameElement>(null);
+  const spotifyContainerRef = useRef<HTMLDivElement>(null);
   const unmuteHandlerRef = useRef<() => void>(() => {});
 
   useEffect(() => {
@@ -44,7 +41,7 @@ export default function DanceScroll() {
     const video = videoRef.current!;
     const videoWrap = videoWrapRef.current!;
     const muteOverlay = muteOverlayRef.current!;
-    const spotifyIframe = spotifyIframeRef.current!;
+    const spotifyContainer = spotifyContainerRef.current!;
 
     const frames: HTMLImageElement[] = [];
     let framesLoaded = 0;
@@ -159,13 +156,48 @@ export default function DanceScroll() {
     function hideMuteOverlay() {
       muteOverlay.style.display = "none";
     }
+
+    // Spotify IFrame Embed API — gives us a real controller.play() call
+    // instead of relying on the "&autoplay=1" URL param, which browsers
+    // don't reliably honor for a hidden cross-origin iframe.
+    let spotifyController: { play: () => void } | null = null;
+    function setUpSpotify() {
+      const w = window as any;
+      const createController = (IFrameAPI: any) => {
+        IFrameAPI.createController(
+          spotifyContainer,
+          { uri: `spotify:track:${CONFIG.spotifyTrackId}` },
+          (EmbedController: any) => {
+            spotifyController = EmbedController;
+          }
+        );
+      };
+      if (w.Spotify?.Player || w.__spotifyIframeAPI) {
+        // API already loaded by something else on the page — reuse it.
+        if (w.__spotifyIframeAPI) createController(w.__spotifyIframeAPI);
+        return;
+      }
+      const prevReady = w.onSpotifyIframeApiReady;
+      w.onSpotifyIframeApiReady = (IFrameAPI: any) => {
+        w.__spotifyIframeAPI = IFrameAPI;
+        prevReady?.(IFrameAPI);
+        createController(IFrameAPI);
+      };
+      if (!document.getElementById("spotify-iframe-api-script")) {
+        const script = document.createElement("script");
+        script.id = "spotify-iframe-api-script";
+        script.src = "https://open.spotify.com/embed/iframe-api/v1";
+        script.async = true;
+        document.body.appendChild(script);
+      }
+    }
+    setUpSpotify();
+
     function onUnmuteClick() {
       userUnmuted = true;
       video.muted = false;
       hideMuteOverlay();
-      if (spotifyIframe && !spotifyIframe.src) {
-        spotifyIframe.src = `https://open.spotify.com/embed/track/${CONFIG.spotifyTrackId}?utm_source=generator&theme=0&autoplay=1`;
-      }
+      spotifyController?.play();
     }
     unmuteHandlerRef.current = onUnmuteClick;
 
@@ -275,7 +307,6 @@ export default function DanceScroll() {
           height: 480,
           overflow: "hidden",
           background: "transparent",
-          marginTop: CONFIG.verticalOffset,
         }}
       >
         <div
@@ -293,19 +324,13 @@ export default function DanceScroll() {
           />
         </div>
 
-        {/* Hidden Spotify embed — audio only. Real internal size so its
-            player script can init, clipped invisible by the zero-size
-            overflow-hidden wrapper. Started on UNMUTE via a real click. */}
+        {/* Hidden Spotify embed — audio only. The IFrame API injects its own
+            iframe into this container with a real internal size (needed
+            for it to actually init/play), clipped invisible by the
+            zero-size overflow-hidden wrapper. Started on UNMUTE via a
+            real click, using the API's controller.play(). */}
         <div style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}>
-          <iframe
-            ref={spotifyIframeRef}
-            title="background track"
-            width="300"
-            height="80"
-            style={{ border: 0 }}
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            loading="lazy"
-          />
+          <div ref={spotifyContainerRef} style={{ width: 300, height: 80 }} />
         </div>
 
         <div
