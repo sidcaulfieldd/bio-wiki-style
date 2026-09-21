@@ -288,6 +288,21 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       return rect.top <= centeredTop;
     }
 
+    // reachedPinLine() only gets checked once per wheel/touch tick, using
+    // whatever position the previous (un-intercepted) tick already
+    // committed — so the box can land a few px past dead-center before
+    // the lock engages, depending on how big that last tick's delta was.
+    // Called once, right as the lock kicks in, this snaps the page back
+    // so the box is always exactly centered when it actually locks.
+    function snapToPinLine() {
+      const rect = box.getBoundingClientRect();
+      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
+      const overshoot = centeredTop - rect.top; // <= 0 once past the pin line
+      if (overshoot < 0) {
+        window.scrollBy({ top: overshoot, left: 0, behavior: "auto" });
+      }
+    }
+
     function advanceScrub(deltaPx: number) {
       if (inVideoPhase) {
         if (deltaPx < 0) exitVideoPhase();
@@ -389,8 +404,12 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
 
     function onWheel(e: WheelEvent) {
       const deltaPositive = e.deltaY > 0;
+      const wasLocked = scrubProgress > 0 || inVideoPhase;
       if (!shouldIntercept(deltaPositive)) return;
       e.preventDefault();
+      if (!wasLocked && !inVideoPhase && deltaPositive) {
+        snapToPinLine();
+      }
       if (inVideoPhase && deltaPositive) {
         noteBufferedInput();
         return;
@@ -409,8 +428,12 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       const currentY = e.touches[0].clientY;
       const dy = touchStartY - currentY; // positive = finger moving up = scrolling down
       const deltaPositive = dy > 0;
+      const wasLocked = scrubProgress > 0 || inVideoPhase;
       if (!shouldIntercept(deltaPositive)) return;
       e.preventDefault();
+      if (!wasLocked && !inVideoPhase && deltaPositive) {
+        snapToPinLine();
+      }
       if (inVideoPhase && deltaPositive) {
         noteBufferedInput();
         touchStartY = currentY;
