@@ -217,9 +217,10 @@ export default function DanceScroll() {
     function initScrollTrigger() {
       st = ScrollTrigger.create({
         trigger: pinTarget,
-        start: "top top",
+        start: "center center",
         end: () => `+=${window.innerHeight * CONFIG.pinSpacerMultiplier}`,
         pin: true,
+        pinSpacing: false,
         anticipatePin: 1,
         scrub: CONFIG.scrubSmoothness,
         onUpdate: (self) => {
