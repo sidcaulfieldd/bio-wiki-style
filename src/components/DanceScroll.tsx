@@ -343,7 +343,7 @@ export default function DanceScroll() {
     >
       <div
         ref={boxRef}
-        className="md:translate-x-[150px]"
+        className="md:translate-x-[174px] rounded-lg"
         style={{
           position: "relative",
           width: 270,
