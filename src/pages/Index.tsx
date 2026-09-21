@@ -200,12 +200,14 @@ const Index = () => {
           {/* Walking easter egg — desktop only, tethered to card edges */}
           <WalkingSid cardRef={cardRef} />
         </div>
-      </main>
 
-      {/* Visual link in grey area */}
-      <div className="text-center leading-none -mt-4 pb-6">
-        <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
-      </div>
+        {/* Visual link — centered relative to the card's own width (this
+            container), not the full page, so it stays aligned with the
+            card regardless of viewport width. */}
+        <div className="text-center leading-none -mt-4 pb-6">
+          <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
+        </div>
+      </main>
     </div>
   );
 };
