@@ -124,7 +124,7 @@ type PhysicsGif = {
 };
 
 // Tunable feel — all in px/frame terms at ~60fps.
-const GRAVITY = 0.004; // pull toward its own home point, per frame
+const GRAVITY = 0.0012; // pull toward its own home point, per frame (slow, gentle drift back)
 const DAMPING = 0.9; // velocity kept per frame (friction/settling)
 const PUSH_STRENGTH = 0.5; // how much of the dragger's speed transfers as a shove
 const MIN_PUSH = 2; // guaranteed minimum nudge even on a slow bump
