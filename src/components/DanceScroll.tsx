@@ -29,7 +29,10 @@ const CONFIG = {
 
 export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElement> }) {
   const boxRef = useRef<HTMLDivElement>(null);
-  useAlignOnCard(boxRef, cardRef, "right");
+  // paddingPx bumped from the 24px default to 40px to match the extra
+  // left clearance added to the Mons Monday pixel-art image, so both
+  // portrait media pieces sit an equal distance from the card's edges.
+  useAlignOnCard(boxRef, cardRef, "right", 40);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoWrapRef = useRef<HTMLDivElement>(null);
