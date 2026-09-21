@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
-import { Link } from "react-router-dom";
 import profilePic from "@/assets/profile_pic.gif";
 import rightVid from "@/assets/right_side_website_vid.mp4";
 import leftVid from "@/assets/left_side_website_vid.mp4";
@@ -34,6 +33,24 @@ const Index = () => {
       v.preload = "auto";
       v.src = src;
     });
+  }, []);
+
+  // Custom-cursor disable, scoped to this page only (same technique used
+  // on the blackbird-application pages): inject a style tag on mount that
+  // wins back the native cursor and hides the mouse.png dot, then remove
+  // it on unmount so every other page is completely unaffected. The
+  // cursor-trail rectangles are left alone — that effect stays active here.
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.id = "index-cursor-override";
+    style.textContent = `
+      html, body, * { cursor: auto !important; }
+      img[src="/mouse.png"] { display: none !important; }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      style.remove();
+    };
   }, []);
 
   return (
@@ -214,7 +231,7 @@ const Index = () => {
             container), not the full page, so it stays aligned with the
             card regardless of viewport width. */}
         <div className="text-center leading-none pt-6">
-          <Link to="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</Link>
+          <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
         </div>
       </main>
     </div>
