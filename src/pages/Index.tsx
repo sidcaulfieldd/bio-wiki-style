@@ -204,7 +204,7 @@ const Index = () => {
         {/* Visual link — centered relative to the card's own width (this
             container), not the full page, so it stays aligned with the
             card regardless of viewport width. */}
-        <div className="text-center leading-none -mt-4 pb-6">
+        <div className="text-center leading-none pt-6 pb-6">
           <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
         </div>
       </main>
