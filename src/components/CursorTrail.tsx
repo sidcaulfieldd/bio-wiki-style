@@ -33,6 +33,33 @@ export const CursorTrail = () => {
   const randomBool = () => Math.random() > 0.5;
   const randomOffset = (range: number) => (Math.random() - 0.5) * range;
 
+  // Restricts where the trail is allowed to spawn to three zones:
+  //   1. the pink backing behind the profile gif (data-cursor-trail-zone)
+  //   2. the grey page backing once the cursor leaves the white card
+  //      (anything outside [data-cursor-trail-card])
+  //   3. the bottom Notable Projects gif / dance video containers
+  //      (also data-cursor-trail-zone)
+  //
+  // Pages that don't mark up a card (i.e. anything other than the home
+  // page) fall back to the old "always on" behaviour.
+  const pointInRect = (x: number, y: number, rect: DOMRect) =>
+    x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+
+  const isInAllowedZone = (clientX: number, clientY: number) => {
+    const card = document.querySelector<HTMLElement>("[data-cursor-trail-card]");
+
+    // No card marked up on this page — preserve legacy "show everywhere".
+    if (!card) return true;
+
+    const zones = document.querySelectorAll<HTMLElement>("[data-cursor-trail-zone]");
+    for (const zone of zones) {
+      if (pointInRect(clientX, clientY, zone.getBoundingClientRect())) return true;
+    }
+
+    // Outside the white card entirely = over the grey backing.
+    return !pointInRect(clientX, clientY, card.getBoundingClientRect());
+  };
+
   const createTrailRect = (
     x: number,
     y: number,
@@ -106,7 +133,9 @@ export const CursorTrail = () => {
 
       if (!lastPos) {
         lastPositionRef.current = { x: e.clientX, y: e.clientY };
-        addNewRect(e.clientX, e.clientY, false);
+        if (isInAllowedZone(e.clientX, e.clientY)) {
+          addNewRect(e.clientX, e.clientY, false);
+        }
         return;
       }
 
@@ -116,7 +145,9 @@ export const CursorTrail = () => {
       totalDistanceRef.current += distance;
 
       if (totalDistanceRef.current >= minDistance) {
-        addNewRect(e.clientX, e.clientY, false);
+        if (isInAllowedZone(e.clientX, e.clientY)) {
+          addNewRect(e.clientX, e.clientY, false);
+        }
         totalDistanceRef.current = 0;
       }
 
@@ -131,7 +162,9 @@ export const CursorTrail = () => {
       scrollDistanceRef.current += scrollDelta;
 
       if (mousePos && scrollDistanceRef.current >= minDistance) {
-        addNewRect(mousePos.x, mousePos.y, true);
+        if (isInAllowedZone(mousePos.x, mousePos.y)) {
+          addNewRect(mousePos.x, mousePos.y, true);
+        }
         scrollDistanceRef.current = 0;
       }
 
