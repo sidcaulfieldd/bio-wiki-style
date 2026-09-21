@@ -180,12 +180,13 @@ const Index = () => {
                 — Available upon request!!
               </p>
 
-              {/* Dance gif-scrub -> video, same pin/scrub effect as the Blackbird page,
-                  boxed to a centered 16:9 stage instead of a full-bleed portrait takeover. */}
+              {/* Dance gif-scrub -> looping video. Sits statically near the
+                  bottom of the page; once scrolled to the literal end,
+                  further wheel/touch input scrubs the frames directly
+                  instead of growing the page (see DanceScroll.tsx). */}
               <div className="my-6">
                 <DanceScroll />
               </div>
-              {/* DanceScroll reserves its own exact scroll room internally. */}
             </div>
 
             {/* Desktop Sidebar */}
