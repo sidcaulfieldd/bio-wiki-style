@@ -1,5 +1,5 @@
 import { useEffect, useRef, type RefObject } from "react";
-import { useCenterOnCard } from "@/hooks/useCenterOnCard";
+import { useAlignOnCard } from "@/hooks/useAlignOnCard";
 
 // Frames + video live in /public/dance/
 //   /dance/frame_000.png ... /dance/frame_012.png  (13 frames, 3-digit padding)
