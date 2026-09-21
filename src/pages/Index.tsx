@@ -119,10 +119,10 @@ const Index = () => {
                   clear-both forces this row to start below the floated
                   sidebar (not beside it), then mt-[35px] adds the gap. */}
               <div className="clear-both mt-[35px] mb-[35px] flex flex-col md:flex-row gap-6 items-center">
-                <div className="py-8">
+                <div className="py-8 md:ml-4">
                   <NotableProjectsPixelation />
                 </div>
-                <div className="flex-1">
+                <div className="md:w-1/2">
                   <ScrollTypeHeading id="mons-monday-caption" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
                     The Mons Monday Podcast
                   </ScrollTypeHeading>
@@ -138,7 +138,7 @@ const Index = () => {
                   vertical padding (py-8) on the video wrapper brings its
                   height closer to the text block beside it. */}
               <div className="my-[35px] flex flex-col md:flex-row gap-6 items-center" data-cursor-trail-zone="bottom-dance-video">
-                <div className="md:w-1/2 order-2 md:order-1">
+                <div className="md:w-1/2 md:pl-4 order-2 md:order-1">
                   <h3 className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">Generalist by Nature</h3>
                   <p className="mb-4 leading-relaxed relative z-10">
                     I'm a self-taught generalist by necessity, not design. No formal training in design, animation or music — just an itch to learn something for no good reason and see it through. A trained designer would probably spot everything wrong with my design work, and a trained musician would hear the amateur in my songs, but that's not really the point. The point is building, trying, failing, and coming out the other side with skills I didn't have going in.
