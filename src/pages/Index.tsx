@@ -527,7 +527,7 @@ const SidebarContent = () => {
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Born</th>
             <td className="py-2 px-2 relative z-10">
               Sidney Joseph Caulfield <br />
-              July 27, 2003 (age 22)
+              July 27, 2003 (age 23)
               <br />
               East Melbourne, Victoria, AUS
             </td>
