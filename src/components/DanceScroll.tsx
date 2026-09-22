@@ -93,6 +93,11 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     // critical tick that would call advanceScrub()/enterVideoPhase() is
     // guaranteed to reach our listeners.
     function updateApproachingLock() {
+      // A desynced lock (scrubProgress stuck > 0 while the box is nowhere
+      // near center) would otherwise cause this to bail out below and
+      // never re-evaluate proximity until the next wheel/touch tick —
+      // check it here too so recovery isn't gated on scroll input type.
+      validateLockPosition();
       // Once actually locked, updateBodyLockClass() owns the class —
       // don't fight it.
       if (scrubProgress > 0 || inVideoPhase) return;
@@ -411,6 +416,39 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       }
     }
 
+    // scrubProgress is meant to only be nonzero while the box is sitting
+    // at (or very near) its pin line. But nothing was ever re-verifying
+    // that against the box's actual position — if a stray wheel/touch
+    // event slipped through before interception kicked in (e.g. one
+    // event in a fast multi-event burst, or a forward-scroll tick during
+    // the video's buffer window that wasn't cleanly swallowed), the real
+    // page scroll could move out from under scrubProgress, leaving it
+    // stuck at some value between 0 and 1 with the box nowhere near
+    // center. From that point on, `return true` below fired unconditionally
+    // for any scrubProgress > 0 regardless of where the box actually was —
+    // which is exactly the "locks even after scrolling well past it" bug.
+    //
+    // This makes the lock self-healing: before trusting scrubProgress,
+    // check whether the box has drifted implausibly far from the pin
+    // line for a value that should only exist near it, and if so, treat
+    // it as a stale/desynced lock and clear it so the page scrolls
+    // normally again.
+    function validateLockPosition() {
+      if (scrubProgress <= 0 || inVideoPhase) return;
+      const rect = box.getBoundingClientRect();
+      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
+      const distance = Math.abs(rect.top - centeredTop);
+      // One viewport height of drift is well beyond anything a genuine
+      // scrub session should ever produce (scrubDistancePx maps to the
+      // box staying pinned), so past that we know the lock desynced.
+      if (distance > window.innerHeight) {
+        scrubProgress = 0;
+        state.frameIndex = 0;
+        drawCurrentFrame();
+        updateBodyLockClass();
+      }
+    }
+
     // Only intercept scroll input once assets are loaded, and either:
     //  - the frames aren't finished yet and the box has scrolled up to
     //    the pin line (or we're already mid-scrub), or
@@ -418,6 +456,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     //    should reverse back into the frames instead of scrolling the page.
     function shouldIntercept(deltaPositive: boolean) {
       if (!assetsReady) return false;
+      validateLockPosition();
       if (inVideoPhase) {
         if (!deltaPositive) return true; // scrolling up always reverses back into the frames immediately
         return awaitingBufferScroll; // forward scroll: keep swallowing until the buffered gesture goes quiet
