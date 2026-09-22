@@ -163,7 +163,7 @@ const Index = () => {
                   grid split and top alignment as above. */}
               <div className="grid md:grid-cols-2 gap-6 items-start" data-cursor-trail-zone="bottom-dance-video">
                 <div className="order-2 md:order-1">
-                  <h3 className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">He Does It For No Reason</h3>
+                  <h3 className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">I Do It For No Reason</h3>
                   <p className="leading-relaxed relative z-10">
                     I'm a self-taught generalist by necessity, not design. No formal training in design, animation or music — just an itch to learn something for no good reason and see it through. A trained designer would probably spot everything wrong with my design work, and a trained musician would hear the amateur in my songs, but that's not really the point. The point is building, trying, failing, and coming out the other side with skills I didn't have going in.
                   </p>
