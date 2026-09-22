@@ -93,7 +93,7 @@ const Index = () => {
                 single wrapper div so this only affects the gaps
                 *between* sections, not the tighter spacing inside one
                 (e.g. a heading's mb-3 to its own paragraph). */}
-            <div className="max-w-[628px] space-y-12">
+            <div className="space-y-12">
               {/* Table of Contents + Lead paragraph share a tighter
                   space-y-4 (16px) gap between just these two, since the
                   outer space-y-12 rhythm felt too loose specifically
@@ -102,7 +102,7 @@ const Index = () => {
                 <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 inline-block relative">
                   <div className="font-bold mb-2 relative z-10">Contents</div>
                   <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
-                    <li><a href="#notable-projects" className="hover:underline">What = He's Proud Of</a></li>
+                    <li><a href="#notable-projects" className="hover:underline">Notable Work</a></li>
                     <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
                     <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
                   </ol>
@@ -113,18 +113,19 @@ const Index = () => {
                 </p>
               </div>
 
-              {/* Notable Projects Section */}
-              <div>
-                {/* inline-block so the border-bottom hugs the heading
-                    text instead of stretching across the whole column
-                    width (looked disproportionate against such short
-                    heading text). */}
-                <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3 inline-block">
-                  What = He's Proud Of
+              {/* Notable Projects Section — shrink-wrapped (inline-block)
+                  around both the heading AND the list together, so the
+                  heading's border-b stops exactly where the longest
+                  bullet line ends, rather than a fixed column width that
+                  overshoots this short list (unlike Skills/Early Life
+                  below, whose content actually reaches 628px). */}
+              <div className="inline-block">
+                <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                  Notable Work
                 </ScrollTypeHeading>
                 <ul className="list-disc ml-6 leading-relaxed relative z-10">
                   <li><strong>Flow Mountain Bike</strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
-                  <li><strong>The Mons Monday Podcast</strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video teaser/launch</a>.</li>
+                  <li><strong>The Mons Monday Podcast</strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">launch</a>.</li>
                   <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
                   <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
                 </ul>
@@ -144,15 +145,17 @@ const Index = () => {
                   image instead of splitting the leftover height evenly
                   above and below it. */}
               <div className="clear-both pt-8 grid md:grid-cols-2 gap-6 items-start">
-                <div className="flex justify-center">
+                {/* Cursor-trail zone lives only on the gif itself now —
+                    not on the surrounding copy. */}
+                <div className="flex justify-center" data-cursor-trail-zone="mons-monday-gif">
                   <NotableProjectsPixelation />
                 </div>
                 <div>
                   <ScrollTypeHeading id="mons-monday-caption" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
-                    The Mons Monday Podcast
+                    More on The Mons Monday Podcast
                   </ScrollTypeHeading>
                   <p className="leading-relaxed relative z-10">
-                    Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based podcast launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy, managing end-to-end production — research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with <a href="https://www.lbdo.com/collections/all-products" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LBDO</a> and <a href="https://krushorganics.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Krush Organics</a>. Caulfield also created and edited video promotional material to support the launch and ongoing audience growth.
+                    Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based podcast launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy, managing end-to-end production — research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with <a href="https://www.lbdo.com/collections/all-products" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LBDO</a> and <a href="https://krushorganics.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Krush Organics</a>. Caulfield also conceptualised, captured and edited <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video promotional material</a> to support the launch and ongoing audience growth.
                   </p>
                 </div>
               </div>
@@ -160,12 +163,15 @@ const Index = () => {
               {/* Dance gif-scrub -> looping video, sitting directly below
                   the Mons Monday gif. Paired with a text box on the left
                   this time so the two rows alternate sides. Same 50/50
-                  grid split and top alignment as above. */}
-              <div className="grid md:grid-cols-2 gap-6 items-start" data-cursor-trail-zone="bottom-dance-video">
+                  grid split and top alignment as above. Cursor-trail zone
+                  removed from this section per request. */}
+              <div className="grid md:grid-cols-2 gap-6 items-start">
                 <div className="order-2 md:order-1">
-                  <h3 className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">Generalist by Nature</h3>
+                  <ScrollTypeHeading id="no-reason" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                    I Do It For No Reason
+                  </ScrollTypeHeading>
                   <p className="leading-relaxed relative z-10">
-                    I'm a self-taught generalist by necessity, not design. No formal training in design, animation or music — just an itch to learn something for no good reason and see it through. A trained designer would probably spot everything wrong with my design work, and a trained musician would hear the amateur in my songs, but that's not really the point. The point is building, trying, failing, and coming out the other side with skills I didn't have going in.
+                    Hi! Breaking the fourth wall here for a sec, sorry!! Just wanted to mention, I am a self-taught generalist by necessity. I’ve had no formal training in design, animation or audio production, just an (unscratchable) itch to learn and to make things. A trained designer would probably spot everything wrong with my design work, and a trained musician would hear the amateur in my songs, but that's not really the point. The point is building, trying, failing and coming out the other side with skills I didn't have going in. And I love it!
                   </p>
                 </div>
                 <div className="order-1 md:order-2 flex justify-center">
@@ -179,11 +185,11 @@ const Index = () => {
                 <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
               </div>
 
-              {/* Skills and Early Life sections. The 628px cap now lives
-                  on the outer wrapper (applies to every section, not
-                  just this one), so just space-y-12 for internal rhythm
-                  here. */}
-              <div className="space-y-12">
+              {/* Skills and Early Life sections — kept at the old main-
+                  column width (card width minus sidebar + gap) so the
+                  float restructure above doesn't change how these look.
+                  space-y-12 inside matches the outer rhythm. */}
+              <div className="max-w-[628px] space-y-12">
                 {/* Skills and Areas of Expertise Section */}
                 <div>
                   <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
@@ -362,7 +368,8 @@ const SidebarContent = () => {
         Sid Caulfield
       </div>
 
-      {/* Infobox image */}
+      {/* Infobox image — cursor-trail zone reinstated on the pink square
+          behind the gif. */}
       <div className="text-center p-3 pb-0">
         <div className="relative w-full aspect-square" data-cursor-trail-zone="pink-behind-gif">
           <div className="absolute inset-0 bg-[#FF69B4]" style={{ zIndex: 2 }} />
