@@ -94,24 +94,32 @@ const Index = () => {
                 *between* sections, not the tighter spacing inside one
                 (e.g. a heading's mb-3 to its own paragraph). */}
             <div className="space-y-12">
-              {/* Table of Contents */}
-              <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 inline-block relative">
-                <div className="font-bold mb-2 relative z-10">Contents</div>
-                <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
-                  <li><a href="#notable-projects" className="hover:underline">What = He's Proud Of</a></li>
-                  <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
-                  <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
-                </ol>
-              </div>
+              {/* Table of Contents + Lead paragraph share a tighter
+                  space-y-4 (16px) gap between just these two, since the
+                  outer space-y-12 rhythm felt too loose specifically
+                  here — the rest of the page keeps the wider rhythm. */}
+              <div className="space-y-4">
+                <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 inline-block relative">
+                  <div className="font-bold mb-2 relative z-10">Contents</div>
+                  <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
+                    <li><a href="#notable-projects" className="hover:underline">What = He's Proud Of</a></li>
+                    <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
+                    <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
+                  </ol>
+                </div>
 
-              {/* Lead Section */}
-              <p className="leading-relaxed relative z-10">
-                <strong>Sid Caulfield</strong> is an Australian copywriter/junior creative based in <a href="https://en.wikipedia.org/wiki/Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, tending to word and picture. His output spans social, earned, paid, podcast and the odd bit of interactive digital design — this page included. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. He is currently a freelance journalist and the Content Syndication and Social Media Manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a> and <a href="https://en.wikipedia.org/wiki/New_Zealand" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">New Zealand</a>'s largest digital mountain bike publication.
-              </p>
+                <p className="leading-relaxed relative z-10">
+                  <strong>Sid Caulfield</strong> is an Australian copywriter/junior creative based in <a href="https://en.wikipedia.org/wiki/Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, tending to word and picture. His output spans social, earned, paid, podcast and the odd bit of interactive digital design — this page included. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. He is currently a freelance journalist and the Content Syndication and Social Media Manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a> and <a href="https://en.wikipedia.org/wiki/New_Zealand" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">New Zealand</a>'s largest digital mountain bike publication.
+                </p>
+              </div>
 
               {/* Notable Projects Section */}
               <div>
-                <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                {/* inline-block so the border-bottom hugs the heading
+                    text instead of stretching across the whole column
+                    width (looked disproportionate against such short
+                    heading text). */}
+                <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3 inline-block">
                   What = He's Proud Of
                 </ScrollTypeHeading>
                 <ul className="list-disc ml-6 leading-relaxed relative z-10">
@@ -124,15 +132,18 @@ const Index = () => {
 
               {/* Mons Monday gif, paired with a text box on the right.
                   clear-both forces this row to start below the floated
-                  sidebar (not beside it) — space-y-12 on the parent
-                  handles the gap, so no extra margin needed here.
+                  sidebar (not beside it). pt-8 adds a guaranteed extra
+                  gap here specifically — a top margin on a cleared
+                  element can get partly absorbed into the clearance
+                  itself, so the space-y-12 rhythm alone wasn't reliably
+                  giving enough breathing room below the sidebar.
                   grid-cols-2 splits the row into true halves: the image
                   is centered within the left half, and the text starts
                   exactly at the row's midpoint. items-start (rather than
                   items-center) lines the text up with the TOP of the
                   image instead of splitting the leftover height evenly
                   above and below it. */}
-              <div className="clear-both grid md:grid-cols-2 gap-6 items-start">
+              <div className="clear-both pt-8 grid md:grid-cols-2 gap-6 items-start">
                 <div className="flex justify-center">
                   <NotableProjectsPixelation />
                 </div>
