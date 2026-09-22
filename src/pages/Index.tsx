@@ -636,7 +636,7 @@ const SidebarContent = () => {
           <tr className="border-t border-[#a2a9b1]">
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Resume</th>
             <td className="py-2 px-2 relative z-10">
-              <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1T26aUBmdWnSU0To83Md1-1DvCs1Ft6yt/view?usp=sharing">
+              <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1vcGW67M-gpblpqpXl9Ph46fHd17-7L6N/view?usp=sharing">
                 View PDF
               </a>
             </td>
