@@ -16,22 +16,39 @@ const STRANGERS = ["neighbors","newcomers","observers","travellers","backpackers
 const MIC       = ["map","man","men","mop","mug","pod","cam","pen","cap","pan","tap","set","net","web","app","air","hub","box","lab","den","bay","bar","pub","gym","jet","pit","mat","bed","sun","van","rod","bin","tub","can","tin","lid","key","log","rug","hat","fig","jam","wax","arc","dam","keg","owl","ant","ram","bug"];
 const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbreaks","backyards","skateparks","houseplants","aftershocks","storybeats","timepieces","showpieces","soundwaves","blueprints","footprints","goldmines","nightfalls","rainstorms","shipwrecks","storefronts","boardrooms","campfires","flashdrives","doorframes","landmasses","starbursts","bookcases","motorways","skylights","newsbreaks","postcards","sandcastles","wildfires","turntables","drumrolls","backflips","hatchbacks","headlines","paintbrushes","storytales","afterhours","longreads","sidequests","breakthroughs","launches","projects","ventures","chapters","episodes","showcases"];
 
-// Renders the (upright, portrait) Man in White video rotated 90° clockwise
-// so the figure appears lying on their side — head to the right, feet to
-// the left — cropped to exactly fill a landscape rectangle. The video is
-// sized to the wrapper's swapped dimensions (height x width) *before*
-// rotation with object-fit: cover, so the crop happens first and the
-// rotation then maps that already-filled box perfectly onto the visible
-// (upright) rectangle, with no stretching or letterboxing.
+// The source video (Man in White.mp4) is a 1920x1080 landscape clip with a
+// baked-in black border, and the character himself only occupies a narrow
+// vertical band on the right side of that frame (roughly x:1080-1650),
+// standing full-height. Rather than guessing a crop, these constants were
+// measured directly from the actual video frames so the crop window exactly
+// bounds the figure with a small margin — no more, no less.
+const MW_SRC_W = 1920;
+const MW_SRC_H = 1080;
+const MW_CROP_X = 1080; // left edge of the crop window within the source frame
+const MW_CROP_Y = 0;
+const MW_CROP_W = 570; // width of the crop window (just the figure + small margin)
+const MW_CROP_H = 1080; // full source height (figure runs top to bottom of frame)
+
+// Renders the Man in White video cropped tightly to just the figure (using
+// the measured window above), then rotates that crop 90° clockwise so the
+// figure appears lying on his side — head to the right, feet to the left —
+// filling a landscape rectangle. The crop happens first (via a same-scale,
+// non-distorting resize + offset + overflow:hidden), and the whole cropped
+// window is rotated as a single unit, so the figure is neither stretched
+// nor cut off regardless of the rectangle's rendered size.
 const ManInWhiteFigure = () => {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [dims, setDims] = useState({ w: 0, h: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  // Uniform scale factor mapping source-video pixels to on-screen pixels,
+  // derived from the container's actual rendered width (since after the
+  // 90° rotation, the crop window's height (MW_CROP_H) becomes the
+  // container's width).
+  const [scale, setScale] = useState(0);
 
   useEffect(() => {
     const update = () => {
-      const el = wrapRef.current;
+      const el = containerRef.current;
       if (!el) return;
-      setDims({ w: el.clientWidth, h: el.clientHeight });
+      setScale(el.clientWidth / MW_CROP_H);
     };
     update();
     window.addEventListener("resize", update);
@@ -40,23 +57,35 @@ const ManInWhiteFigure = () => {
 
   return (
     <div
-      ref={wrapRef}
-      className="w-full max-w-[560px] aspect-[16/9] overflow-hidden relative"
+      ref={containerRef}
+      className="w-full max-w-[560px] overflow-hidden relative"
+      style={{ aspectRatio: `${MW_CROP_H} / ${MW_CROP_W}` }}
     >
-      {dims.w > 0 && dims.h > 0 && (
-        <video
-          src={manInWhiteVid}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute top-1/2 left-1/2 object-cover"
+      {scale > 0 && (
+        <div
+          className="absolute top-1/2 left-1/2 overflow-hidden"
           style={{
-            width: `${dims.h}px`,
-            height: `${dims.w}px`,
+            width: `${MW_CROP_W * scale}px`,
+            height: `${MW_CROP_H * scale}px`,
             transform: "translate(-50%, -50%) rotate(90deg)",
           }}
-        />
+        >
+          <video
+            src={manInWhiteVid}
+            autoPlay
+            muted
+            loop
+            playsInline
+            style={{
+              position: "absolute",
+              top: 0,
+              left: `${-MW_CROP_X * scale}px`,
+              width: `${MW_SRC_W * scale}px`,
+              height: `${MW_SRC_H * scale}px`,
+              maxWidth: "none",
+            }}
+          />
+        </div>
       )}
     </div>
   );
