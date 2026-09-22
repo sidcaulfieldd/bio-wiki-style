@@ -24,6 +24,17 @@ const CONFIG = {
   // trackpad swipe fires many small events in a burst, so this swallows
   // the whole burst rather than just its first event.
   bufferGestureGapMs: 150,
+
+  // How close (px) the box's top has to be to its centered "pin line"
+  // position before we proactively disable pointer-events on iframes.
+  // This has to fire BEFORE the critical wheel/touch tick that would
+  // otherwise engage the lock, because if the cursor happens to be over
+  // an iframe (e.g. the sidebar Spotify embed) at that exact moment, the
+  // wheel event never reaches window at all — there's no event to react
+  // to. A plain `scroll` listener isn't gated by iframe hit-testing the
+  // way wheel/touchmove are, so it's the only reliable place to flip
+  // this class ahead of time.
+  approachThresholdPx: 400,
 };
 
 export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElement> }) {
@@ -67,6 +78,32 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     // swallow the wheel event before it ever reaches our listeners.
     function updateBodyLockClass() {
       document.body.classList.toggle("dance-lock-active", scrubProgress > 0 || inVideoPhase);
+    }
+
+    // Tracks whether the proactive "approaching" state is currently
+    // applied, purely so we don't call classList.toggle on every single
+    // scroll tick once we're already in the desired state.
+    let approachingLock = false;
+
+    // Proactively disables iframe pointer-events once the box is getting
+    // close to its pin line, well before the lock would otherwise engage.
+    // This is what actually fixes the "doesn't work when the mouse is
+    // over the sidebar" bug: by the time the box reaches the pin line,
+    // iframes have already stopped intercepting wheel/touch input, so the
+    // critical tick that would call advanceScrub()/enterVideoPhase() is
+    // guaranteed to reach our listeners.
+    function updateApproachingLock() {
+      // Once actually locked, updateBodyLockClass() owns the class —
+      // don't fight it.
+      if (scrubProgress > 0 || inVideoPhase) return;
+      const rect = box.getBoundingClientRect();
+      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
+      const distance = Math.abs(rect.top - centeredTop);
+      const isApproaching = distance < CONFIG.approachThresholdPx;
+      if (isApproaching !== approachingLock) {
+        approachingLock = isApproaching;
+        document.body.classList.toggle("dance-lock-active", isApproaching);
+      }
     }
 
     const state = { frameIndex: 0 };
@@ -286,19 +323,22 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       return rect.top <= centeredTop;
     }
 
-    // reachedPinLine() only gets checked once per wheel/touch tick, using
-    // whatever position the previous (un-intercepted) tick already
-    // committed — so the box can land a few px past dead-center before
-    // the lock engages, depending on how big that last tick's delta was.
-    // Called once, right as the lock kicks in, this snaps the page back
-    // so the box is always exactly centered when it actually locks.
-    function snapToPinLine() {
+    // A fast wheel/touch tick can jump the box from "not yet at the pin
+    // line" to well past dead-center in one step, since reachedPinLine()
+    // is only ever checked inside the wheel/touch handlers using whatever
+    // position the previous (un-intercepted) tick already committed.
+    // Rather than teleporting the page back to force pixel-perfect
+    // centering (which fights OS-level scroll momentum and feels janky),
+    // this converts the overshoot distance directly into an equivalent
+    // starting scrubProgress — the box stays wherever the scroll
+    // naturally landed near center, and the animation picks up already
+    // partway through, exactly as if that overshoot had been scrub input.
+    function computeOvershootProgress(): number {
       const rect = box.getBoundingClientRect();
       const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
-      const overshoot = centeredTop - rect.top; // <= 0 once past the pin line
-      if (overshoot < 0) {
-        window.scrollBy({ top: overshoot, left: 0, behavior: "auto" });
-      }
+      const overshoot = centeredTop - rect.top; // negative once past the pin line
+      if (overshoot >= 0) return 0;
+      return Math.min(1, Math.abs(overshoot) / CONFIG.scrubDistancePx);
     }
 
     function advanceScrub(deltaPx: number) {
@@ -406,7 +446,10 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       if (!shouldIntercept(deltaPositive)) return;
       e.preventDefault();
       if (!wasLocked && !inVideoPhase && deltaPositive) {
-        snapToPinLine();
+        scrubProgress = computeOvershootProgress();
+        state.frameIndex = scrubProgress * (CONFIG.frameCount - 1);
+        drawCurrentFrame();
+        updateBodyLockClass();
       }
       if (inVideoPhase && deltaPositive) {
         noteBufferedInput();
@@ -430,7 +473,10 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       if (!shouldIntercept(deltaPositive)) return;
       e.preventDefault();
       if (!wasLocked && !inVideoPhase && deltaPositive) {
-        snapToPinLine();
+        scrubProgress = computeOvershootProgress();
+        state.frameIndex = scrubProgress * (CONFIG.frameCount - 1);
+        drawCurrentFrame();
+        updateBodyLockClass();
       }
       if (inVideoPhase && deltaPositive) {
         noteBufferedInput();
@@ -450,6 +496,8 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("scroll", updateApproachingLock, { passive: true });
+    window.addEventListener("resize", updateApproachingLock, { passive: true });
 
     let resizeDebounce: ReturnType<typeof setTimeout> | null = null;
     const onResize = () => {
@@ -460,6 +508,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
 
     resizeCanvas();
     drawCurrentFrame();
+    updateApproachingLock();
 
     Promise.all([preloadFrames(), preloadVideo()]).then(() => {
       resizeCanvas();
@@ -472,6 +521,8 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("scroll", updateApproachingLock);
+      window.removeEventListener("resize", updateApproachingLock);
       window.removeEventListener("resize", onResize);
       cancelMomentum();
       if (bufferGestureTimer !== null) clearTimeout(bufferGestureTimer);
