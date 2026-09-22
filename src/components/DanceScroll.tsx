@@ -1,4 +1,4 @@
-import { useEffect, useRef, type RefObject } from "react";
+import { useEffect, useRef } from "react";
 
 // Frames + video live in /public/dance/
 //   /dance/frame_000.png ... /dance/frame_012.png  (13 frames, 3-digit padding)
@@ -35,11 +35,28 @@ const CONFIG = {
   // wheel event never reaches window at all — there's no event to react
   // to. A plain `scroll` listener isn't gated by iframe hit-testing the
   // way wheel/touchmove are, so it's the only reliable place to flip
-  // this class ahead of time.
-  approachThresholdPx: 400,
+  // this class ahead of time. Matches stickyBufferPx below, since that's
+  // the actual window we have to work with now.
+  approachThresholdPx: 160,
 };
 
-export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElement> }) {
+// The box's own fixed size.
+const BOX_WIDTH = 225;
+const BOX_HEIGHT = 400;
+
+// How much extra height (px, on top of the box's own height) the sticky
+// wrapper gets on top and bottom combined. This is what gives `position:
+// sticky` room to actually hold the box centered across a range of
+// scroll positions — approaching from above or below — rather than the
+// box just being centered for a single scroll-position instant (which is
+// exactly the old bug: a fast scroll tick could skip past that instant
+// entirely). Kept modest here specifically to stay close to the current
+// compact layout rather than the more typical full-viewport-tall
+// scrollytelling treatment.
+const STICKY_BUFFER_PX = 180;
+const STICKY_WRAPPER_HEIGHT = BOX_HEIGHT + STICKY_BUFFER_PX * 2;
+
+export default function DanceScroll() {
   const boxRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -67,6 +84,18 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     let cachedCh = 0;
     let scrubProgress = 0; // 0 to 1, driven directly by wheel/touch input once pinned
     let assetsReady = false;
+
+    // Prefer visualViewport's height where available — on mobile,
+    // window.innerHeight can include space that's about to be covered or
+    // uncovered by the browser's address bar/toolbar as it shows/hides
+    // mid-scroll, whereas visualViewport tracks the actually-visible
+    // area. This only affects the precision of when our JS *detects* the
+    // pin line — with sticky now handling the box's actual on-screen
+    // position (see the JSX below), a small mismatch here can no longer
+    // cause an off-center lock, only slightly early/late detection.
+    function viewportHeight() {
+      return window.visualViewport?.height ?? window.innerHeight;
+    }
 
     // True right after the video starts, until forward-scroll input has
     // gone quiet for bufferGestureGapMs — swallows the rest of the one
@@ -104,7 +133,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       // don't fight it.
       if (scrubProgress > 0 || inVideoPhase) return;
       const rect = box.getBoundingClientRect();
-      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
+      const centeredTop = Math.max(0, (viewportHeight() - rect.height) / 2);
       const distance = Math.abs(rect.top - centeredTop);
       const isApproaching = distance < CONFIG.approachThresholdPx;
       if (isApproaching !== approachingLock) {
@@ -371,7 +400,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     // the viewport height happens to be, including on resize.
     function reachedPinLine() {
       const rect = box.getBoundingClientRect();
-      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
+      const centeredTop = Math.max(0, (viewportHeight() - rect.height) / 2);
       return rect.top <= centeredTop;
     }
 
@@ -385,27 +414,17 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     // i.e. approaching it from above rather than from below.
     function returnedToPinLine() {
       const rect = box.getBoundingClientRect();
-      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
+      const centeredTop = Math.max(0, (viewportHeight() - rect.height) / 2);
       return rect.top >= centeredTop;
     }
 
-    // A fast wheel/touch tick can jump the box from "not yet at the pin
-    // line" to well past dead-center in one step, since reachedPinLine()
-    // is only ever checked inside the wheel/touch handlers using whatever
-    // position the previous (un-intercepted) tick already committed.
-    // Rather than teleporting the page back to force pixel-perfect
-    // centering (which fights OS-level scroll momentum and feels janky),
-    // this converts the overshoot distance directly into an equivalent
-    // starting scrubProgress — the box stays wherever the scroll
-    // naturally landed near center, and the animation picks up already
-    // partway through, exactly as if that overshoot had been scrub input.
-    function computeOvershootProgress(): number {
-      const rect = box.getBoundingClientRect();
-      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
-      const overshoot = centeredTop - rect.top; // negative once past the pin line
-      if (overshoot >= 0) return 0;
-      return Math.min(1, Math.abs(overshoot) / CONFIG.scrubDistancePx);
-    }
+    // With the box's centered position now guaranteed by CSS `position:
+    // sticky` (see the JSX below) rather than approximated by polling
+    // getBoundingClientRect() mid-scroll, there's no overshoot to correct
+    // for anymore: by the time any wheel/touch tick detects the box has
+    // reached the pin line, the browser has already pinned it exactly
+    // there — regardless of how fast the scroll was. The old overshoot-
+    // into-scrubProgress correction that lived here is no longer needed.
 
     function advanceScrub(deltaPx: number) {
       if (inVideoPhase) {
@@ -497,12 +516,12 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     function validateLockPosition() {
       if (scrubProgress <= 0 || inVideoPhase) return;
       const rect = box.getBoundingClientRect();
-      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
+      const centeredTop = Math.max(0, (viewportHeight() - rect.height) / 2);
       const distance = Math.abs(rect.top - centeredTop);
       // One viewport height of drift is well beyond anything a genuine
       // scrub session should ever produce (scrubDistancePx maps to the
       // box staying pinned), so past that we know the lock desynced.
-      if (distance > window.innerHeight) {
+      if (distance > viewportHeight()) {
         scrubProgress = 0;
         state.frameIndex = 0;
         drawCurrentFrame();
@@ -546,15 +565,8 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
 
     function onWheel(e: WheelEvent) {
       const deltaPositive = e.deltaY > 0;
-      const wasLocked = scrubProgress > 0 || inVideoPhase;
       if (!shouldIntercept(deltaPositive)) return;
       e.preventDefault();
-      if (!wasLocked && !inVideoPhase && deltaPositive) {
-        scrubProgress = computeOvershootProgress();
-        state.frameIndex = scrubProgress * (CONFIG.frameCount - 1);
-        drawCurrentFrame();
-        updateBodyLockClass();
-      }
       if (inVideoPhase && deltaPositive) {
         noteBufferedInput();
         return;
@@ -573,15 +585,8 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       const currentY = e.touches[0].clientY;
       const dy = touchStartY - currentY; // positive = finger moving up = scrolling down
       const deltaPositive = dy > 0;
-      const wasLocked = scrubProgress > 0 || inVideoPhase;
       if (!shouldIntercept(deltaPositive)) return;
       e.preventDefault();
-      if (!wasLocked && !inVideoPhase && deltaPositive) {
-        scrubProgress = computeOvershootProgress();
-        state.frameIndex = scrubProgress * (CONFIG.frameCount - 1);
-        drawCurrentFrame();
-        updateBodyLockClass();
-      }
       if (inVideoPhase && deltaPositive) {
         noteBufferedInput();
         touchStartY = currentY;
@@ -642,32 +647,53 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
         events, so hovering it can't swallow a wheel/touch event before
         it ever reaches this component's window-level listeners. */}
     <style>{`body.dance-lock-active iframe { pointer-events: none !important; }`}</style>
+    {/* Outer wrapper: sized to give the sticky child below room to hold
+        centered across a range of scroll positions (STICKY_BUFFER_PX on
+        each side), rather than the box only being exactly centered for a
+        single scroll-position instant. Kept just tall enough for that —
+        not the more typical full-viewport-height scrollytelling treatment
+        — to stay close to the page's existing compact layout. */}
     <div
       style={{
         position: "relative",
         width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "#ffffff",
+        height: STICKY_WRAPPER_HEIGHT,
       }}
     >
+      {/* This is what actually guarantees centering: `position: sticky`
+          is computed by the browser's compositor on every scroll frame,
+          so the box snaps to exactly this offset the instant it would
+          otherwise scroll past it — no matter how fast the scroll was.
+          Our JS never has to poll/approximate this position anymore; it
+          only detects (via getBoundingClientRect(), which will now read
+          back this exact value while stuck) when to engage the hard lock
+          on top of it. `dvh` (rather than `vh`) tracks the actual visible
+          viewport on mobile as browser toolbars show/hide. */}
       <div
-        ref={boxRef}
-        className="rounded-lg"
         style={{
-          position: "relative",
-          // Capped at 225x400 (still exact 9:16) instead of 270x480 —
-          // matches NotableProjectsPixelation's cap, and sits closer to
-          // the height of the caption text beside it. resizeCanvas()
-          // reads this box's actual rect at runtime, so the video/canvas
-          // scale to fit automatically — nothing else needs to change.
-          width: 225,
-          height: 400,
-          overflow: "hidden",
-          background: "transparent",
+          position: "sticky",
+          top: `calc(50dvh - ${BOX_HEIGHT / 2}px)`,
+          display: "flex",
+          justifyContent: "center",
+          background: "#ffffff",
         }}
       >
+        <div
+          ref={boxRef}
+          className="rounded-lg"
+          style={{
+            position: "relative",
+            // Capped at 225x400 (still exact 9:16) instead of 270x480 —
+            // matches NotableProjectsPixelation's cap, and sits closer to
+            // the height of the caption text beside it. resizeCanvas()
+            // reads this box's actual rect at runtime, so the video/canvas
+            // scale to fit automatically — nothing else needs to change.
+            width: BOX_WIDTH,
+            height: BOX_HEIGHT,
+            overflow: "hidden",
+            background: "transparent",
+          }}
+        >
         <div
           ref={videoWrapRef}
           style={{ position: "absolute", inset: 0, opacity: 0, pointerEvents: "none", zIndex: 10 }}
@@ -704,7 +730,8 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
             paddingBottom: 16,
           }}
         >
-          <div
+          <button
+            type="button"
             style={{
               background: "rgba(0,0,0,0.6)",
               color: "#fff",
@@ -715,11 +742,14 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
               textDecoration: "underline",
               cursor: "pointer",
               pointerEvents: "auto",
+              border: "none",
+              font: "inherit",
             }}
             onClick={() => unmuteHandlerRef.current()}
+            aria-label="Unmute video and play music"
           >
             UNMUTE
-          </div>
+          </button>
         </div>
 
         <canvas
@@ -758,6 +788,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
           </div>
         </div>
       </div>
+    </div>
     </div>
     </>
   );
