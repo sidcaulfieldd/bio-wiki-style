@@ -563,9 +563,30 @@ export default function DanceScroll() {
       }, CONFIG.bufferGestureGapMs);
     }
 
+    // TEMPORARY DIAGNOSTIC LOGGING — remove once the scroll-lock issue is
+    // pinpointed. Logs the key state on every wheel tick so we can see
+    // exactly why interception is or isn't engaging.
+    const DEBUG_LOCK = true;
+
     function onWheel(e: WheelEvent) {
       const deltaPositive = e.deltaY > 0;
-      if (!shouldIntercept(deltaPositive)) return;
+      const intercepted = shouldIntercept(deltaPositive);
+      if (DEBUG_LOCK) {
+        const rect = box.getBoundingClientRect();
+        const centeredTop = Math.max(0, (viewportHeight() - rect.height) / 2);
+        console.log("[DanceScroll:debug]", {
+          deltaY: e.deltaY,
+          deltaPositive,
+          intercepted,
+          scrubProgress: scrubProgress.toFixed(3),
+          inVideoPhase,
+          assetsReady,
+          rectTop: Math.round(rect.top),
+          centeredTop: Math.round(centeredTop),
+          reachedPinLine: reachedPinLine(),
+        });
+      }
+      if (!intercepted) return;
       e.preventDefault();
       if (inVideoPhase && deltaPositive) {
         noteBufferedInput();
