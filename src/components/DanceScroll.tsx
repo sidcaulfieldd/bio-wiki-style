@@ -18,6 +18,14 @@ const CONFIG = {
   // Hidden Spotify track played (audio only) once the person hits UNMUTE.
   spotifyTrackId: "5kDLJIAApnLKgdiTdAsd6P",
 
+  // How long a gap in forward-scroll input has to be, once the video
+  // starts, before the current gesture is considered "finished" and the
+  // next scroll is allowed to move the page. A single physical wheel/
+  // trackpad swipe fires many small events in a burst; this swallows
+  // the rest of that one gesture and releases right after it ends,
+  // rather than requiring an entirely separate second gesture.
+  bufferGestureGapMs: 150,
+
   // How close (px) the box's top has to be to its centered "pin line"
   // position before we proactively disable pointer-events on iframes.
   // This has to fire BEFORE the critical wheel/touch tick that would
@@ -58,6 +66,12 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     let cachedCh = 0;
     let scrubProgress = 0; // 0 to 1, driven directly by wheel/touch input once pinned
     let assetsReady = false;
+
+    // True right after the video starts, until forward-scroll input has
+    // gone quiet for bufferGestureGapMs — swallows the rest of the one
+    // gesture that triggered the video, releasing right after it ends.
+    let awaitingBufferScroll = false;
+    let bufferGestureTimer: ReturnType<typeof setTimeout> | null = null;
 
     // While locked (mid-scrub or in the video's up-reverse/buffer window),
     // every iframe on the page loses pointer-events via this body class,
@@ -269,6 +283,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     function enterVideoPhase() {
       if (inVideoPhase) return;
       inVideoPhase = true;
+      awaitingBufferScroll = true;
       videoWrap.style.opacity = "1";
       videoWrap.style.pointerEvents = "auto";
       canvas.style.opacity = "0";
@@ -283,6 +298,11 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     function exitVideoPhase() {
       if (!inVideoPhase) return;
       inVideoPhase = false;
+      awaitingBufferScroll = false;
+      if (bufferGestureTimer !== null) {
+        clearTimeout(bufferGestureTimer);
+        bufferGestureTimer = null;
+      }
       videoWrap.style.opacity = "0";
       videoWrap.style.pointerEvents = "none";
       canvas.style.opacity = "1";
@@ -307,6 +327,20 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       const rect = box.getBoundingClientRect();
       const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
       return rect.top <= centeredTop;
+    }
+
+    // The mirror image of reachedPinLine(), for the video-phase reverse
+    // trigger. reachedPinLine() alone won't work here: once the box has
+    // scrolled up past the pin line (top < centeredTop), it stays true
+    // for the *entire* remainder of the downward scroll, since the box
+    // only gets further above the line, not closer to it. What we
+    // actually need while inVideoPhase is a check for the box's top
+    // coming back UP to the centered line as the person scrolls up —
+    // i.e. approaching it from above rather than from below.
+    function returnedToPinLine() {
+      const rect = box.getBoundingClientRect();
+      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
+      return rect.top >= centeredTop;
     }
 
     // A fast wheel/touch tick can jump the box from "not yet at the pin
@@ -439,12 +473,29 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       if (!assetsReady) return false;
       validateLockPosition();
       if (inVideoPhase) {
-        if (!deltaPositive) return true; // scrolling up always reverses back into the frames immediately
-        return false; // forward scroll: release immediately, same as the up-direction release at scrubProgress 0
+        // Reverse (scroll up) only re-engages the lock once the box has
+        // actually scrolled back up to the same centered line used going
+        // down — not on any upward scroll while the video happens to be
+        // playing, which could be while the box is far off-screen.
+        if (!deltaPositive) return returnedToPinLine();
+        return awaitingBufferScroll; // forward scroll: keep swallowing until the buffered gesture goes quiet
       }
       if (scrubProgress <= 0 && !deltaPositive) return false; // let them scroll back up, away from the pin line
       if (!reachedPinLine() && scrubProgress <= 0) return false;
       return true;
+    }
+
+    // Called for every forward-scroll event swallowed by the buffer.
+    // Keeps re-arming the quiet-gap timer, so a whole burst of wheel/
+    // touch events from one physical gesture gets absorbed together —
+    // only once input actually stops for bufferGestureGapMs does the
+    // buffer clear and let the next gesture through.
+    function noteBufferedInput() {
+      if (bufferGestureTimer !== null) clearTimeout(bufferGestureTimer);
+      bufferGestureTimer = setTimeout(() => {
+        awaitingBufferScroll = false;
+        bufferGestureTimer = null;
+      }, CONFIG.bufferGestureGapMs);
     }
 
     function onWheel(e: WheelEvent) {
@@ -457,6 +508,10 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
         state.frameIndex = scrubProgress * (CONFIG.frameCount - 1);
         drawCurrentFrame();
         updateBodyLockClass();
+      }
+      if (inVideoPhase && deltaPositive) {
+        noteBufferedInput();
+        return;
       }
       cancelMomentum();
       advanceScrub(e.deltaY);
@@ -480,6 +535,11 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
         state.frameIndex = scrubProgress * (CONFIG.frameCount - 1);
         drawCurrentFrame();
         updateBodyLockClass();
+      }
+      if (inVideoPhase && deltaPositive) {
+        noteBufferedInput();
+        touchStartY = currentY;
+        return;
       }
       advanceScrub(dy);
       registerInput(dy, false);
@@ -523,6 +583,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       window.removeEventListener("resize", updateApproachingLock);
       window.removeEventListener("resize", onResize);
       cancelMomentum();
+      if (bufferGestureTimer !== null) clearTimeout(bufferGestureTimer);
       document.body.classList.remove("dance-lock-active");
     };
   }, []);
