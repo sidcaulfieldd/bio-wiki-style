@@ -501,8 +501,13 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
         className="rounded-lg"
         style={{
           position: "relative",
-          width: 270,
-          height: 480,
+          // Capped at 225x400 (still exact 9:16) instead of 270x480 —
+          // matches NotableProjectsPixelation's cap, and sits closer to
+          // the height of the caption text beside it. resizeCanvas()
+          // reads this box's actual rect at runtime, so the video/canvas
+          // scale to fit automatically — nothing else needs to change.
+          width: 225,
+          height: 400,
           overflow: "hidden",
           background: "transparent",
         }}
