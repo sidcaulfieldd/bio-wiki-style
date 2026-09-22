@@ -175,7 +175,7 @@ const Index = () => {
                   </p>
                 </div>
                 <div className="order-1 md:order-2 flex justify-center">
-                  <DanceScroll cardRef={cardRef} />
+                  <DanceScroll />
                 </div>
               </div>
 
