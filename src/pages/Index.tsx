@@ -86,10 +86,16 @@ const Index = () => {
               </div>
             </aside>
 
-            {/* Main Content */}
-            <div>
+            {/* Main Content — one consistent gap (space-y-12, 48px)
+                between every top-level section, instead of the mix of
+                mb-4/mb-6/mt-6/my-[35px] that made spacing feel random
+                from one section to the next. Each section below is a
+                single wrapper div so this only affects the gaps
+                *between* sections, not the tighter spacing inside one
+                (e.g. a heading's mb-3 to its own paragraph). */}
+            <div className="space-y-12">
               {/* Table of Contents */}
-              <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 mb-6 inline-block relative">
+              <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 inline-block relative">
                 <div className="font-bold mb-2 relative z-10">Contents</div>
                 <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
                   <li><a href="#notable-projects" className="hover:underline">What = He's Proud Of</a></li>
@@ -99,38 +105,42 @@ const Index = () => {
               </div>
 
               {/* Lead Section */}
-              <p className="mb-4 leading-relaxed relative z-10">
+              <p className="leading-relaxed relative z-10">
                 <strong>Sid Caulfield</strong> is an Australian copywriter/junior creative based in <a href="https://en.wikipedia.org/wiki/Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, tending to word and picture. His output spans social, earned, paid, podcast and the odd bit of interactive digital design — this page included. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. He is currently a freelance journalist and the Content Syndication and Social Media Manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a> and <a href="https://en.wikipedia.org/wiki/New_Zealand" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">New Zealand</a>'s largest digital mountain bike publication.
               </p>
 
               {/* Notable Projects Section */}
-              <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                What = He's Proud Of
-              </ScrollTypeHeading>
-
-              <ul className="list-disc ml-6 leading-relaxed mb-4 relative z-10">
-                <li><strong>Flow Mountain Bike</strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
-                <li><strong>The Mons Monday Podcast</strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video teaser/launch</a>.</li>
-                <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
-                <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
-              </ul>
+              <div>
+                <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                  What = He's Proud Of
+                </ScrollTypeHeading>
+                <ul className="list-disc ml-6 leading-relaxed relative z-10">
+                  <li><strong>Flow Mountain Bike</strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
+                  <li><strong>The Mons Monday Podcast</strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video teaser/launch</a>.</li>
+                  <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
+                  <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
+                </ul>
+              </div>
 
               {/* Mons Monday gif, paired with a text box on the right.
                   clear-both forces this row to start below the floated
-                  sidebar (not beside it), then mt-[35px] adds the gap.
+                  sidebar (not beside it) — space-y-12 on the parent
+                  handles the gap, so no extra margin needed here.
                   grid-cols-2 splits the row into true halves: the image
                   is centered within the left half, and the text starts
-                  exactly at the row's midpoint (the right half's edge)
-                  rather than wherever the image happens to end. */}
-              <div className="clear-both mt-[35px] mb-[35px] grid md:grid-cols-2 gap-6 items-center">
-                <div className="py-8 flex justify-center">
+                  exactly at the row's midpoint. items-start (rather than
+                  items-center) lines the text up with the TOP of the
+                  image instead of splitting the leftover height evenly
+                  above and below it. */}
+              <div className="clear-both grid md:grid-cols-2 gap-6 items-start">
+                <div className="flex justify-center">
                   <NotableProjectsPixelation />
                 </div>
                 <div>
                   <ScrollTypeHeading id="mons-monday-caption" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
                     The Mons Monday Podcast
                   </ScrollTypeHeading>
-                  <p className="mb-4 leading-relaxed relative z-10">
+                  <p className="leading-relaxed relative z-10">
                     Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based podcast launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy, managing end-to-end production — research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with <a href="https://www.lbdo.com/collections/all-products" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LBDO</a> and <a href="https://krushorganics.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Krush Organics</a>. Caulfield also created and edited video promotional material to support the launch and ongoing audience growth.
                   </p>
                 </div>
@@ -139,68 +149,72 @@ const Index = () => {
               {/* Dance gif-scrub -> looping video, sitting directly below
                   the Mons Monday gif. Paired with a text box on the left
                   this time so the two rows alternate sides. Same 50/50
-                  grid split as above — the video is centered within the
-                  right half instead of pinned flush to the card's edge. */}
-              <div className="my-[35px] grid md:grid-cols-2 gap-6 items-center" data-cursor-trail-zone="bottom-dance-video">
+                  grid split and top alignment as above. */}
+              <div className="grid md:grid-cols-2 gap-6 items-start" data-cursor-trail-zone="bottom-dance-video">
                 <div className="order-2 md:order-1">
                   <h3 className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">Generalist by Nature</h3>
-                  <p className="mb-4 leading-relaxed relative z-10">
+                  <p className="leading-relaxed relative z-10">
                     I'm a self-taught generalist by necessity, not design. No formal training in design, animation or music — just an itch to learn something for no good reason and see it through. A trained designer would probably spot everything wrong with my design work, and a trained musician would hear the amateur in my songs, but that's not really the point. The point is building, trying, failing, and coming out the other side with skills I didn't have going in.
                   </p>
                 </div>
-                <div className="py-8 order-1 md:order-2 flex justify-center">
+                <div className="order-1 md:order-2 flex justify-center">
                   <DanceScroll cardRef={cardRef} />
                 </div>
               </div>
 
               {/* Visual link — sits on the card itself, directly under
                   the gif + dance block above. */}
-              <div className="text-center leading-none my-[35px]">
+              <div className="text-center leading-none">
                 <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
               </div>
 
               {/* Skills and Early Life sections — kept at the old main-
                   column width (card width minus sidebar + gap) so the
-                  float restructure above doesn't change how these look. */}
-              <div className="max-w-[628px]">
+                  float restructure above doesn't change how these look.
+                  space-y-12 inside matches the outer rhythm. */}
+              <div className="max-w-[628px] space-y-12">
                 {/* Skills and Areas of Expertise Section */}
-                <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                  Skills and Areas of Expertise
-                </ScrollTypeHeading>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {[
-                    "Copywriting and editing",
-                    "Concept and campaign development",
-                    "Social and long-form storytelling",
-                    "Podcast writing and production",
-                    "Video editing and animation",
-                    "Adobe Creative Suite",
-                    "Canva (visual systems and templates)",
-                    "Audience profiling and insights",
-                    "Content strategy and scheduling",
-                    "Cross-platform syndication",
-                    "eDM planning, delivery and performance analysis",
-                    "SEO and metadata optimisation"
-                  ].map((skill) => (
-                    <span key={skill} className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded cursor-pointer hover:bg-[#c8ccd1] hover:border-[#72777d] transition-colors duration-150">
-                      {skill}
-                    </span>
-                  ))}
+                <div>
+                  <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                    Skills and Areas of Expertise
+                  </ScrollTypeHeading>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      "Copywriting and editing",
+                      "Concept and campaign development",
+                      "Social and long-form storytelling",
+                      "Podcast writing and production",
+                      "Video editing and animation",
+                      "Adobe Creative Suite",
+                      "Canva (visual systems and templates)",
+                      "Audience profiling and insights",
+                      "Content strategy and scheduling",
+                      "Cross-platform syndication",
+                      "eDM planning, delivery and performance analysis",
+                      "SEO and metadata optimisation"
+                    ].map((skill) => (
+                      <span key={skill} className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded cursor-pointer hover:bg-[#c8ccd1] hover:border-[#72777d] transition-colors duration-150">
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Early Life and Education Section — last */}
-                <ScrollTypeHeading id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mt-6 mb-3">
-                  Early Life and Education
-                </ScrollTypeHeading>
-                <p className="mb-4 leading-relaxed relative z-10">
-                  Sidney Joseph Caulfield was born on July 27, 2003, in <a href="https://en.wikipedia.org/wiki/East_Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">East Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a>.
-                </p>
-                <p className="mb-4 leading-relaxed relative z-10">
-                  Caulfield completed his secondary education at <a href="https://en.wikipedia.org/wiki/Belmont_High_School_(Victoria)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Belmont High School</a> in <a href="https://en.wikipedia.org/wiki/Geelong" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Geelong</a>, where he studied Media, Linguistics and Indonesian.
-                </p>
-                <p className="mb-4 leading-relaxed relative z-10">
-                  He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a> and will graduate with a Bachelor of Communication (Journalism) in 2026.
-                </p>
+                <div>
+                  <ScrollTypeHeading id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                    Early Life and Education
+                  </ScrollTypeHeading>
+                  <p className="mb-4 leading-relaxed relative z-10">
+                    Sidney Joseph Caulfield was born on July 27, 2003, in <a href="https://en.wikipedia.org/wiki/East_Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">East Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a>.
+                  </p>
+                  <p className="mb-4 leading-relaxed relative z-10">
+                    Caulfield completed his secondary education at <a href="https://en.wikipedia.org/wiki/Belmont_High_School_(Victoria)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Belmont High School</a> in <a href="https://en.wikipedia.org/wiki/Geelong" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Geelong</a>, where he studied Media, Linguistics and Indonesian.
+                  </p>
+                  <p className="leading-relaxed relative z-10">
+                    He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a> and will graduate with a Bachelor of Communication (Journalism) in 2026.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
