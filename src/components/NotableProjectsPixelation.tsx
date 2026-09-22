@@ -2,8 +2,11 @@ import { useEffect, useRef } from "react";
 import notableSmallGif from "@/assets/notable-small.gif";
 import { decompressFrames, parseGIF } from "gifuct-js";
 
-const DISPLAY_WIDTH = 270;
-const DISPLAY_HEIGHT = 480;
+// Capped at 225x400 (still exact 9:16) instead of the original 270x480 —
+// closer to the height of the caption text sitting beside it, so the row
+// doesn't end up mostly whitespace next to a much shorter paragraph.
+const DISPLAY_WIDTH = 225;
+const DISPLAY_HEIGHT = 400;
 const FOCUS_ZONE_PX = 100;
 const MAX_PIXEL_SIZE = 100;
 
