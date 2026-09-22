@@ -113,12 +113,12 @@ const Index = () => {
                 </p>
               </div>
 
-              {/* Notable Projects Section */}
-              <div>
-                {/* border-b now stretches the full container width (no
-                    inline-block) so it aligns with the end of the body
-                    copy below it, matching how the other section
-                    headings are formatted. */}
+              {/* Notable Projects Section — capped to the same 628px
+                  main-column width as Skills/Early Life below, so the
+                  heading's border-b stops in line with the body copy
+                  instead of stretching the full (float-affected)
+                  container width. */}
+              <div className="max-w-[628px]">
                 <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
                   Notable Work
                 </ScrollTypeHeading>
@@ -166,7 +166,9 @@ const Index = () => {
                   removed from this section per request. */}
               <div className="grid md:grid-cols-2 gap-6 items-start">
                 <div className="order-2 md:order-1">
-                  <h3 className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">I Do It For No Reason</h3>
+                  <ScrollTypeHeading id="no-reason" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                    I Do It For No Reason
+                  </ScrollTypeHeading>
                   <p className="leading-relaxed relative z-10">
                     Hi! Breaking the fourth wall here for a sec, sorry!! Just wanted to mention, I am a self-taught generalist by necessity. I’ve had no formal training in design, animation or audio production, just an (unscratchable) itch to learn and to make things. A trained designer would probably spot everything wrong with my design work, and a trained musician would hear the amateur in my songs, but that's not really the point. The point is building, trying, failing and coming out the other side with skills I didn't have going in. And I love it!
                   </p>
@@ -365,11 +367,10 @@ const SidebarContent = () => {
         Sid Caulfield
       </div>
 
-      {/* Infobox image — cursor-trail zone removed from the pink square
-          behind the gif per request; the trail effect now only lives on
-          the Mons Monday gif in the main content. */}
+      {/* Infobox image — cursor-trail zone reinstated on the pink square
+          behind the gif. */}
       <div className="text-center p-3 pb-0">
-        <div className="relative w-full aspect-square">
+        <div className="relative w-full aspect-square" data-cursor-trail-zone="pink-behind-gif">
           <div className="absolute inset-0 bg-[#FF69B4]" style={{ zIndex: 2 }} />
           <img
             src={profilePic}
