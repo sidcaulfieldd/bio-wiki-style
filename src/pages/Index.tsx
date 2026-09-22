@@ -90,8 +90,73 @@ const ManInWhiteFigure = () => {
   );
 };
 
+// ScrollTypeHeading renders a plain <h2>, and both NotableProjectsPixelation
+// and DanceScroll size themselves with zero internal top offset — so on
+// paper, a CSS grid with items-start should already put a heading's box and
+// an adjacent media block's box flush at the same top. In practice they
+// still look slightly off because of the heading's own line-height
+// "leading" (the bit of empty space a line of text carries above its
+// visible glyphs), which varies with font/size and isn't something you
+// should hardcode a pixel guess for. This hook measures the real gap at
+// runtime — after fonts finish loading, and again on resize — and returns
+// exactly the marginTop needed to bring the media block's visible top flush
+// with the heading's visible top, whatever that gap actually is.
+function useAlignTopToHeading(
+  headingRef: RefObject<HTMLElement>,
+  mediaRef: RefObject<HTMLElement>
+) {
+  const [correction, setCorrection] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const measure = () => {
+      const headingEl = headingRef.current;
+      const mediaEl = mediaRef.current;
+      if (!headingEl || !mediaEl) return;
+
+      // Neutralize any previously-applied correction before measuring,
+      // so repeated measurements (e.g. on resize) don't compound.
+      const prevMarginTop = mediaEl.style.marginTop;
+      mediaEl.style.marginTop = "0px";
+      const headingTop = headingEl.getBoundingClientRect().top;
+      const mediaTop = mediaEl.getBoundingClientRect().top;
+      mediaEl.style.marginTop = prevMarginTop;
+
+      if (!cancelled) setCorrection(headingTop - mediaTop);
+    };
+
+    measure();
+    const fonts = (document as any).fonts;
+    if (fonts?.ready) {
+      fonts.ready.then(() => {
+        if (!cancelled) measure();
+      });
+    }
+    window.addEventListener("resize", measure);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("resize", measure);
+    };
+  }, [headingRef, mediaRef]);
+
+  return correction;
+}
+
 const Index = () => {
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Refs + runtime alignment correction for the two heading/media rows
+  // below (Mons Monday gif, and the Dance video) — see
+  // useAlignTopToHeading's comment for why this is measured rather than
+  // hardcoded.
+  const monsHeadingRef = useRef<HTMLDivElement>(null);
+  const monsMediaRef = useRef<HTMLDivElement>(null);
+  const monsAlignCorrection = useAlignTopToHeading(monsHeadingRef, monsMediaRef);
+
+  const danceHeadingRef = useRef<HTMLDivElement>(null);
+  const danceMediaRef = useRef<HTMLDivElement>(null);
+  const danceAlignCorrection = useAlignTopToHeading(danceHeadingRef, danceMediaRef);
 
   // The page stays behind the LoadingScreen until the profile gif itself
   // has loaded (LoadingScreen owns that load and reports back here).
@@ -206,7 +271,13 @@ const Index = () => {
                   <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
                   <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
                 </ul>
-                <div className="mt-4">
+                {/* mt-20 (80px) matches the space below this block before
+                    the Mons Monday row's content starts (space-y-12's 48px
+                    gap + that row's own pt-8/32px = 80px), so this figure
+                    sits centered in the gap between the bullet list above
+                    and the Mons Monday gif below, rather than hugging the
+                    list. */}
+                <div className="mt-20">
                   <ManInWhiteFigure />
                 </div>
               </div>
@@ -224,28 +295,27 @@ const Index = () => {
                   items-center) lines the text up with the TOP of the
                   image instead of splitting the leftover height evenly
                   above and below it.
-                  An invisible spacer heading (same classes as the real
-                  "More on The Mons Monday Podcast" heading) sits above
-                  the gif so its top edge lines up flush with the real
-                  heading's top edge, instead of the gif floating higher
-                  than the heading text. */}
+                  The gif's top is aligned flush with the heading's top via
+                  useAlignTopToHeading (measured at runtime — see that
+                  hook's comment for why a hardcoded spacer doesn't work
+                  here), rather than a guessed spacer height. */}
               <div className="clear-both pt-8 grid md:grid-cols-2 gap-6 items-start">
                 {/* Cursor-trail zone lives only on the gif itself now —
                     not on the surrounding copy. */}
-                <div>
-                  <div className="invisible" aria-hidden="true">
-                    <ScrollTypeHeading className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
-                      Spacer
-                    </ScrollTypeHeading>
-                  </div>
-                  <div className="flex justify-center" data-cursor-trail-zone="mons-monday-gif">
-                    <NotableProjectsPixelation />
-                  </div>
+                <div
+                  ref={monsMediaRef}
+                  className="flex justify-center"
+                  data-cursor-trail-zone="mons-monday-gif"
+                  style={{ marginTop: monsAlignCorrection }}
+                >
+                  <NotableProjectsPixelation />
                 </div>
                 <div>
-                  <ScrollTypeHeading id="mons-monday-caption" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
-                    More on The Mons Monday Podcast
-                  </ScrollTypeHeading>
+                  <div ref={monsHeadingRef}>
+                    <ScrollTypeHeading id="mons-monday-caption" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                      More on The Mons Monday Podcast
+                    </ScrollTypeHeading>
+                  </div>
                   <p className="leading-relaxed relative z-10">
                     Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based podcast launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy, managing end-to-end production — research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with <a href="https://www.lbdo.com/collections/all-products" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LBDO</a> and <a href="https://krushorganics.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Krush Organics</a>. Caulfield also conceptualised, captured and edited <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video promotional material</a> to support the launch and ongoing audience growth.
                   </p>
@@ -256,28 +326,26 @@ const Index = () => {
                   the Mons Monday gif. Paired with a text box on the left
                   this time so the two rows alternate sides. Same 50/50
                   grid split and top alignment as above. Cursor-trail zone
-                  removed from this section per request. An invisible
-                  spacer heading (matching "I Do It For No Reason") sits
-                  above the video so its top edge lines up flush with the
-                  real heading's top edge on the left. */}
+                  removed from this section per request. The video's top
+                  is aligned flush with the heading's top the same way as
+                  the Mons Monday row above, via useAlignTopToHeading. */}
               <div className="grid md:grid-cols-2 gap-6 items-start">
                 <div className="order-2 md:order-1">
-                  <ScrollTypeHeading id="no-reason" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
-                    I Do It For No Reason
-                  </ScrollTypeHeading>
+                  <div ref={danceHeadingRef}>
+                    <ScrollTypeHeading id="no-reason" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                      I Do It For No Reason
+                    </ScrollTypeHeading>
+                  </div>
                   <p className="leading-relaxed relative z-10">
                     Hi! Breaking the fourth wall here for a sec, sorry!! Just wanted to mention, I am a self-taught generalist by necessity. I’ve had no formal training in design, animation or audio production, just an (unscratchable) itch to learn and to make things. A trained designer would probably spot everything wrong with my design work, and a trained musician would hear the amateur in my songs, but that's not really the point. The point is building, trying, failing and coming out the other side with skills I didn't have going in. And I love it!
                   </p>
                 </div>
-                <div className="order-1 md:order-2">
-                  <div className="invisible" aria-hidden="true">
-                    <ScrollTypeHeading className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
-                      Spacer
-                    </ScrollTypeHeading>
-                  </div>
-                  <div className="flex justify-center">
-                    <DanceScroll cardRef={cardRef} />
-                  </div>
+                <div
+                  ref={danceMediaRef}
+                  className="order-1 md:order-2 flex justify-center"
+                  style={{ marginTop: danceAlignCorrection }}
+                >
+                  <DanceScroll cardRef={cardRef} />
                 </div>
               </div>
 
