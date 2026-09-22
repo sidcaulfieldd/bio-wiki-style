@@ -102,7 +102,7 @@ const Index = () => {
                 <div className="border border-[#a2a9b1] bg-[#f8f9fa] p-4 inline-block relative">
                   <div className="font-bold mb-2 relative z-10">Contents</div>
                   <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
-                    <li><a href="#notable-projects" className="hover:underline">What = He's Proud Of</a></li>
+                    <li><a href="#notable-projects" className="hover:underline">Notable Work</a></li>
                     <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
                     <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
                   </ol>
@@ -115,16 +115,16 @@ const Index = () => {
 
               {/* Notable Projects Section */}
               <div>
-                {/* inline-block so the border-bottom hugs the heading
-                    text instead of stretching across the whole column
-                    width (looked disproportionate against such short
-                    heading text). */}
-                <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3 inline-block">
-                  What = He's Proud Of
+                {/* border-b now stretches the full container width (no
+                    inline-block) so it aligns with the end of the body
+                    copy below it, matching how the other section
+                    headings are formatted. */}
+                <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                  Notable Work
                 </ScrollTypeHeading>
                 <ul className="list-disc ml-6 leading-relaxed relative z-10">
                   <li><strong>Flow Mountain Bike</strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
-                  <li><strong>The Mons Monday Podcast</strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video teaser/launch</a>.</li>
+                  <li><strong>The Mons Monday Podcast</strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">launch</a>.</li>
                   <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
                   <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
                 </ul>
@@ -144,7 +144,9 @@ const Index = () => {
                   image instead of splitting the leftover height evenly
                   above and below it. */}
               <div className="clear-both pt-8 grid md:grid-cols-2 gap-6 items-start">
-                <div className="flex justify-center">
+                {/* Cursor-trail zone lives only on the gif itself now —
+                    not on the surrounding copy. */}
+                <div className="flex justify-center" data-cursor-trail-zone="mons-monday-gif">
                   <NotableProjectsPixelation />
                 </div>
                 <div>
@@ -152,7 +154,7 @@ const Index = () => {
                     More on The Mons Monday Podcast
                   </ScrollTypeHeading>
                   <p className="leading-relaxed relative z-10">
-                    Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based podcast launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy, managing end-to-end production — research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with <a href="https://www.lbdo.com/collections/all-products" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LBDO</a> and <a href="https://krushorganics.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Krush Organics</a>. Caulfield also created and edited video promotional material to support the launch and ongoing audience growth.
+                    Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based podcast launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy, managing end-to-end production — research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with <a href="https://www.lbdo.com/collections/all-products" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LBDO</a> and <a href="https://krushorganics.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Krush Organics</a>. Caulfield also conceptualised, captured and edited <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">video promotional material</a> to support the launch and ongoing audience growth.
                   </p>
                 </div>
               </div>
@@ -160,8 +162,9 @@ const Index = () => {
               {/* Dance gif-scrub -> looping video, sitting directly below
                   the Mons Monday gif. Paired with a text box on the left
                   this time so the two rows alternate sides. Same 50/50
-                  grid split and top alignment as above. */}
-              <div className="grid md:grid-cols-2 gap-6 items-start" data-cursor-trail-zone="bottom-dance-video">
+                  grid split and top alignment as above. Cursor-trail zone
+                  removed from this section per request. */}
+              <div className="grid md:grid-cols-2 gap-6 items-start">
                 <div className="order-2 md:order-1">
                   <h3 className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">I Do It For No Reason</h3>
                   <p className="leading-relaxed relative z-10">
@@ -362,9 +365,11 @@ const SidebarContent = () => {
         Sid Caulfield
       </div>
 
-      {/* Infobox image */}
+      {/* Infobox image — cursor-trail zone removed from the pink square
+          behind the gif per request; the trail effect now only lives on
+          the Mons Monday gif in the main content. */}
       <div className="text-center p-3 pb-0">
-        <div className="relative w-full aspect-square" data-cursor-trail-zone="pink-behind-gif">
+        <div className="relative w-full aspect-square">
           <div className="absolute inset-0 bg-[#FF69B4]" style={{ zIndex: 2 }} />
           <img
             src={profilePic}
