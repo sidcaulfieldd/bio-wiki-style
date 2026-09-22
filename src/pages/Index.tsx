@@ -16,18 +16,17 @@ const STRANGERS = ["neighbors","newcomers","observers","travellers","backpackers
 const MIC       = ["map","man","men","mop","mug","pod","cam","pen","cap","pan","tap","set","net","web","app","air","hub","box","lab","den","bay","bar","pub","gym","jet","pit","mat","bed","sun","van","rod","bin","tub","can","tin","lid","key","log","rug","hat","fig","jam","wax","arc","dam","keg","owl","ant","ram","bug"];
 const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbreaks","backyards","skateparks","houseplants","aftershocks","storybeats","timepieces","showpieces","soundwaves","blueprints","footprints","goldmines","nightfalls","rainstorms","shipwrecks","storefronts","boardrooms","campfires","flashdrives","doorframes","landmasses","starbursts","bookcases","motorways","skylights","newsbreaks","postcards","sandcastles","wildfires","turntables","drumrolls","backflips","hatchbacks","headlines","paintbrushes","storytales","afterhours","longreads","sidequests","breakthroughs","launches","projects","ventures","chapters","episodes","showcases"];
 
-// The source video (Man in White.mp4) is a 1920x1080 landscape clip with a
-// baked-in black border, and the character himself only occupies a narrow
-// vertical band on the right side of that frame (roughly x:1080-1650),
-// standing full-height. Rather than guessing a crop, these constants were
-// measured directly from the actual video frames so the crop window exactly
-// bounds the figure with a small margin — no more, no less.
-const MW_SRC_W = 1920;
-const MW_SRC_H = 1080;
-const MW_CROP_X = 1080; // left edge of the crop window within the source frame
+// The source video (Man in White.mp4) was replaced with a new 1080x1920
+// portrait clip of the same character, already framed close to full-height
+// with a bit of blank margin on the left/right. These constants (measured
+// from the actual frames) trim that side margin down evenly; no vertical
+// crop is needed since the figure already runs top to bottom of the frame.
+const MW_SRC_W = 1080;
+const MW_SRC_H = 1920;
+const MW_CROP_X = 200; // left edge of the crop window within the source frame
 const MW_CROP_Y = 0;
-const MW_CROP_W = 570; // width of the crop window (just the figure + small margin)
-const MW_CROP_H = 1080; // full source height (figure runs top to bottom of frame)
+const MW_CROP_W = 850; // width of the crop window (just the figure + small margin)
+const MW_CROP_H = 1920; // full source height (figure runs top to bottom of frame)
 
 // Renders the Man in White video cropped tightly to just the figure (using
 // the measured window above), then rotates that crop 90° clockwise so the
