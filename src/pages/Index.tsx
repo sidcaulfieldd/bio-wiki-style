@@ -118,14 +118,16 @@ const Index = () => {
                   heading's border-b stops exactly where the longest
                   bullet line ends, rather than a fixed column width that
                   overshoots this short list (unlike Skills/Early Life
-                  below, whose content actually reaches 628px). */}
+                  below, whose content actually reaches 628px).
+                  List order: Mons Monday Podcast first, then Flow
+                  Mountain Bike, then Freelance writing, then Animation. */}
               <div className="inline-block">
                 <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
                   Notable Work
                 </ScrollTypeHeading>
                 <ul className="list-disc ml-6 leading-relaxed relative z-10">
-                  <li><strong>Flow Mountain Bike</strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
                   <li><strong>The Mons Monday Podcast</strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">launch</a>.</li>
+                  <li><strong>Flow Mountain Bike</strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
                   <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
                   <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
                 </ul>
@@ -143,12 +145,24 @@ const Index = () => {
                   exactly at the row's midpoint. items-start (rather than
                   items-center) lines the text up with the TOP of the
                   image instead of splitting the leftover height evenly
-                  above and below it. */}
+                  above and below it.
+                  An invisible spacer heading (same classes as the real
+                  "More on The Mons Monday Podcast" heading) sits above
+                  the gif so its top edge lines up flush with the real
+                  heading's top edge, instead of the gif floating higher
+                  than the heading text. */}
               <div className="clear-both pt-8 grid md:grid-cols-2 gap-6 items-start">
                 {/* Cursor-trail zone lives only on the gif itself now —
                     not on the surrounding copy. */}
-                <div className="flex justify-center" data-cursor-trail-zone="mons-monday-gif">
-                  <NotableProjectsPixelation />
+                <div>
+                  <div className="invisible" aria-hidden="true">
+                    <ScrollTypeHeading className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                      Spacer
+                    </ScrollTypeHeading>
+                  </div>
+                  <div className="flex justify-center" data-cursor-trail-zone="mons-monday-gif">
+                    <NotableProjectsPixelation />
+                  </div>
                 </div>
                 <div>
                   <ScrollTypeHeading id="mons-monday-caption" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
@@ -164,7 +178,10 @@ const Index = () => {
                   the Mons Monday gif. Paired with a text box on the left
                   this time so the two rows alternate sides. Same 50/50
                   grid split and top alignment as above. Cursor-trail zone
-                  removed from this section per request. */}
+                  removed from this section per request. An invisible
+                  spacer heading (matching "I Do It For No Reason") sits
+                  above the video so its top edge lines up flush with the
+                  real heading's top edge on the left. */}
               <div className="grid md:grid-cols-2 gap-6 items-start">
                 <div className="order-2 md:order-1">
                   <ScrollTypeHeading id="no-reason" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
@@ -174,8 +191,15 @@ const Index = () => {
                     Hi! Breaking the fourth wall here for a sec, sorry!! Just wanted to mention, I am a self-taught generalist by necessity. I’ve had no formal training in design, animation or audio production, just an (unscratchable) itch to learn and to make things. A trained designer would probably spot everything wrong with my design work, and a trained musician would hear the amateur in my songs, but that's not really the point. The point is building, trying, failing and coming out the other side with skills I didn't have going in. And I love it!
                   </p>
                 </div>
-                <div className="order-1 md:order-2 flex justify-center">
-                  <DanceScroll cardRef={cardRef} />
+                <div className="order-1 md:order-2">
+                  <div className="invisible" aria-hidden="true">
+                    <ScrollTypeHeading className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
+                      Spacer
+                    </ScrollTypeHeading>
+                  </div>
+                  <div className="flex justify-center">
+                    <DanceScroll cardRef={cardRef} />
+                  </div>
                 </div>
               </div>
 
@@ -194,10 +218,10 @@ const Index = () => {
                       "Copywriting and editing",
                       "Concept and campaign development",
                       "Social and long-form storytelling",
+                      "PR and media relations",
                       "Podcast writing and production",
                       "Video editing and animation",
                       "Adobe Creative Suite",
-                      "Canva (visual systems and templates)",
                       "Audience profiling and insights",
                       "Content strategy and scheduling",
                       "Cross-platform syndication",
@@ -254,9 +278,17 @@ const WalkingSid = ({
 }) => {
   // Positive pushes the videos further down from true viewport-center; negative pushes up.
   const VERTICAL_OFFSET = 25;
+  // How long to wait, after the right-side video finishes, before the
+  // whole left-then-right sequence plays again.
+  const REPLAY_INTERVAL_MS = 30000;
 
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
+  // Bumped every time we want to replay the sequence from the start.
+  // Used as a React `key` on the video wrappers so the <video> elements
+  // remount (and therefore autoplay again from frame 0) instead of
+  // silently no-oping because they never actually unmounted.
+  const [cycle, setCycle] = useState(0);
   // Gap between the card's left edge and the screen's left edge (px)
   const [leftGap, setLeftGap] = useState(0);
   // Gap between the card's right edge and the screen's right edge (px)
@@ -293,11 +325,17 @@ const WalkingSid = ({
     };
   }, [cardRef]);
 
+  // Kicks off the very first play 5s after the profile loads, and then
+  // (via the `cycle` bump below) every replay after that fires immediately
+  // — the 30s wait already happened before `cycle` was incremented.
   useEffect(() => {
     if (!isProfileLoaded) return;
-    const t = setTimeout(() => setShowLeft(true), 5000);
-    return () => clearTimeout(t);
-  }, [isProfileLoaded]);
+    if (cycle === 0) {
+      const t = setTimeout(() => setShowLeft(true), 5000);
+      return () => clearTimeout(t);
+    }
+    setShowLeft(true);
+  }, [isProfileLoaded, cycle]);
 
   // Derive whole-pixel heights from the rounded gaps so the CSS box matches
   // exactly what the top-offset math above assumed.
@@ -308,6 +346,7 @@ const WalkingSid = ({
     <div className="hidden md:block pointer-events-none">
       {showLeft && (
         <div
+          key={`left-${cycle}`}
           className="absolute overflow-hidden"
           style={{
             width: `${leftGap}px`,
@@ -333,6 +372,7 @@ const WalkingSid = ({
       )}
       {showRight && (
         <div
+          key={`right-${cycle}`}
           className="absolute overflow-hidden"
           style={{
             width: `${rightGap}px`,
@@ -351,6 +391,8 @@ const WalkingSid = ({
             onEnded={(e) => {
               e.currentTarget.pause();
               setShowRight(false);
+              // Schedule the next full left-then-right replay 30s from now.
+              setTimeout(() => setCycle((c) => c + 1), REPLAY_INTERVAL_MS);
             }}
           />
         </div>
