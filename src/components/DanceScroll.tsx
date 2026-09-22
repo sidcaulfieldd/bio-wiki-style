@@ -426,6 +426,37 @@ export default function DanceScroll() {
     // there — regardless of how fast the scroll was. The old overshoot-
     // into-scrubProgress correction that lived here is no longer needed.
 
+    // preventDefault() on the wheel/touch event is meant to stop the page
+    // from actually scrolling while locked, but macOS trackpad momentum
+    // can partially leak past it regardless — the OS's inertial "fling"
+    // is delivered as a train of synthetic wheel events, and some of that
+    // momentum can already be committed to the page's scroll position by
+    // the browser/compositor before our handler runs, independent of
+    // whether we call preventDefault() correctly. A light flick leaks a
+    // little, a heavy swipe leaks more — matching exactly the "sometimes
+    // a touch, sometimes a lot" symptom. Rather than trying to make
+    // preventDefault() airtight (it can't fully be, for this), this
+    // captures the real window.scrollY the moment the lock engages, and
+    // a dedicated scroll listener (below) snaps back to it the instant
+    // any drift is detected — correcting the leak after the fact instead
+    // of trying to prevent it outright.
+    let lockScrollY: number | null = null;
+
+    function updateScrollLockCapture() {
+      const shouldHoldScroll = scrubProgress > 0 && !inVideoPhase;
+      if (shouldHoldScroll && lockScrollY === null) {
+        lockScrollY = window.scrollY;
+      } else if (!shouldHoldScroll) {
+        lockScrollY = null;
+      }
+    }
+
+    function correctScrollDrift() {
+      if (lockScrollY !== null && window.scrollY !== lockScrollY) {
+        window.scrollTo(0, lockScrollY);
+      }
+    }
+
     function advanceScrub(deltaPx: number) {
       if (inVideoPhase) {
         if (deltaPx < 0) exitVideoPhase();
@@ -438,6 +469,7 @@ export default function DanceScroll() {
         enterVideoPhase();
       }
       updateBodyLockClass();
+      updateScrollLockCapture();
     }
 
     // Inertia: once the person stops actively scrolling/swiping, keep
@@ -526,6 +558,7 @@ export default function DanceScroll() {
         state.frameIndex = 0;
         drawCurrentFrame();
         updateBodyLockClass();
+        lockScrollY = null;
       }
     }
 
@@ -563,30 +596,9 @@ export default function DanceScroll() {
       }, CONFIG.bufferGestureGapMs);
     }
 
-    // TEMPORARY DIAGNOSTIC LOGGING — remove once the scroll-lock issue is
-    // pinpointed. Logs the key state on every wheel tick so we can see
-    // exactly why interception is or isn't engaging.
-    const DEBUG_LOCK = true;
-
     function onWheel(e: WheelEvent) {
       const deltaPositive = e.deltaY > 0;
-      const intercepted = shouldIntercept(deltaPositive);
-      if (DEBUG_LOCK) {
-        const rect = box.getBoundingClientRect();
-        const centeredTop = Math.max(0, (viewportHeight() - rect.height) / 2);
-        console.log("[DanceScroll:debug]", {
-          deltaY: e.deltaY,
-          deltaPositive,
-          intercepted,
-          scrubProgress: scrubProgress.toFixed(3),
-          inVideoPhase,
-          assetsReady,
-          rectTop: Math.round(rect.top),
-          centeredTop: Math.round(centeredTop),
-          reachedPinLine: reachedPinLine(),
-        });
-      }
-      if (!intercepted) return;
+      if (!shouldIntercept(deltaPositive)) return;
       e.preventDefault();
       if (inVideoPhase && deltaPositive) {
         noteBufferedInput();
@@ -627,6 +639,7 @@ export default function DanceScroll() {
     window.addEventListener("touchmove", onTouchMove, { passive: false });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
     window.addEventListener("scroll", updateApproachingLock, { passive: true });
+    window.addEventListener("scroll", correctScrollDrift, { passive: true });
     window.addEventListener("resize", updateApproachingLock, { passive: true });
 
     let resizeDebounce: ReturnType<typeof setTimeout> | null = null;
@@ -652,6 +665,7 @@ export default function DanceScroll() {
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("scroll", updateApproachingLock);
+      window.removeEventListener("scroll", correctScrollDrift);
       window.removeEventListener("resize", updateApproachingLock);
       window.removeEventListener("resize", onResize);
       cancelMomentum();
