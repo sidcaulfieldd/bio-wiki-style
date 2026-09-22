@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState, type RefObject } from "react"
 import profilePic from "@/assets/profile_pic.gif";
 import rightVid from "@/assets/right_side_website_vid.mp4";
 import leftVid from "@/assets/left_side_website_vid.mp4";
+import manInWhiteVid from "@/assets/Man in White.mp4";
 import NotableProjectsPixelation from "@/components/NotableProjectsPixelation";
 import DanceScroll from "@/components/DanceScroll";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -14,6 +15,52 @@ import { ScrollFlipWord } from "@/components/ScrollFlipWord";
 const STRANGERS = ["neighbors","newcomers","observers","travellers","backpackers","adventurers","volunteers","creatives","explorers","founders","designers","builders","teachers","planners","thinkers","dreamers","runners","riders","surfers","skaters","painters","writers","readers","dancers","singers","coders","gamers","traders","brokers","dealers","editors","bloggers","vloggers","leaders","workers","artists","drivers","campers","climbers","hikers","paddlers","cyclists","joggers","sailors","rafters","brewers","bakers","farmers","doctors"];
 const MIC       = ["map","man","men","mop","mug","pod","cam","pen","cap","pan","tap","set","net","web","app","air","hub","box","lab","den","bay","bar","pub","gym","jet","pit","mat","bed","sun","van","rod","bin","tub","can","tin","lid","key","log","rug","hat","fig","jam","wax","arc","dam","keg","owl","ant","ram","bug"];
 const HIGHLIGHTS = ["milestones","snapshots","headliners","roadtrips","heartbreaks","backyards","skateparks","houseplants","aftershocks","storybeats","timepieces","showpieces","soundwaves","blueprints","footprints","goldmines","nightfalls","rainstorms","shipwrecks","storefronts","boardrooms","campfires","flashdrives","doorframes","landmasses","starbursts","bookcases","motorways","skylights","newsbreaks","postcards","sandcastles","wildfires","turntables","drumrolls","backflips","hatchbacks","headlines","paintbrushes","storytales","afterhours","longreads","sidequests","breakthroughs","launches","projects","ventures","chapters","episodes","showcases"];
+
+// Renders the (upright, portrait) Man in White video rotated 90° clockwise
+// so the figure appears lying on their side — head to the right, feet to
+// the left — cropped to exactly fill a landscape rectangle. The video is
+// sized to the wrapper's swapped dimensions (height x width) *before*
+// rotation with object-fit: cover, so the crop happens first and the
+// rotation then maps that already-filled box perfectly onto the visible
+// (upright) rectangle, with no stretching or letterboxing.
+const ManInWhiteFigure = () => {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [dims, setDims] = useState({ w: 0, h: 0 });
+
+  useEffect(() => {
+    const update = () => {
+      const el = wrapRef.current;
+      if (!el) return;
+      setDims({ w: el.clientWidth, h: el.clientHeight });
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return (
+    <div
+      ref={wrapRef}
+      className="w-full max-w-[560px] aspect-[16/9] overflow-hidden relative"
+    >
+      {dims.w > 0 && dims.h > 0 && (
+        <video
+          src={manInWhiteVid}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute top-1/2 left-1/2 object-cover"
+          style={{
+            width: `${dims.h}px`,
+            height: `${dims.w}px`,
+            transform: "translate(-50%, -50%) rotate(90deg)",
+          }}
+        />
+      )}
+    </div>
+  );
+};
 
 const Index = () => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -131,6 +178,9 @@ const Index = () => {
                   <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
                   <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
                 </ul>
+                <div className="mt-4">
+                  <ManInWhiteFigure />
+                </div>
               </div>
 
               {/* Mons Monday gif, paired with a text box on the right.
