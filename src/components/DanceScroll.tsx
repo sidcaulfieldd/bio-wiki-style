@@ -12,8 +12,9 @@ const CONFIG = {
   videoSrc: "/dance/dance-vid.mp4",
 
   // How many px of wheel/touch input it takes to scrub through all the
-  // frames once the box has scrolled up to the pin line.
-  scrubDistancePx: 900,
+  // frames once the box has scrolled up to the pin line. Lower = more
+  // sensitive (less physical scrolling needed per frame).
+  scrubDistancePx: 420,
 
   // Hidden Spotify track played (audio only) once the person hits UNMUTE.
   spotifyTrackId: "5kDLJIAApnLKgdiTdAsd6P",
@@ -280,6 +281,49 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     }
     unmuteHandlerRef.current = onUnmuteClick;
 
+    // video.play() returns a promise that can be rejected — most commonly
+    // because pause() was called (an AbortError) before it resolved, which
+    // happens easily here if the person scrolls back and forth fast enough
+    // to flip enterVideoPhase/exitVideoPhase before the previous play()
+    // settled. The original code just logged that and gave up, leaving the
+    // video silently paused — which is exactly the "only sometimes
+    // playing" symptom. playAttemptToken lets a stale retry recognize it's
+    // no longer relevant (phase changed again since it was scheduled) and
+    // bail instead of fighting a newer request.
+    let playAttemptToken = 0;
+    function attemptVideoPlay(token: number) {
+      video
+        .play()
+        .then(() => {
+          if (token !== playAttemptToken) return; // superseded, ignore
+        })
+        .catch((err) => {
+          if (token !== playAttemptToken || !inVideoPhase) return; // superseded or already exited
+          console.error("[DanceScroll] video.play() FAILED, retrying:", err);
+          setTimeout(() => attemptVideoPlay(token), 60);
+        });
+    }
+
+    // Backstop: even a "successful" play() can end up silently paused
+    // again (e.g. a stray pause from something else on the page), so
+    // periodically confirm it's actually playing for as long as we're
+    // meant to be in the video phase, and re-trigger play() if not.
+    let videoWatchdogTimer: ReturnType<typeof setInterval> | null = null;
+    function startVideoWatchdog() {
+      stopVideoWatchdog();
+      videoWatchdogTimer = setInterval(() => {
+        if (inVideoPhase && video.paused) {
+          attemptVideoPlay(playAttemptToken);
+        }
+      }, 250);
+    }
+    function stopVideoWatchdog() {
+      if (videoWatchdogTimer !== null) {
+        clearInterval(videoWatchdogTimer);
+        videoWatchdogTimer = null;
+      }
+    }
+
     function enterVideoPhase() {
       if (inVideoPhase) return;
       inVideoPhase = true;
@@ -289,9 +333,9 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       canvas.style.opacity = "0";
       if (!userUnmuted) video.muted = true;
       video.currentTime = 0;
-      video.play()
-        .then(() => console.log("[DanceScroll] video.play() succeeded"))
-        .catch((err) => console.error("[DanceScroll] video.play() FAILED:", err));
+      playAttemptToken++;
+      attemptVideoPlay(playAttemptToken);
+      startVideoWatchdog();
       showMuteOverlay();
     }
 
@@ -299,6 +343,8 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       if (!inVideoPhase) return;
       inVideoPhase = false;
       awaitingBufferScroll = false;
+      playAttemptToken++; // invalidate any in-flight retry from this session
+      stopVideoWatchdog();
       if (bufferGestureTimer !== null) {
         clearTimeout(bufferGestureTimer);
         bufferGestureTimer = null;
@@ -583,6 +629,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       window.removeEventListener("resize", updateApproachingLock);
       window.removeEventListener("resize", onResize);
       cancelMomentum();
+      stopVideoWatchdog();
       if (bufferGestureTimer !== null) clearTimeout(bufferGestureTimer);
       document.body.classList.remove("dance-lock-active");
     };
