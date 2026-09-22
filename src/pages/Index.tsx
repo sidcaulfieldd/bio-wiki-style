@@ -149,7 +149,7 @@ const Index = () => {
                 </div>
                 <div>
                   <ScrollTypeHeading id="mons-monday-caption" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
-                    The Mons Monday Podcast
+                    More on The Mons Monday Podcast
                   </ScrollTypeHeading>
                   <p className="leading-relaxed relative z-10">
                     Caulfield is the producer of <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">The Mons Monday Podcast</a>, a profile-based podcast launched in 2025. He secured the project through cold outreach and developed the podcast's format, production systems and distribution strategy, managing end-to-end production — research, recording, editing, audience communications and release scheduling. The podcast debuted at number three on the Apple Australia Arts chart and later secured commercial partnerships with <a href="https://www.lbdo.com/collections/all-products" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">LBDO</a> and <a href="https://krushorganics.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Krush Organics</a>. Caulfield also created and edited video promotional material to support the launch and ongoing audience growth.
