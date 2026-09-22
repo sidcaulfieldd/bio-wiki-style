@@ -113,12 +113,13 @@ const Index = () => {
                 </p>
               </div>
 
-              {/* Notable Projects Section — capped to the same 628px
-                  main-column width as Skills/Early Life below, so the
-                  heading's border-b stops in line with the body copy
-                  instead of stretching the full (float-affected)
-                  container width. */}
-              <div className="max-w-[628px]">
+              {/* Notable Projects Section — shrink-wrapped (inline-block)
+                  around both the heading AND the list together, so the
+                  heading's border-b stops exactly where the longest
+                  bullet line ends, rather than a fixed column width that
+                  overshoots this short list (unlike Skills/Early Life
+                  below, whose content actually reaches 628px). */}
+              <div className="inline-block">
                 <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
                   Notable Work
                 </ScrollTypeHeading>
