@@ -179,12 +179,6 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Visual link — sits on the card itself, directly under
-                  the gif + dance block above. */}
-              <div className="text-center leading-none">
-                <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
-              </div>
-
               {/* Skills and Early Life sections — kept at the old main-
                   column width (card width minus sidebar + gap) so the
                   float restructure above doesn't change how these look.
@@ -238,6 +232,13 @@ const Index = () => {
 
           {/* Walking easter egg — desktop only, tethered to card edges */}
           <WalkingSid cardRef={cardRef} isProfileLoaded={isProfileLoaded} />
+        </div>
+
+        {/* Visual link — centered relative to the card's own width (this
+            container), not the full page, so it stays aligned with the
+            card regardless of viewport width. */}
+        <div className="text-center leading-none pt-6">
+          <a href="/LETSGETVISUAL" className="text-[#0645ad] hover:underline text-base">LET'S GET VISUAL</a>
         </div>
       </main>
     </div>
