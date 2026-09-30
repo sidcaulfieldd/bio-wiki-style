@@ -259,8 +259,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
 
     function advanceScrub(deltaPx: number) {
       if (inVideoPhase) {
-        if (deltaPx < 0) exitVideoPhase();
-        else return;
+        return;
       }
       scrubProgress = Math.max(0, Math.min(1, scrubProgress + deltaPx / CONFIG.scrubDistancePx));
       state.frameIndex = scrubProgress * (CONFIG.frameCount - 1);
@@ -293,10 +292,6 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       if (momentumFrame !== null) return;
       function step() {
         if (inVideoPhase || Math.abs(velocity) < MOMENTUM_MIN_VELOCITY) {
-          momentumFrame = null;
-          return;
-        }
-        if (scrubProgress <= 0 && velocity < 0) {
           momentumFrame = null;
           return;
         }
@@ -341,19 +336,15 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       if (!assetsReady) return;
 
       // Scrolling up while not mid-scrub: let the page scroll normally
-      if (scrubProgress <= 0 && !inVideoPhase && e.deltaY < 0) return;
-
-      // In video phase: up reverses to frames, forward gets buffered
+      // While in scrub or video phase, eat all scroll inside the box
       if (inVideoPhase) {
-        if (e.deltaY < 0) {
-          e.preventDefault();
-          exitVideoPhase();
-        } else {
-          e.preventDefault();
-          noteBufferedInput();
-        }
+        e.preventDefault();
+        noteBufferedInput();
         return;
       }
+
+      // Scrolling up before scrub has started: let page scroll normally
+      if (scrubProgress <= 0 && e.deltaY < 0) return;
 
       e.preventDefault();
       cancelMomentum();
@@ -371,19 +362,16 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       const currentY = e.touches[0].clientY;
       const dy = touchStartY - currentY;
 
-      if (scrubProgress <= 0 && !inVideoPhase && dy < 0) return;
-
+      // While in scrub or video phase, eat all scroll inside the box
       if (inVideoPhase) {
-        if (dy < 0) {
-          e.preventDefault();
-          exitVideoPhase();
-        } else {
-          e.preventDefault();
-          noteBufferedInput();
-        }
+        e.preventDefault();
+        noteBufferedInput();
         touchStartY = currentY;
         return;
       }
+
+      // Scrolling up before scrub has started: let page scroll normally
+      if (scrubProgress <= 0 && dy < 0) return;
 
       e.preventDefault();
       advanceScrub(dy);
