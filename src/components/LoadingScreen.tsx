@@ -7,58 +7,34 @@ interface LoadingScreenProps {
 
 const ROWS = 8;
 const COLS = 5;
-const TICK_MS = 42;   // ms per box during normal animation
-const FAST_MS = 12;   // ms per box when gif loaded before animation finished
-const PULSE_MS = 600; // ms between G pulses while waiting for gif
 
 const LETTER_DEFS: Record<string, { map: number[][]; order: [number, number][] }> = {
   L: {
-    map: [
-      [1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],
-      [1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,1],
-    ],
+    map: [[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,1]],
     order: [[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[7,1],[7,2],[7,3],[7,4]],
   },
   O: {
-    map: [
-      [0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],
-      [1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0],
-    ],
+    map: [[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
     order: [[0,1],[0,2],[0,3],[1,4],[2,4],[3,4],[4,4],[5,4],[6,4],[7,3],[7,2],[7,1],[6,0],[5,0],[4,0],[3,0],[2,0],[1,0]],
   },
   A: {
-    map: [
-      [0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,1],
-      [1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],
-    ],
+    map: [[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1]],
     order: [[7,0],[6,0],[5,0],[4,0],[3,0],[2,0],[1,0],[0,1],[0,2],[0,3],[1,4],[2,4],[3,4],[4,4],[5,4],[6,4],[7,4],[3,1],[3,2],[3,3]],
   },
   D: {
-    map: [
-      [1,1,1,0,0],[1,0,0,1,0],[1,0,0,0,1],[1,0,0,0,1],
-      [1,0,0,0,1],[1,0,0,0,1],[1,0,0,1,0],[1,1,1,0,0],
-    ],
+    map: [[1,1,1,0,0],[1,0,0,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,1,0],[1,1,1,0,0]],
     order: [[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[7,1],[7,2],[6,3],[5,4],[4,4],[3,4],[2,4],[1,3],[0,2],[0,1]],
   },
   I: {
-    map: [
-      [1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],
-      [0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1],
-    ],
+    map: [[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1]],
     order: [[0,0],[0,1],[0,2],[0,3],[0,4],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,4],[7,3],[7,2],[7,1],[7,0]],
   },
   N: {
-    map: [
-      [1,0,0,0,1],[1,1,0,0,1],[1,0,1,0,1],[1,0,0,1,1],
-      [1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],
-    ],
+    map: [[1,0,0,0,1],[1,1,0,0,1],[1,0,1,0,1],[1,0,0,1,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1]],
     order: [[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[1,1],[2,2],[3,3],[0,4],[1,4],[2,4],[3,4],[4,4],[5,4],[6,4],[7,4]],
   },
   G: {
-    map: [
-      [0,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,1,1,1],
-      [1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0],
-    ],
+    map: [[0,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,1,1,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
     order: [[0,3],[0,2],[0,1],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,1],[7,2],[7,3],[6,4],[5,4],[4,4],[3,4],[3,3],[3,2]],
   },
 };
@@ -68,40 +44,13 @@ const WORD = ["L", "O", "A", "D", "I", "N", "G"];
 const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const outerRef = useRef<HTMLDivElement>(null);
-  const tids = useRef<ReturnType<typeof setTimeout>[]>([]);
-
-  const sched = (fn: () => void, ms: number) => {
-    const t = setTimeout(fn, ms);
-    tids.current.push(t);
-    return t;
-  };
-
-  const clearAll = () => {
-    tids.current.forEach(clearTimeout);
-    tids.current = [];
-  };
-
-  const tickBox = (box: HTMLDivElement) => {
-    box.style.background = "#3366cc";
-    box.style.borderColor = "#3366cc";
-    box.style.boxShadow = "0 2px 0 0 #1a4a9e";
-    const svg = box.querySelector("svg") as SVGElement | null;
-    if (svg) svg.style.opacity = "1";
-  };
-
-  const untickBox = (box: HTMLDivElement) => {
-    box.style.background = "#fff";
-    box.style.borderColor = "#000";
-    box.style.boxShadow = "0 2px 0 0 #000";
-    const svg = box.querySelector("svg") as SVGElement | null;
-    if (svg) svg.style.opacity = "0";
-  };
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
-    const letterBoxGroups: HTMLDivElement[][] = [];
+    // Build grid, collect all active boxes in order across the whole word
+    const allBoxes: HTMLDivElement[] = [];
 
     WORD.forEach((ch) => {
       const def = LETTER_DEFS[ch];
@@ -137,105 +86,59 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
       }
 
       wrapper.appendChild(letterEl);
-      const ordered = def.order
-        .map(([r, c]) => cellGrid[r][c])
-        .filter((el): el is HTMLDivElement => el !== null);
-      letterBoxGroups.push(ordered);
+      def.order.forEach(([r, c]) => {
+        const box = cellGrid[r][c];
+        if (box) allBoxes.push(box);
+      });
     });
 
-    const allBoxes = letterBoxGroups.flat();
-    let tickedCount = 0; // how many boxes have been ticked so far
-    let animationDone = false;
-    let gifDone = false;
-    let pulseInterval: ReturnType<typeof setInterval> | null = null;
-
-    // Pulse the last letter (G) on/off while waiting for gif
-    const startPulse = () => {
-      const gBoxes = letterBoxGroups[letterBoxGroups.length - 1];
-      let on = true;
-      pulseInterval = setInterval(() => {
-        if (on) gBoxes.forEach(untickBox);
-        else gBoxes.forEach(tickBox);
-        on = !on;
-      }, PULSE_MS);
+    const tickBox = (box: HTMLDivElement) => {
+      box.style.background = "#3366cc";
+      box.style.borderColor = "#3366cc";
+      box.style.boxShadow = "0 2px 0 0 #1a4a9e";
+      const svg = box.querySelector("svg") as SVGElement | null;
+      if (svg) svg.style.opacity = "1";
     };
 
-    const stopPulse = () => {
-      if (pulseInterval) { clearInterval(pulseInterval); pulseInterval = null; }
-      letterBoxGroups[letterBoxGroups.length - 1].forEach(tickBox);
-    };
-
-    const fadeOut = () => {
-      if (outerRef.current) outerRef.current.style.opacity = "0";
-      sched(onLoaded, 400);
-    };
-
-    // Rapid-fire any remaining unticked boxes (tracked by index) then fade
-    const finishFast = () => {
-      clearAll();
-      stopPulse();
-      const remaining = allBoxes.slice(tickedCount);
-      remaining.forEach((box, i) => sched(() => tickBox(box), i * FAST_MS));
-      sched(fadeOut, remaining.length * FAST_MS + 50);
-    };
-
-    // Normal tick: letter by letter
-    const tickLetter = (boxes: HTMLDivElement[], onDone: () => void) => {
-      let i = 0;
-      const next = () => {
-        if (i >= boxes.length) { onDone(); return; }
-        tickBox(boxes[i]);
-        tickedCount++;
-        i++;
-        sched(next, TICK_MS);
-      };
-      next();
-    };
-
-    const tickAll = (letterIndex: number) => {
-      if (letterIndex >= letterBoxGroups.length) {
-        animationDone = true;
-        if (gifDone) {
-          fadeOut();
-        } else {
-          startPulse();
-        }
-        return;
-      }
-      tickLetter(letterBoxGroups[letterIndex], () => {
-        sched(() => tickAll(letterIndex + 1), 80);
+    const setTicked = (count: number) => {
+      allBoxes.forEach((box, i) => {
+        if (i < count) tickBox(box);
       });
     };
 
-    tickAll(0);
-
-    // Gif load handler
+    // Fake progress crawl — same logic as the original pill loader
     let settled = false;
-    const onGifDone = () => {
+    let fakePct = 0;
+
+    const tick = setInterval(() => {
+      if (settled) return;
+      fakePct = Math.min(fakePct + Math.random() * 15 + 5, 90);
+      setTicked(Math.round((fakePct / 100) * allBoxes.length));
+    }, 150);
+
+    const finish = () => {
       if (settled) return;
       settled = true;
-      gifDone = true;
-      if (animationDone) {
-        // Animation already finished — stop pulse and fade
-        stopPulse();
-        fadeOut();
-      } else {
-        // Animation still running — rapid-fire remaining boxes
-        finishFast();
-      }
+      clearInterval(tick);
+      // Rapid-fire remaining boxes then fade
+      const remaining = allBoxes.slice(Math.round((fakePct / 100) * allBoxes.length));
+      remaining.forEach((box, i) => setTimeout(() => tickBox(box), i * 18));
+      setTimeout(() => {
+        if (outerRef.current) outerRef.current.style.opacity = "0";
+        setTimeout(onLoaded, 400);
+      }, remaining.length * 18 + 50);
     };
 
     const img = new Image();
-    img.onload = onGifDone;
-    img.onerror = onGifDone;
+    img.onload = finish;
+    img.onerror = finish;
     img.src = profilePic;
 
-    const fallback = setTimeout(onGifDone, 8000);
+    const fallback = setTimeout(finish, 8000);
 
     return () => {
-      clearAll();
+      clearInterval(tick);
       clearTimeout(fallback);
-      if (pulseInterval) clearInterval(pulseInterval);
     };
   }, [onLoaded]);
 
@@ -256,11 +159,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
     >
       <div
         ref={wrapperRef}
-        style={{
-          display: "flex",
-          gap: "16px",
-          alignItems: "flex-start",
-        }}
+        style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
       />
     </div>
   );
