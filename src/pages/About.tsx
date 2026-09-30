@@ -102,12 +102,12 @@ type PhysicsGif = {
   // No homeX/homeY — gifs travel freely in whatever direction they were hit
 };
 
-// Physics constants — tuned for golden syrup feel
-const FRICTION = 0.88;        // aggressive drag, speed bleeds fast like moving through thick liquid
-const WALL_BOUNCE = 0.18;     // walls are basically dead — hit and slump, barely any rebound
-const DRAG_LERP = 0.18;       // how fast the gif catches up to the pointer (0=frozen, 1=instant)
-const PUSH_STRENGTH = 0.35;   // collisions transfer less force — heavy, not snappy
-const MIN_PUSH = 1.5;         // smaller minimum nudge for sluggish collision feel
+// Physics constants — dialled in via sandbox
+const FRICTION = 0.93;        // bleeds speed gradually, still travels with some momentum
+const WALL_BOUNCE = 0.66;     // decent rebound off walls without feeling rubbery
+const DRAG_LERP = 0.18;       // gif lags behind pointer — the syrupy pull feel
+const PUSH_STRENGTH = 1.50;   // collisions have real weight and transfer a good kick
+const MIN_PUSH = 1.5;         // minimum nudge on a slow graze
 const SEPARATION = 2;         // px nudged out of overlap per frame
 const COLLISION_SAMPLES = 6;  // NxN sample grid inside any overlap box
 const MAX_SPEED = 18;         // lower top speed — nothing moves fast in syrup
