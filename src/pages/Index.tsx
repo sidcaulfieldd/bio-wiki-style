@@ -158,6 +158,17 @@ const Index = () => {
   const danceMediaRef = useRef<HTMLDivElement>(null);
   const danceAlignCorrection = useAlignTopToHeading(danceHeadingRef, danceMediaRef);
 
+  // On mobile (< md / 768px), the two-col grid collapses to one column, so
+  // media and heading are in separate rows — the alignment correction would
+  // push media DOWN into dead space instead of aligning it with anything.
+  // Zero it out below the md breakpoint.
+  const [isMd, setIsMd] = useState(() => window.innerWidth >= 768);
+  useEffect(() => {
+    const check = () => setIsMd(window.innerWidth >= 768);
+    window.addEventListener("resize", check, { passive: true });
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   // The page stays behind the LoadingScreen until the profile gif itself
   // has loaded (LoadingScreen owns that load and reports back here).
   const [isProfileLoaded, setIsProfileLoaded] = useState(false);
@@ -277,7 +288,7 @@ const Index = () => {
                     sits centered in the gap between the bullet list above
                     and the Mons Monday gif below, rather than hugging the
                     list. */}
-                <div className="mt-20">
+                <div className="mt-8 md:mt-20">
                   <ManInWhiteFigure />
                 </div>
               </div>
@@ -299,14 +310,14 @@ const Index = () => {
                   useAlignTopToHeading (measured at runtime — see that
                   hook's comment for why a hardcoded spacer doesn't work
                   here), rather than a guessed spacer height. */}
-              <div className="clear-both pt-8 grid md:grid-cols-2 gap-6 items-start">
+              <div className="clear-both pt-8 grid md:grid-cols-2 gap-3 md:gap-6 items-start">
                 {/* Cursor-trail zone lives only on the gif itself now —
                     not on the surrounding copy. */}
                 <div
                   ref={monsMediaRef}
                   className="flex justify-center"
                   data-cursor-trail-zone="mons-monday-gif"
-                  style={{ marginTop: monsAlignCorrection }}
+                  style={{ marginTop: isMd ? monsAlignCorrection : 0 }}
                 >
                   <NotableProjectsPixelation />
                 </div>
@@ -329,7 +340,7 @@ const Index = () => {
                   removed from this section per request. The video's top
                   is aligned flush with the heading's top the same way as
                   the Mons Monday row above, via useAlignTopToHeading. */}
-              <div className="grid md:grid-cols-2 gap-6 items-start">
+              <div className="grid md:grid-cols-2 gap-3 md:gap-6 items-start">
                 <div className="order-2 md:order-1">
                   <div ref={danceHeadingRef}>
                     <ScrollTypeHeading id="no-reason" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
@@ -343,7 +354,7 @@ const Index = () => {
                 <div
                   ref={danceMediaRef}
                   className="order-1 md:order-2 flex justify-center"
-                  style={{ marginTop: danceAlignCorrection }}
+                  style={{ marginTop: isMd ? danceAlignCorrection : 0 }}
                 >
                   <DanceScroll cardRef={cardRef} />
                 </div>
