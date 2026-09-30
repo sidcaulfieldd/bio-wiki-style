@@ -7,130 +7,59 @@ interface LoadingScreenProps {
 
 const ROWS = 8;
 const COLS = 5;
+const TICK_MS = 42;   // ms per box during normal animation
+const FAST_MS = 12;   // ms per box when gif loaded before animation finished
+const PULSE_MS = 600; // ms between G pulses while waiting for gif
 
 const LETTER_DEFS: Record<string, { map: number[][]; order: [number, number][] }> = {
   L: {
     map: [
-      [1,0,0,0,0],
-      [1,0,0,0,0],
-      [1,0,0,0,0],
-      [1,0,0,0,0],
-      [1,0,0,0,0],
-      [1,0,0,0,0],
-      [1,0,0,0,0],
-      [1,1,1,1,1],
+      [1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],
+      [1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,1],
     ],
-    order: [
-      [0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],
-      [7,0],[7,1],[7,2],[7,3],[7,4],
-    ],
+    order: [[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[7,1],[7,2],[7,3],[7,4]],
   },
   O: {
     map: [
-      [0,1,1,1,0],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [0,1,1,1,0],
+      [0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],
+      [1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0],
     ],
-    order: [
-      [0,1],[0,2],[0,3],
-      [1,4],[2,4],[3,4],[4,4],[5,4],[6,4],
-      [7,3],[7,2],[7,1],
-      [6,0],[5,0],[4,0],[3,0],[2,0],[1,0],
-    ],
+    order: [[0,1],[0,2],[0,3],[1,4],[2,4],[3,4],[4,4],[5,4],[6,4],[7,3],[7,2],[7,1],[6,0],[5,0],[4,0],[3,0],[2,0],[1,0]],
   },
   A: {
     map: [
-      [0,1,1,1,0],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,1,1,1,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
+      [0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,1],
+      [1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],
     ],
-    order: [
-      [7,0],[6,0],[5,0],[4,0],[3,0],[2,0],[1,0],
-      [0,1],[0,2],[0,3],
-      [1,4],[2,4],[3,4],[4,4],[5,4],[6,4],[7,4],
-      [3,1],[3,2],[3,3],
-    ],
+    order: [[7,0],[6,0],[5,0],[4,0],[3,0],[2,0],[1,0],[0,1],[0,2],[0,3],[1,4],[2,4],[3,4],[4,4],[5,4],[6,4],[7,4],[3,1],[3,2],[3,3]],
   },
   D: {
     map: [
-      [1,1,1,0,0],
-      [1,0,0,1,0],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,1,0],
-      [1,1,1,0,0],
+      [1,1,1,0,0],[1,0,0,1,0],[1,0,0,0,1],[1,0,0,0,1],
+      [1,0,0,0,1],[1,0,0,0,1],[1,0,0,1,0],[1,1,1,0,0],
     ],
-    order: [
-      [0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],
-      [7,1],[7,2],
-      [6,3],[5,4],[4,4],[3,4],[2,4],
-      [1,3],
-      [0,2],[0,1],
-    ],
+    order: [[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[7,1],[7,2],[6,3],[5,4],[4,4],[3,4],[2,4],[1,3],[0,2],[0,1]],
   },
   I: {
     map: [
-      [1,1,1,1,1],
-      [0,0,1,0,0],
-      [0,0,1,0,0],
-      [0,0,1,0,0],
-      [0,0,1,0,0],
-      [0,0,1,0,0],
-      [0,0,1,0,0],
-      [1,1,1,1,1],
+      [1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],
+      [0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1],
     ],
-    order: [
-      [0,0],[0,1],[0,2],[0,3],[0,4],
-      [1,2],[2,2],[3,2],[4,2],[5,2],[6,2],
-      [7,4],[7,3],[7,2],[7,1],[7,0],
-    ],
+    order: [[0,0],[0,1],[0,2],[0,3],[0,4],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,4],[7,3],[7,2],[7,1],[7,0]],
   },
   N: {
     map: [
-      [1,0,0,0,1],
-      [1,1,0,0,1],
-      [1,0,1,0,1],
-      [1,0,0,1,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
+      [1,0,0,0,1],[1,1,0,0,1],[1,0,1,0,1],[1,0,0,1,1],
+      [1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],
     ],
-    order: [
-      [0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],
-      [1,1],[2,2],[3,3],
-      [0,4],[1,4],[2,4],[3,4],[4,4],[5,4],[6,4],[7,4],
-    ],
+    order: [[0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0],[1,1],[2,2],[3,3],[0,4],[1,4],[2,4],[3,4],[4,4],[5,4],[6,4],[7,4]],
   },
   G: {
     map: [
-      [0,1,1,1,0],
-      [1,0,0,0,0],
-      [1,0,0,0,0],
-      [1,0,1,1,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [1,0,0,0,1],
-      [0,1,1,1,0],
+      [0,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,1,1,1],
+      [1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0],
     ],
-    order: [
-      [0,3],[0,2],[0,1],
-      [1,0],[2,0],[3,0],[4,0],[5,0],[6,0],
-      [7,1],[7,2],[7,3],
-      [6,4],[5,4],[4,4],[3,4],[3,3],[3,2],
-    ],
+    order: [[0,3],[0,2],[0,1],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,1],[7,2],[7,3],[6,4],[5,4],[4,4],[3,4],[3,3],[3,2]],
   },
 };
 
@@ -139,23 +68,39 @@ const WORD = ["L", "O", "A", "D", "I", "N", "G"];
 const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const outerRef = useRef<HTMLDivElement>(null);
-  const tickTimeouts = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const tids = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  const clearTicks = () => {
-    tickTimeouts.current.forEach(clearTimeout);
-    tickTimeouts.current = [];
+  const sched = (fn: () => void, ms: number) => {
+    const t = setTimeout(fn, ms);
+    tids.current.push(t);
+    return t;
   };
 
-  const schedule = (fn: () => void, ms: number) => {
-    const t = setTimeout(fn, ms);
-    tickTimeouts.current.push(t);
+  const clearAll = () => {
+    tids.current.forEach(clearTimeout);
+    tids.current = [];
+  };
+
+  const tickBox = (box: HTMLDivElement) => {
+    box.style.background = "#3366cc";
+    box.style.borderColor = "#3366cc";
+    box.style.boxShadow = "0 2px 0 0 #1a4a9e";
+    const svg = box.querySelector("svg") as SVGElement | null;
+    if (svg) svg.style.opacity = "1";
+  };
+
+  const untickBox = (box: HTMLDivElement) => {
+    box.style.background = "#fff";
+    box.style.borderColor = "#000";
+    box.style.boxShadow = "0 2px 0 0 #000";
+    const svg = box.querySelector("svg") as SVGElement | null;
+    if (svg) svg.style.opacity = "0";
   };
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
-    // Build the grid and collect ordered box refs per letter
     const letterBoxGroups: HTMLDivElement[][] = [];
 
     WORD.forEach((ch) => {
@@ -198,62 +143,105 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
       letterBoxGroups.push(ordered);
     });
 
-    // Tick a single letter's boxes in order, call onDone when finished
-    const tickLetter = (boxes: HTMLDivElement[], onDone: () => void) => {
+    const allBoxes = letterBoxGroups.flat();
+    let animationDone = false;
+    let gifDone = false;
+    let pulseInterval: ReturnType<typeof setInterval> | null = null;
+
+    // Pulse the last letter (G) on/off while waiting for gif
+    const startPulse = () => {
+      const gBoxes = letterBoxGroups[letterBoxGroups.length - 1];
+      let on = true;
+      pulseInterval = setInterval(() => {
+        if (on) gBoxes.forEach(untickBox);
+        else gBoxes.forEach(tickBox);
+        on = !on;
+      }, PULSE_MS);
+    };
+
+    const stopPulse = () => {
+      if (pulseInterval) { clearInterval(pulseInterval); pulseInterval = null; }
+      // Make sure G ends up ticked
+      letterBoxGroups[letterBoxGroups.length - 1].forEach(tickBox);
+    };
+
+    const fadeOut = () => {
+      if (outerRef.current) outerRef.current.style.opacity = "0";
+      sched(onLoaded, 400);
+    };
+
+    // Rapid-fire any remaining unticked boxes then fade
+    const finishFast = () => {
+      clearAll();
+      stopPulse();
+      const unticked = allBoxes.filter(b => b.style.background !== "rgb(51, 102, 204)");
+      unticked.forEach((box, i) => sched(() => tickBox(box), i * FAST_MS));
+      sched(fadeOut, unticked.length * FAST_MS + 50);
+    };
+
+    // Normal tick: letter by letter
+    const tickLetter = (boxes: HTMLDivElement[], onDone: () => void, ms: number) => {
       let i = 0;
       const next = () => {
         if (i >= boxes.length) { onDone(); return; }
-        const box = boxes[i];
-        box.style.background = "#3366cc";
-        box.style.borderColor = "#3366cc";
-        box.style.boxShadow = "0 2px 0 0 #1a4a9e";
-        const svg = box.querySelector("svg") as SVGElement | null;
-        if (svg) svg.style.opacity = "1";
+        tickBox(boxes[i]);
         i++;
-        schedule(next, 42);
+        sched(next, ms);
       };
       next();
     };
 
-    // Tick letters one after another
     const tickAll = (letterIndex: number) => {
-      if (letterIndex >= letterBoxGroups.length) return;
+      if (letterIndex >= letterBoxGroups.length) {
+        // Animation finished
+        animationDone = true;
+        if (gifDone) {
+          // Gif already loaded — fade immediately
+          fadeOut();
+        } else {
+          // Gif still loading — pulse G while we wait
+          startPulse();
+        }
+        return;
+      }
       tickLetter(letterBoxGroups[letterIndex], () => {
         if (letterIndex + 1 < letterBoxGroups.length) {
-          schedule(() => tickAll(letterIndex + 1), 80);
+          sched(() => tickAll(letterIndex + 1), 80);
+        } else {
+          tickAll(letterBoxGroups.length); // triggers done branch above
         }
-      });
+      }, TICK_MS);
     };
 
     tickAll(0);
 
-    // Wait for the gif to load, then fade out
+    // Gif load handler
     let settled = false;
-    const finish = () => {
+    const onGifDone = () => {
       if (settled) return;
       settled = true;
-      // Let all remaining boxes tick to completion before fading
-      const allBoxes = letterBoxGroups.flat();
-      const unticked = allBoxes.filter(
-        (b) => b.style.background !== "rgb(51, 102, 204)"
-      );
-      let delay = unticked.length * 42;
-      schedule(() => {
-        if (outerRef.current) outerRef.current.style.opacity = "0";
-        schedule(onLoaded, 400);
-      }, delay);
+      gifDone = true;
+      if (animationDone) {
+        // Animation already finished — stop pulse and fade
+        stopPulse();
+        fadeOut();
+      } else {
+        // Animation still running — rapid-fire remaining boxes
+        finishFast();
+      }
     };
 
     const img = new Image();
-    img.onload = finish;
-    img.onerror = finish;
+    img.onload = onGifDone;
+    img.onerror = onGifDone;
     img.src = profilePic;
 
-    const fallback = setTimeout(finish, 8000);
+    const fallback = setTimeout(onGifDone, 8000);
 
     return () => {
-      clearTicks();
+      clearAll();
       clearTimeout(fallback);
+      if (pulseInterval) clearInterval(pulseInterval);
     };
   }, [onLoaded]);
 
