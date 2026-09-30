@@ -106,13 +106,34 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
       });
     };
 
-    // Fake progress crawl — same logic as the original pill loader
+    // Fake progress crawl with two deliberate pauses to look like it's struggling
     let settled = false;
     let fakePct = 0;
+    let pausing = false;
+
+    // Pause at ~30% for 600ms, again at ~65% for 900ms
+    const PAUSES = [
+      { at: 30, duration: 600 },
+      { at: 65, duration: 900 },
+    ];
+    let nextPauseIdx = 0;
 
     const tick = setInterval(() => {
-      if (settled) return;
-      fakePct = Math.min(fakePct + Math.random() * 15 + 5, 90);
+      if (settled || pausing) return;
+
+      const next = Math.min(fakePct + Math.random() * 12 + 4, 90);
+
+      // Check if we've crossed a pause threshold
+      if (nextPauseIdx < PAUSES.length && next >= PAUSES[nextPauseIdx].at) {
+        fakePct = PAUSES[nextPauseIdx].at;
+        pausing = true;
+        const { duration } = PAUSES[nextPauseIdx];
+        nextPauseIdx++;
+        setTimeout(() => { pausing = false; }, duration);
+      } else {
+        fakePct = next;
+      }
+
       setTicked(Math.round((fakePct / 100) * allBoxes.length));
     }, 150);
 
