@@ -41,6 +41,26 @@ const LETTER_DEFS: Record<string, { map: number[][]; order: [number, number][] }
 
 const WORD = ["L", "O", "A", "D", "I", "N", "G"];
 
+// Each letter is COLS cells wide with (COLS-1) gaps between cells, plus
+// letterGap between letters. Total width = 7*(COLS*cell + (COLS-1)*gap) + 6*letterGap.
+// We solve for cell size so the whole word fits within the available width.
+function computeCellSize(availableWidth: number) {
+  const letterGap = 8;    // gap between letters (px)
+  const cellGap = 3;      // gap between cells within a letter (px)
+  const numLetters = WORD.length;          // 7
+  const cellsPerLetter = COLS;             // 5
+  // width of one letter = cellsPerLetter*cell + (cellsPerLetter-1)*cellGap
+  // total = numLetters * letterWidth + (numLetters-1) * letterGap
+  // availableWidth >= numLetters*(cellsPerLetter*cell + (cellsPerLetter-1)*cellGap) + (numLetters-1)*letterGap
+  // solve for cell:
+  const cell = Math.floor(
+    (availableWidth - (numLetters - 1) * letterGap - numLetters * (cellsPerLetter - 1) * cellGap) /
+    (numLetters * cellsPerLetter)
+  );
+  // clamp: min 8px so it's still visible, max 18px (the original desktop size)
+  return Math.min(18, Math.max(8, cell));
+}
+
 const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const outerRef = useRef<HTMLDivElement>(null);
@@ -49,25 +69,34 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
 
-    // Build grid, collect all active boxes in order across the whole word
+    // Use 88vw as available width so there's a comfortable margin on both sides
+    const availableWidth = window.innerWidth * 0.88;
+    const cell = computeCellSize(availableWidth);
+    const cellGap = Math.max(2, Math.round(cell * 0.18));   // ~18% of cell, min 2
+    const letterGap = Math.max(4, cell * 0.44);             // ~44% of cell, min 4
+
+    // Build grid
     const allBoxes: HTMLDivElement[] = [];
 
     WORD.forEach((ch) => {
       const def = LETTER_DEFS[ch];
       const letterEl = document.createElement("div");
-      letterEl.style.cssText = `display:grid;grid-template-columns:repeat(${COLS},18px);gap:4px;`;
+      letterEl.style.cssText = `display:grid;grid-template-columns:repeat(${COLS},${cell}px);gap:${cellGap}px;`;
 
       const cellGrid: (HTMLDivElement | null)[][] = Array.from({ length: ROWS }, () =>
         Array(COLS).fill(null)
       );
 
+      const svgSize = Math.round(cell * 0.56);
+      const strokeW = Math.max(1.2, cell * 0.1);
+
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
-          const cell = document.createElement("div");
+          const cellEl = document.createElement("div");
           const active = def.map[r][c] === 1;
           if (active) {
-            cell.style.cssText = [
-              "width:18px;height:18px",
+            cellEl.style.cssText = [
+              `width:${cell}px;height:${cell}px`,
               "border:2px solid #000",
               "border-radius:2px",
               "background:#fff",
@@ -76,12 +105,12 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
               "flex-shrink:0",
               "transition:background 0.08s",
             ].join(";");
-            cell.innerHTML = `<svg width="10" height="10" viewBox="0 0 10 10" fill="none" style="opacity:0"><polyline points="1.5,5 4,7.5 8.5,2" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-            cellGrid[r][c] = cell;
+            cellEl.innerHTML = `<svg width="${svgSize}" height="${svgSize}" viewBox="0 0 10 10" fill="none" style="opacity:0"><polyline points="1.5,5 4,7.5 8.5,2" stroke="#fff" stroke-width="${strokeW}" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+            cellGrid[r][c] = cellEl;
           } else {
-            cell.style.cssText = "width:18px;height:18px;";
+            cellEl.style.cssText = `width:${cell}px;height:${cell}px;`;
           }
-          letterEl.appendChild(cell);
+          letterEl.appendChild(cellEl);
         }
       }
 
@@ -91,6 +120,9 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
         if (box) allBoxes.push(box);
       });
     });
+
+    // Apply letter gap to the wrapper
+    wrapper.style.gap = `${letterGap}px`;
 
     const tickBox = (box: HTMLDivElement) => {
       box.style.background = "#3366cc";
@@ -106,12 +138,10 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
       });
     };
 
-    // Fake progress crawl with two deliberate pauses to look like it's struggling
     let settled = false;
     let fakePct = 0;
     let pausing = false;
 
-    // Pause at ~30% for 600ms, again at ~65% for 900ms
     const PAUSES = [
       { at: 30, duration: 600 },
       { at: 65, duration: 900 },
@@ -123,7 +153,6 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
 
       const next = Math.min(fakePct + Math.random() * 12 + 4, 90);
 
-      // Check if we've crossed a pause threshold
       if (nextPauseIdx < PAUSES.length && next >= PAUSES[nextPauseIdx].at) {
         fakePct = PAUSES[nextPauseIdx].at;
         pausing = true;
@@ -141,7 +170,6 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
       if (settled) return;
       settled = true;
       clearInterval(tick);
-      // Rapid-fire remaining boxes then fade
       const remaining = allBoxes.slice(Math.round((fakePct / 100) * allBoxes.length));
       remaining.forEach((box, i) => setTimeout(() => tickBox(box), i * 18));
       setTimeout(() => {
@@ -178,12 +206,11 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
         transition: "opacity 0.4s ease",
       }}
     >
-      <div style={{ transform: "scale(0.5)", transformOrigin: "center center" }}>
-        <div
-          ref={wrapperRef}
-          style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
-        />
-      </div>
+      {/* No more scale() hack — cells are sized at compute time to fit the viewport */}
+      <div
+        ref={wrapperRef}
+        style={{ display: "flex", alignItems: "flex-start" }}
+      />
     </div>
   );
 };
