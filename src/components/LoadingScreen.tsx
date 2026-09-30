@@ -144,6 +144,7 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
     });
 
     const allBoxes = letterBoxGroups.flat();
+    let tickedCount = 0; // how many boxes have been ticked so far
     let animationDone = false;
     let gifDone = false;
     let pulseInterval: ReturnType<typeof setInterval> | null = null;
@@ -161,7 +162,6 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
 
     const stopPulse = () => {
       if (pulseInterval) { clearInterval(pulseInterval); pulseInterval = null; }
-      // Make sure G ends up ticked
       letterBoxGroups[letterBoxGroups.length - 1].forEach(tickBox);
     };
 
@@ -170,47 +170,41 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
       sched(onLoaded, 400);
     };
 
-    // Rapid-fire any remaining unticked boxes then fade
+    // Rapid-fire any remaining unticked boxes (tracked by index) then fade
     const finishFast = () => {
       clearAll();
       stopPulse();
-      const unticked = allBoxes.filter(b => b.style.background !== "rgb(51, 102, 204)");
-      unticked.forEach((box, i) => sched(() => tickBox(box), i * FAST_MS));
-      sched(fadeOut, unticked.length * FAST_MS + 50);
+      const remaining = allBoxes.slice(tickedCount);
+      remaining.forEach((box, i) => sched(() => tickBox(box), i * FAST_MS));
+      sched(fadeOut, remaining.length * FAST_MS + 50);
     };
 
     // Normal tick: letter by letter
-    const tickLetter = (boxes: HTMLDivElement[], onDone: () => void, ms: number) => {
+    const tickLetter = (boxes: HTMLDivElement[], onDone: () => void) => {
       let i = 0;
       const next = () => {
         if (i >= boxes.length) { onDone(); return; }
         tickBox(boxes[i]);
+        tickedCount++;
         i++;
-        sched(next, ms);
+        sched(next, TICK_MS);
       };
       next();
     };
 
     const tickAll = (letterIndex: number) => {
       if (letterIndex >= letterBoxGroups.length) {
-        // Animation finished
         animationDone = true;
         if (gifDone) {
-          // Gif already loaded — fade immediately
           fadeOut();
         } else {
-          // Gif still loading — pulse G while we wait
           startPulse();
         }
         return;
       }
       tickLetter(letterBoxGroups[letterIndex], () => {
-        if (letterIndex + 1 < letterBoxGroups.length) {
-          sched(() => tickAll(letterIndex + 1), 80);
-        } else {
-          tickAll(letterBoxGroups.length); // triggers done branch above
-        }
-      }, TICK_MS);
+        sched(() => tickAll(letterIndex + 1), 80);
+      });
     };
 
     tickAll(0);
