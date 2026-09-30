@@ -12,7 +12,7 @@ const CONFIG = {
   videoSrc: "/dance/dance-vid.mp4",
 
   // How many px of wheel/touch input it takes to scrub through all the
-  // frames once the box has scrolled up to the pin line.
+  // frames once the cursor is over the box.
   scrubDistancePx: 900,
 
   // Hidden Spotify track played (audio only) once the person hits UNMUTE.
@@ -52,7 +52,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     let inVideoPhase = false;
     let cachedCw = 0;
     let cachedCh = 0;
-    let scrubProgress = 0; // 0 to 1, driven directly by wheel/touch input once pinned
+    let scrubProgress = 0; // 0 to 1, driven by wheel/touch input while cursor is over box
     let assetsReady = false;
 
     // True right after the video starts, until forward-scroll input has
@@ -60,14 +60,6 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     // gesture so the page can't jump the instant the video begins.
     let awaitingBufferScroll = false;
     let bufferGestureTimer: ReturnType<typeof setTimeout> | null = null;
-
-    // While locked (mid-scrub or in the video's up-reverse/buffer window),
-    // every iframe on the page loses pointer-events via this body class,
-    // so a cursor sitting over e.g. the sidebar's Spotify embed can't
-    // swallow the wheel event before it ever reaches our listeners.
-    function updateBodyLockClass() {
-      document.body.classList.toggle("dance-lock-active", scrubProgress > 0 || inVideoPhase);
-    }
 
     const state = { frameIndex: 0 };
 
@@ -174,9 +166,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       muteOverlay.style.display = "none";
     }
 
-    // Spotify IFrame Embed API — gives us a real controller.play() call
-    // instead of relying on the "&autoplay=1" URL param, which browsers
-    // don't reliably honor for a hidden cross-origin iframe.
+    // Spotify IFrame Embed API
     let spotifyController: { play: () => void; pause: () => void; addListener?: (event: string, cb: (e: any) => void) => void } | null = null;
     let spotifyHasStartedPlaying = false;
     function onSpotifyPlaybackUpdate(e: any) {
@@ -185,9 +175,6 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
         spotifyHasStartedPlaying = true;
         return;
       }
-      // Spotify's embed pauses itself and resets position to 0 once a
-      // single track finishes with nothing queued after it — treat that
-      // as "ended" and let the person replay it via UNMUTE again.
       if (spotifyHasStartedPlaying && isPaused && position === 0) {
         spotifyHasStartedPlaying = false;
         if (inVideoPhase) {
@@ -209,7 +196,6 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
         );
       };
       if (w.Spotify?.Player || w.__spotifyIframeAPI) {
-        // API already loaded by something else on the page — reuse it.
         if (w.__spotifyIframeAPI) createController(w.__spotifyIframeAPI);
         return;
       }
@@ -268,34 +254,15 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       video.muted = true;
       hideMuteOverlay();
       spotifyController?.pause();
-      // Treat every fresh entry into the video as a clean state — re-prompt
-      // for UNMUTE next time rather than silently staying "unmuted" from a
-      // previous pass.
       userUnmuted = false;
     }
 
-    // True once the box has scrolled up far enough that locking now would
-    // land it centered in the current viewport — the cue to start
-    // intercepting scroll input for the frame scrub instead of letting
-    // the page keep scrolling. Computed live off window.innerHeight
-    // (rather than a fixed px constant) so it centers correctly whatever
-    // the viewport height happens to be, including on resize.
-    function reachedPinLine() {
-      const rect = box.getBoundingClientRect();
-      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
-      return rect.top <= centeredTop;
-    }
-
-    // reachedPinLine() only gets checked once per wheel/touch tick, using
-    // whatever position the previous (un-intercepted) tick already
-    // committed — so the box can land a few px past dead-center before
-    // the lock engages, depending on how big that last tick's delta was.
-    // Called once, right as the lock kicks in, this snaps the page back
-    // so the box is always exactly centered when it actually locks.
+    // Snap the page so the box is vertically centered in the viewport
+    // right as the scrub begins, so it doesn't feel like it jumps.
     function snapToPinLine() {
       const rect = box.getBoundingClientRect();
       const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
-      const overshoot = centeredTop - rect.top; // <= 0 once past the pin line
+      const overshoot = centeredTop - rect.top;
       if (overshoot < 0) {
         window.scrollBy({ top: overshoot, left: 0, behavior: "auto" });
       }
@@ -304,7 +271,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     function advanceScrub(deltaPx: number) {
       if (inVideoPhase) {
         if (deltaPx < 0) exitVideoPhase();
-        else return; // scrolling down during video: no lock, let the page scroll
+        else return;
       }
       scrubProgress = Math.max(0, Math.min(1, scrubProgress + deltaPx / CONFIG.scrubDistancePx));
       state.frameIndex = scrubProgress * (CONFIG.frameCount - 1);
@@ -312,12 +279,9 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       if (scrubProgress >= 1 && deltaPx > 0) {
         enterVideoPhase();
       }
-      updateBodyLockClass();
     }
 
-    // Inertia: once the person stops actively scrolling/swiping, keep
-    // scrubbing for a bit at a decaying "velocity" instead of stopping
-    // dead, the way normal page-scroll momentum feels.
+    // Inertia
     let velocity = 0;
     let momentumFrame: number | null = null;
     let momentumIdleTimer: ReturnType<typeof setTimeout> | null = null;
@@ -337,7 +301,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     }
 
     function runMomentum() {
-      if (momentumFrame !== null) return; // already coasting
+      if (momentumFrame !== null) return;
       function step() {
         if (inVideoPhase || Math.abs(velocity) < MOMENTUM_MIN_VELOCITY) {
           momentumFrame = null;
@@ -358,8 +322,6 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       momentumFrame = requestAnimationFrame(step);
     }
 
-    // Called after every real wheel/touch input: records velocity and
-    // (re)schedules momentum to kick in once input goes quiet.
     function registerInput(deltaPx: number, kickOffMomentumNow: boolean) {
       velocity = deltaPx;
       if (momentumIdleTimer !== null) clearTimeout(momentumIdleTimer);
@@ -371,27 +333,6 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       }
     }
 
-    // Only intercept scroll input once assets are loaded, and either:
-    //  - the frames aren't finished yet and the box has scrolled up to
-    //    the pin line (or we're already mid-scrub), or
-    //  - we're in the video phase and the person is scrolling UP, which
-    //    should reverse back into the frames instead of scrolling the page.
-    function shouldIntercept(deltaPositive: boolean) {
-      if (!assetsReady) return false;
-      if (inVideoPhase) {
-        if (!deltaPositive) return true; // scrolling up always reverses back into the frames immediately
-        return awaitingBufferScroll; // forward scroll: keep swallowing until the buffered gesture goes quiet
-      }
-      if (scrubProgress <= 0 && !deltaPositive) return false; // let them scroll back up, away from the pin line
-      if (!reachedPinLine() && scrubProgress <= 0) return false;
-      return true;
-    }
-
-    // Called for every forward-scroll event swallowed by the buffer.
-    // Keeps re-arming the quiet-gap timer, so a whole burst of wheel/
-    // touch events from one physical gesture gets absorbed together —
-    // only once input actually stops for bufferGestureGapMs does the
-    // buffer clear and let the next gesture through.
     function noteBufferedInput() {
       if (bufferGestureTimer !== null) clearTimeout(bufferGestureTimer);
       bufferGestureTimer = setTimeout(() => {
@@ -400,18 +341,37 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       }, CONFIG.bufferGestureGapMs);
     }
 
+    // -----------------------------------------------------------------
+    // All listeners are now on `box` instead of `window`, so they only
+    // fire when the cursor/touch is physically over the dance container.
+    // No global scroll hijacking — scrolling anywhere else on the page
+    // works completely normally.
+    // -----------------------------------------------------------------
+
     function onWheel(e: WheelEvent) {
-      const deltaPositive = e.deltaY > 0;
-      const wasLocked = scrubProgress > 0 || inVideoPhase;
-      if (!shouldIntercept(deltaPositive)) return;
-      e.preventDefault();
-      if (!wasLocked && !inVideoPhase && deltaPositive) {
-        snapToPinLine();
-      }
-      if (inVideoPhase && deltaPositive) {
-        noteBufferedInput();
+      if (!assetsReady) return;
+
+      // Scrolling up while not mid-scrub: let the page scroll normally
+      if (scrubProgress <= 0 && !inVideoPhase && e.deltaY < 0) return;
+
+      // In video phase: up reverses to frames, forward gets buffered
+      if (inVideoPhase) {
+        if (e.deltaY < 0) {
+          e.preventDefault();
+          exitVideoPhase();
+        } else {
+          e.preventDefault();
+          noteBufferedInput();
+        }
         return;
       }
+
+      // Starting a fresh scrub: snap to center first
+      if (scrubProgress <= 0 && e.deltaY > 0) {
+        snapToPinLine();
+      }
+
+      e.preventDefault();
       cancelMomentum();
       advanceScrub(e.deltaY);
       registerInput(e.deltaY, false);
@@ -423,33 +383,40 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       cancelMomentum();
     }
     function onTouchMove(e: TouchEvent) {
+      if (!assetsReady) return;
       const currentY = e.touches[0].clientY;
-      const dy = touchStartY - currentY; // positive = finger moving up = scrolling down
-      const deltaPositive = dy > 0;
-      const wasLocked = scrubProgress > 0 || inVideoPhase;
-      if (!shouldIntercept(deltaPositive)) return;
-      e.preventDefault();
-      if (!wasLocked && !inVideoPhase && deltaPositive) {
-        snapToPinLine();
-      }
-      if (inVideoPhase && deltaPositive) {
-        noteBufferedInput();
+      const dy = touchStartY - currentY;
+
+      if (scrubProgress <= 0 && !inVideoPhase && dy < 0) return;
+
+      if (inVideoPhase) {
+        if (dy < 0) {
+          e.preventDefault();
+          exitVideoPhase();
+        } else {
+          e.preventDefault();
+          noteBufferedInput();
+        }
         touchStartY = currentY;
         return;
       }
+
+      if (scrubProgress <= 0 && dy > 0) snapToPinLine();
+
+      e.preventDefault();
       advanceScrub(dy);
       registerInput(dy, false);
       touchStartY = currentY;
     }
     function onTouchEnd() {
-      // Finger lifted — coast immediately rather than waiting out the idle timer.
       registerInput(velocity, true);
     }
 
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    // Attach to the box element, not window
+    box.addEventListener("wheel", onWheel, { passive: false });
+    box.addEventListener("touchstart", onTouchStart, { passive: true });
+    box.addEventListener("touchmove", onTouchMove, { passive: false });
+    box.addEventListener("touchend", onTouchEnd, { passive: true });
 
     let resizeDebounce: ReturnType<typeof setTimeout> | null = null;
     const onResize = () => {
@@ -468,24 +435,18 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
     });
 
     return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
+      box.removeEventListener("wheel", onWheel);
+      box.removeEventListener("touchstart", onTouchStart);
+      box.removeEventListener("touchmove", onTouchMove);
+      box.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("resize", onResize);
       cancelMomentum();
       if (bufferGestureTimer !== null) clearTimeout(bufferGestureTimer);
-      document.body.classList.remove("dance-lock-active");
     };
   }, []);
 
   return (
     <>
-    {/* While dance-lock-active is set on <body>, every iframe on the page
-        (chiefly the sidebar's Spotify embed) stops receiving pointer
-        events, so hovering it can't swallow a wheel/touch event before
-        it ever reaches this component's window-level listeners. */}
-    <style>{`body.dance-lock-active iframe { pointer-events: none !important; }`}</style>
     <div
       style={{
         position: "relative",
@@ -501,15 +462,13 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
         className="rounded-lg"
         style={{
           position: "relative",
-          // Capped at 225x400 (still exact 9:16) instead of 270x480 —
-          // matches NotableProjectsPixelation's cap, and sits closer to
-          // the height of the caption text beside it. resizeCanvas()
-          // reads this box's actual rect at runtime, so the video/canvas
-          // scale to fit automatically — nothing else needs to change.
           width: 225,
           height: 400,
           overflow: "hidden",
           background: "transparent",
+          // Cursor hint: pointer while there's still scrubbing to do,
+          // so the user knows this box is interactive.
+          cursor: "ns-resize",
         }}
       >
         <div
@@ -527,11 +486,7 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
           />
         </div>
 
-        {/* Hidden Spotify embed — audio only. The IFrame API injects its own
-            iframe into this container with a real internal size (needed
-            for it to actually init/play), clipped invisible by the
-            zero-size overflow-hidden wrapper. Started on UNMUTE via a
-            real click, using the API's controller.play(). */}
+        {/* Hidden Spotify embed — audio only */}
         <div style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}>
           <div ref={spotifyContainerRef} style={{ width: 300, height: 80 }} />
         </div>
