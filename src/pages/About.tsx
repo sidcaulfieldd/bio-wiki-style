@@ -214,15 +214,7 @@ function preventOverlap(a: PhysicsGif, b: PhysicsGif, aIsDragged: boolean, bIsDr
 }
 
 const About = () => {
-  const [isIos, setIsIos] = useState(false);
-  const [showPrompt, setShowPrompt] = useState(false);
   const [maskReady, setMaskReady] = useState(false);
-
-  useEffect(() => {
-    const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-    const standalone = (window.navigator as any).standalone === true;
-    setIsIos(ios && !standalone);
-  }, []);
 
   useEffect(() => {
     loadMask(() => setMaskReady(true));
@@ -450,16 +442,6 @@ const About = () => {
         ADD
       </button>
 
-      {isIos && (
-        <button
-          onClick={() => setShowPrompt(true)}
-          style={sfPro}
-          className="fixed bottom-12 left-4 z-[9999] text-white text-sm font-bold uppercase tracking-wider hover:opacity-80 transition-opacity"
-        >
-          ADD TO HOME SCREEN
-        </button>
-      )}
-
       <Link
         to="/"
         style={sfPro}
@@ -467,31 +449,6 @@ const About = () => {
       >
         BACK
       </Link>
-
-      {showPrompt && (
-        <div
-          onClick={() => setShowPrompt(false)}
-          className="fixed inset-0 z-[10000] bg-black/40 flex items-end justify-center p-4"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={sfPro}
-            className="bg-white text-black rounded-2xl p-5 max-w-sm w-full text-center shadow-2xl"
-          >
-            <p className="m-0 mb-3 text-sm">
-              Install this app: tap the <strong>Share</strong> icon{" "}
-              <span className="text-xl align-middle">⎋</span> and then{" "}
-              <strong>'Add to Home Screen'</strong>.
-            </p>
-            <button
-              onClick={() => setShowPrompt(false)}
-              className="mt-2 text-[#007AFF] font-bold text-sm uppercase tracking-wider"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
