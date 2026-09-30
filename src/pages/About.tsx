@@ -10,8 +10,6 @@ const sfPro = {
 type Pos = { x: number; y: number };
 
 // ───────────────────────── Title drag (unchanged) ─────────────────────────
-// The heading is plain drag-only — no gravity, no collision. Kept exactly
-// as it was.
 const useDraggable = (initial: Pos) => {
   const [pos, setPos] = useState<Pos>(initial);
   const ref = useRef<HTMLDivElement>(null);
@@ -45,31 +43,20 @@ const useDraggable = (initial: Pos) => {
   return { ref, pos, setPos, onPointerDown };
 };
 
-// Skewed random: bias toward extremes rather than centre (used when placing
-// newly-added gifs).
 const skewedRandom = () => {
   const r = Math.random();
   return Math.random() < 0.5 ? Math.pow(r, 0.3) : 1 - Math.pow(r, 0.3);
 };
 
 // ───────────────────── Shared transparency-aware mask ─────────────────────
-// Every gif on the page is the same source image, so we only need to build
-// this once: a coarse opacity grid sampled from the actual gif's alpha
-// channel. Collision checks below use this instead of the rectangular
-// bounding box, so two gifs only "touch" where their visible silhouettes
-// actually overlap — the transparent padding around the figure doesn't
-// count.
 const MASK_COLS = 28;
 let maskGrid: Uint8Array | null = null;
 let maskRows = 0;
-let maskAspect = 1; // naturalHeight / naturalWidth, used to size every gif
+let maskAspect = 1;
 let maskLoadStarted = false;
 
 function loadMask(onReady: () => void) {
-  if (maskGrid) {
-    onReady();
-    return;
-  }
+  if (maskGrid) { onReady(); return; }
   if (maskLoadStarted) return;
   maskLoadStarted = true;
 
@@ -77,31 +64,27 @@ function loadMask(onReady: () => void) {
   img.onload = () => {
     maskAspect = img.naturalHeight / img.naturalWidth;
     maskRows = Math.max(1, Math.round(MASK_COLS * maskAspect));
-
     const canvas = document.createElement("canvas");
     canvas.width = MASK_COLS;
     canvas.height = maskRows;
     const ctx = canvas.getContext("2d");
-    if (!ctx) {
-      onReady();
-      return;
-    }
+    if (!ctx) { onReady(); return; }
     ctx.drawImage(img, 0, 0, MASK_COLS, maskRows);
     const { data } = ctx.getImageData(0, 0, MASK_COLS, maskRows);
     const grid = new Uint8Array(MASK_COLS * maskRows);
     for (let i = 0; i < MASK_COLS * maskRows; i++) {
-      grid[i] = data[i * 4 + 3] > 40 ? 1 : 0; // alpha threshold
+      grid[i] = data[i * 4 + 3] > 40 ? 1 : 0;
     }
     maskGrid = grid;
     onReady();
   };
-  img.onerror = () => onReady(); // fall back to plain rectangle collision
+  img.onerror = () => onReady();
   img.src = profilePic;
 }
 
 function isOpaqueAtUV(u: number, v: number): boolean {
   if (u < 0 || u > 1 || v < 0 || v > 1) return false;
-  if (!maskGrid) return true; // mask not ready yet — treat as a solid rectangle
+  if (!maskGrid) return true;
   const col = Math.min(MASK_COLS - 1, Math.floor(u * MASK_COLS));
   const row = Math.min(maskRows - 1, Math.floor(v * maskRows));
   return maskGrid[row * MASK_COLS + col] === 1;
@@ -116,26 +99,18 @@ type PhysicsGif = {
   vy: number;
   width: number;
   height: number;
-  // Its own personal "rest" point — where it spawned, or the last place it
-  // was dropped after a drag. Gravity pulls it back here, not to the
-  // screen's centre.
-  homeX: number;
-  homeY: number;
+  // No homeX/homeY — gifs travel freely in whatever direction they were hit
 };
 
-// Tunable feel — all in px/frame terms at ~60fps.
-const GRAVITY = 0.0012; // pull toward its own home point, per frame (slow, gentle drift back)
-const DAMPING = 0.9; // velocity kept per frame (friction/settling)
-const PUSH_STRENGTH = 0.5; // how much of the dragger's speed transfers as a shove
-const MIN_PUSH = 2; // guaranteed minimum nudge even on a slow bump
-const SEPARATION = 3; // px nudged out of overlap per frame while touching
-const COLLISION_SAMPLES = 6; // NxN sample grid inside any overlap box
-const MAX_SPEED = 40; // velocity clamp so a hard hit can't blow up
+// Physics constants
+const FRICTION = 0.97;        // velocity kept per frame — higher = slides further
+const WALL_BOUNCE = 0.65;     // energy retained on wall hit — 0=dead stop, 1=perfect bounce
+const PUSH_STRENGTH = 0.55;   // how much of the drag speed transfers on collision
+const MIN_PUSH = 3;           // minimum nudge even on a slow graze
+const SEPARATION = 3;         // px nudged out of overlap per frame
+const COLLISION_SAMPLES = 6;  // NxN sample grid inside any overlap box
+const MAX_SPEED = 40;         // velocity clamp
 
-// Shared mask-aware contact test: returns the unit direction to push `b`
-// away from `a` if their visible (opaque) silhouettes actually touch,
-// or null if they don't overlap at all, or only overlap in transparent
-// padding.
 function getContactDirection(a: PhysicsGif, b: PhysicsGif): { dx: number; dy: number } | null {
   const overlapLeft = Math.max(a.x, b.x);
   const overlapTop = Math.max(a.y, b.y);
@@ -148,11 +123,8 @@ function getContactDirection(a: PhysicsGif, b: PhysicsGif): { dx: number; dy: nu
     for (let sy = 0; sy < COLLISION_SAMPLES; sy++) {
       const px = overlapLeft + ((sx + 0.5) / COLLISION_SAMPLES) * (overlapRight - overlapLeft);
       const py = overlapTop + ((sy + 0.5) / COLLISION_SAMPLES) * (overlapBottom - overlapTop);
-      const au = (px - a.x) / a.width;
-      const av = (py - a.y) / a.height;
-      const bu = (px - b.x) / b.width;
-      const bv = (py - b.y) / b.height;
-      if (isOpaqueAtUV(au, av) && isOpaqueAtUV(bu, bv)) {
+      if (isOpaqueAtUV((px - a.x) / a.width, (py - a.y) / a.height) &&
+          isOpaqueAtUV((px - b.x) / b.width, (py - b.y) / b.height)) {
         touched = true;
         break;
       }
@@ -160,45 +132,28 @@ function getContactDirection(a: PhysicsGif, b: PhysicsGif): { dx: number; dy: nu
   }
   if (!touched) return null;
 
-  const acx = a.x + a.width / 2;
-  const acy = a.y + a.height / 2;
-  const bcx = b.x + b.width / 2;
-  const bcy = b.y + b.height / 2;
-  let dx = bcx - acx;
-  let dy = bcy - acy;
+  const dx = (b.x + b.width / 2) - (a.x + a.width / 2);
+  const dy = (b.y + b.height / 2) - (a.y + a.height / 2);
   const dist = Math.hypot(dx, dy) || 1;
   return { dx: dx / dist, dy: dy / dist };
 }
 
-// The "knock": only the actively-dragged gif shoves others with real
-// force, scaled by how fast it's moving.
 function resolveCollision(dragged: PhysicsGif, other: PhysicsGif) {
   const contact = getContactDirection(dragged, other);
   if (!contact) return;
   const { dx, dy } = contact;
-
   const dragSpeed = Math.hypot(dragged.vx, dragged.vy);
   const kick = MIN_PUSH + dragSpeed * PUSH_STRENGTH;
   other.vx += dx * kick;
   other.vy += dy * kick;
-
-  // Nudge it out of the overlap directly too, so a fast drag doesn't
-  // visually pass through it before the velocity kick catches up.
   other.x += dx * SEPARATION;
   other.y += dy * SEPARATION;
 }
 
-// Runs every frame, for every pair, regardless of drag state. This is
-// what makes a gif springing back toward its home settle at the nearest
-// free spot instead of drifting straight through whatever (including the
-// actively-dragged gif) happens to be sitting in its way. The dragged
-// gif itself never gets moved by this — it stays pinned to the pointer —
-// only the other one gets nudged clear.
 function preventOverlap(a: PhysicsGif, b: PhysicsGif, aIsDragged: boolean, bIsDragged: boolean) {
   const contact = getContactDirection(a, b);
   if (!contact) return;
   const { dx, dy } = contact;
-
   if (aIsDragged) {
     b.x += dx * SEPARATION;
     b.y += dy * SEPARATION;
@@ -229,9 +184,6 @@ const About = () => {
   const dragOffsetRef = useRef<Pos>({ x: 0, y: 0 });
   const lastPointerRef = useRef<Pos>({ x: 0, y: 0 });
 
-  // Once the mask (and with it, the real aspect ratio) is ready, place the
-  // title and spawn the hero gif centred on screen. The hero's spawn spot
-  // becomes its home too.
   useEffect(() => {
     if (!maskReady || titleInitialized) return;
     const titleEl = title.ref.current;
@@ -252,8 +204,6 @@ const About = () => {
         vy: 0,
         width: heroWidth,
         height: heroHeight,
-        homeX: heroX,
-        homeY: heroY,
       },
     ]);
     nextId.current = 1;
@@ -261,20 +211,11 @@ const About = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maskReady, titleInitialized]);
 
-  // Pointer tracking for whichever gif is currently grabbed. On release,
-  // the dragged gif's home updates to wherever it was just dropped — so
-  // gravity from then on pulls it back there, not to its original spawn.
   useEffect(() => {
     const onPointerMove = (e: PointerEvent) => {
       lastPointerRef.current = { x: e.clientX, y: e.clientY };
     };
     const onPointerUp = () => {
-      const droppedId = draggingIdRef.current;
-      if (droppedId !== null) {
-        setGifs((prev) =>
-          prev.map((g) => (g.id === droppedId ? { ...g, homeX: g.x, homeY: g.y } : g))
-        );
-      }
       draggingIdRef.current = null;
     };
     window.addEventListener("pointermove", onPointerMove);
@@ -285,16 +226,16 @@ const About = () => {
     };
   }, []);
 
-  const handleGifPointerDown = useCallback((id: number) => (e: React.PointerEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    draggingIdRef.current = id;
-    dragOffsetRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    lastPointerRef.current = { x: e.clientX, y: e.clientY };
-  }, []);
+  const handleGifPointerDown = useCallback(
+    (id: number) => (e: React.PointerEvent<HTMLDivElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      draggingIdRef.current = id;
+      dragOffsetRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      lastPointerRef.current = { x: e.clientX, y: e.clientY };
+    },
+    []
+  );
 
-  // Main physics loop: gravity (toward each gif's own home point) + damping
-  // for everything, direct pointer control for whichever gif is grabbed,
-  // and collision only from the grabbed gif outward onto the rest.
   useEffect(() => {
     let rafId: number;
 
@@ -305,6 +246,8 @@ const About = () => {
           return prev;
         }
 
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
         const next = prev.map((g) => ({ ...g }));
         const draggingId = draggingIdRef.current;
 
@@ -314,6 +257,7 @@ const About = () => {
           if (dragged) {
             const targetX = lastPointerRef.current.x - dragOffsetRef.current.x;
             const targetY = lastPointerRef.current.y - dragOffsetRef.current.y;
+            // Velocity = how fast the pointer moved — this is what transfers on collision
             dragged.vx = targetX - dragged.x;
             dragged.vy = targetY - dragged.y;
             dragged.x = targetX;
@@ -324,24 +268,45 @@ const About = () => {
         for (const g of next) {
           if (g === dragged) continue;
 
-          // Spring toward its own home position, not the screen centre.
-          g.vx += (g.homeX - g.x) * GRAVITY;
-          g.vy += (g.homeY - g.y) * GRAVITY;
+          // No gravity — just friction to bleed off speed over time
+          g.vx *= FRICTION;
+          g.vy *= FRICTION;
 
-          g.vx *= DAMPING;
-          g.vy *= DAMPING;
-
+          // Clamp speed
           const speed = Math.hypot(g.vx, g.vy);
           if (speed > MAX_SPEED) {
-            const scale = MAX_SPEED / speed;
-            g.vx *= scale;
-            g.vy *= scale;
+            g.vx *= MAX_SPEED / speed;
+            g.vy *= MAX_SPEED / speed;
+          }
+
+          // Stop dead if barely moving (prevents endless micro-drift)
+          if (speed < 0.05) {
+            g.vx = 0;
+            g.vy = 0;
           }
 
           g.x += g.vx;
           g.y += g.vy;
+
+          // Wall bouncing — reflect velocity in the hit axis, lose some energy
+          if (g.x < 0) {
+            g.x = 0;
+            g.vx *= -WALL_BOUNCE;
+          } else if (g.x + g.width > vw) {
+            g.x = vw - g.width;
+            g.vx *= -WALL_BOUNCE;
+          }
+
+          if (g.y < 0) {
+            g.y = 0;
+            g.vy *= -WALL_BOUNCE;
+          } else if (g.y + g.height > vh) {
+            g.y = vh - g.height;
+            g.vy *= -WALL_BOUNCE;
+          }
         }
 
+        // Collision: dragged gif knocks others in its travel direction
         if (dragged) {
           for (const other of next) {
             if (other === dragged) continue;
@@ -349,15 +314,10 @@ const About = () => {
           }
         }
 
-        // Always-on overlap prevention, for every pair, whether or not
-        // anything is currently being dragged — this is what stops a
-        // returning gif from passing straight through an obstacle instead
-        // of settling against it.
+        // Always-on overlap prevention for every pair
         for (let i = 0; i < next.length; i++) {
           for (let j = i + 1; j < next.length; j++) {
-            const a = next[i];
-            const b = next[j];
-            preventOverlap(a, b, a === dragged, b === dragged);
+            preventOverlap(next[i], next[j], next[i] === dragged, next[j] === dragged);
           }
         }
 
@@ -378,17 +338,14 @@ const About = () => {
     const originalWidth = hero ? hero.width : Math.min(vw, vh);
     const maxW = originalWidth * 0.75;
     const minW = 30;
-
     const width = Math.round(minW + Math.random() * (maxW - minW));
     const height = width * maskAspect;
-    // Random spawn point — this becomes its home, so gravity always
-    // settles it back here (until it's dragged somewhere new).
     const x = Math.round(skewedRandom() * (vw - width));
     const y = Math.round(skewedRandom() * (vh - height));
 
     setGifs((prev) => [
       ...prev,
-      { id: nextId.current++, x, y, vx: 0, vy: 0, width, height, homeX: x, homeY: y },
+      { id: nextId.current++, x, y, vx: 0, vy: 0, width, height },
     ]);
   };
 
