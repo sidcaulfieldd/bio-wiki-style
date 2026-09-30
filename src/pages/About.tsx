@@ -102,14 +102,15 @@ type PhysicsGif = {
   // No homeX/homeY — gifs travel freely in whatever direction they were hit
 };
 
-// Physics constants
-const FRICTION = 0.97;        // velocity kept per frame — higher = slides further
-const WALL_BOUNCE = 0.65;     // energy retained on wall hit — 0=dead stop, 1=perfect bounce
-const PUSH_STRENGTH = 0.55;   // how much of the drag speed transfers on collision
-const MIN_PUSH = 3;           // minimum nudge even on a slow graze
-const SEPARATION = 3;         // px nudged out of overlap per frame
+// Physics constants — tuned for golden syrup feel
+const FRICTION = 0.88;        // aggressive drag, speed bleeds fast like moving through thick liquid
+const WALL_BOUNCE = 0.18;     // walls are basically dead — hit and slump, barely any rebound
+const DRAG_LERP = 0.18;       // how fast the gif catches up to the pointer (0=frozen, 1=instant)
+const PUSH_STRENGTH = 0.35;   // collisions transfer less force — heavy, not snappy
+const MIN_PUSH = 1.5;         // smaller minimum nudge for sluggish collision feel
+const SEPARATION = 2;         // px nudged out of overlap per frame
 const COLLISION_SAMPLES = 6;  // NxN sample grid inside any overlap box
-const MAX_SPEED = 40;         // velocity clamp
+const MAX_SPEED = 18;         // lower top speed — nothing moves fast in syrup
 
 function getContactDirection(a: PhysicsGif, b: PhysicsGif): { dx: number; dy: number } | null {
   const overlapLeft = Math.max(a.x, b.x);
@@ -257,11 +258,13 @@ const About = () => {
           if (dragged) {
             const targetX = lastPointerRef.current.x - dragOffsetRef.current.x;
             const targetY = lastPointerRef.current.y - dragOffsetRef.current.y;
-            // Velocity = how fast the pointer moved — this is what transfers on collision
-            dragged.vx = targetX - dragged.x;
-            dragged.vy = targetY - dragged.y;
-            dragged.x = targetX;
-            dragged.y = targetY;
+            // Lerp toward pointer instead of snapping — gif lags behind like honey
+            const newX = dragged.x + (targetX - dragged.x) * DRAG_LERP;
+            const newY = dragged.y + (targetY - dragged.y) * DRAG_LERP;
+            dragged.vx = newX - dragged.x;
+            dragged.vy = newY - dragged.y;
+            dragged.x = newX;
+            dragged.y = newY;
           }
         }
 
@@ -279,8 +282,8 @@ const About = () => {
             g.vy *= MAX_SPEED / speed;
           }
 
-          // Stop dead if barely moving (prevents endless micro-drift)
-          if (speed < 0.05) {
+          // Stop dead if barely moving — higher threshold since syrup decelerates slowly
+          if (speed < 0.15) {
             g.vx = 0;
             g.vy = 0;
           }
