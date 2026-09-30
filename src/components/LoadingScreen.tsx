@@ -178,10 +178,12 @@ const LoadingScreen = ({ onLoaded }: LoadingScreenProps) => {
         transition: "opacity 0.4s ease",
       }}
     >
-      <div
-        ref={wrapperRef}
-        style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
-      />
+      <div style={{ transform: "scale(0.5)", transformOrigin: "center center" }}>
+        <div
+          ref={wrapperRef}
+          style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
+        />
+      </div>
     </div>
   );
 };
