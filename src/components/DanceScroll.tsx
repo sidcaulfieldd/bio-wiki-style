@@ -257,17 +257,6 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
       userUnmuted = false;
     }
 
-    // Snap the page so the box is vertically centered in the viewport
-    // right as the scrub begins, so it doesn't feel like it jumps.
-    function snapToPinLine() {
-      const rect = box.getBoundingClientRect();
-      const centeredTop = Math.max(0, (window.innerHeight - rect.height) / 2);
-      const overshoot = centeredTop - rect.top;
-      if (overshoot < 0) {
-        window.scrollBy({ top: overshoot, left: 0, behavior: "auto" });
-      }
-    }
-
     function advanceScrub(deltaPx: number) {
       if (inVideoPhase) {
         if (deltaPx < 0) exitVideoPhase();
@@ -366,11 +355,6 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
         return;
       }
 
-      // Starting a fresh scrub: snap to center first
-      if (scrubProgress <= 0 && e.deltaY > 0) {
-        snapToPinLine();
-      }
-
       e.preventDefault();
       cancelMomentum();
       advanceScrub(e.deltaY);
@@ -400,8 +384,6 @@ export default function DanceScroll({ cardRef }: { cardRef: RefObject<HTMLElemen
         touchStartY = currentY;
         return;
       }
-
-      if (scrubProgress <= 0 && dy > 0) snapToPinLine();
 
       e.preventDefault();
       advanceScrub(dy);
