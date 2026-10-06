@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Buttermilk — Treat Yourself Better</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍫</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>/* using system fonts */</style>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 <style>
   :root {
     --bg: #e2e2e2;
@@ -19,7 +19,7 @@
   *, *::before, *::after { box-sizing: inherit; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
     background: var(--bg);
     color: var(--black);
     overflow-x: hidden;
@@ -657,9 +657,7 @@ function initMouseTrail() {
       y: localY - imgH / 2 + jitterY,
       rotation: rot,
       opacity: 1,
-      scale: scaleVar,git add public/buttermilk-landing.html
-git commit -m "add buttermilk landing page"
-git pull --rebase && git push
+      scale: scaleVar,
       transformOrigin: '50% 50%'
     });
   }
