@@ -39,6 +39,9 @@ const Index = () => {
         <div
           ref={cardRef}
           data-cursor-trail-card
+          // Whole card is a trail zone, so the colourful cursor trail shows
+          // over the white card too (not just the grey strips either side).
+          data-cursor-trail-zone="holding-card"
           className="w-full min-h-screen bg-white border-x border-[#a7d7f9] p-6 relative flex items-center justify-center"
         >
           {/* 15px = half the previous text-3xl (30px). */}
