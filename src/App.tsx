@@ -2,16 +2,18 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import About from "./pages/About";
-import EPortfolio from "./pages/EPortfolio";
-import BlackbirdApplication from "./pages/blackbirdapplication";
-import BlackbirdApplicationBecca from "./pages/blackbird-application";
-import Scratch from "./pages/Scratch";
-import NotFound from "./pages/NotFound";
 import CustomCursor from "./components/CustomCursor";
 import CursorTrail from "./components/CursorTrail";
+
+// Site is temporarily in holding mode: only the placeholder (/) and
+// LET'S GET VISUAL are live. Every other address — including
+// /E-PORTFOLIO, /blackbirdapplication, /blackbird-application and
+// /scratch — redirects to the placeholder. The page files themselves are
+// untouched in src/pages; to bring them back, restore the imports and
+// <Route> lines from git history.
 const queryClient = new QueryClient();
 const AppContent = () => {
   return (
@@ -24,11 +26,7 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/LETSGETVISUAL" element={<About />} />
-          <Route path="/E-PORTFOLIO" element={<EPortfolio />} />
-          <Route path="/blackbirdapplication" element={<BlackbirdApplication />} />
-          <Route path="/blackbird-application" element={<BlackbirdApplicationBecca />} />
-          <Route path="/scratch" element={<Scratch />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </>
