@@ -254,13 +254,12 @@ const Index = () => {
                   <div className="font-bold mb-2 relative z-10">Contents</div>
                   <ol className="list-decimal ml-6 text-sm text-[#0645ad] relative z-10">
                     <li><a href="#notable-projects" className="hover:underline">Notable Work</a></li>
-                    <li><a href="#skills" className="hover:underline">Skills and Areas of Expertise</a></li>
                     <li><a href="#early-life" className="hover:underline">Early Life and Education</a></li>
                   </ol>
                 </div>
 
                 <p className="leading-relaxed relative z-10">
-                  <strong>Sid Caulfield</strong> is an Australian copywriter/creative based in <a href="https://en.wikipedia.org/wiki/Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, tending to word and picture. His output spans social, earned, paid, podcast and the odd bit of interactive digital design — this page included. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. He is currently a freelance journalist and the Content Syndication and Social Media Manager at <a href="https://flowmountainbike.com/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>, <a href="https://en.wikipedia.org/wiki/Australia" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Australia</a> and <a href="https://en.wikipedia.org/wiki/New_Zealand" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">New Zealand</a>'s largest digital mountain bike publication.
+                  <strong>Sid Caulfield</strong> is an Australian copywriter/creative based in <a href="https://en.wikipedia.org/wiki/Melbourne" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Melbourne</a>, <a href="https://en.wikipedia.org/wiki/Victoria_(state)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Victoria</a>, tending to word and picture. His output spans social, earned, paid, podcast and the odd bit of interactive digital design — this page included. Caulfield is known for his ability to tap into the cultural zeitgeist, connecting it with contemporary Australian life and community storytelling. He currently works in the creative and community team at <a href="https://blackbird.vc/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Blackbird Ventures</a>.
                 </p>
               </div>
 
@@ -268,17 +267,16 @@ const Index = () => {
                   around both the heading AND the list together, so the
                   heading's border-b stops exactly where the longest
                   bullet line ends, rather than a fixed column width that
-                  overshoots this short list (unlike Skills/Early Life
+                  overshoots this short list (unlike Early Life
                   below, whose content actually reaches 628px).
-                  List order: Mons Monday Podcast first, then Flow
-                  Mountain Bike, then Freelance writing, then Animation. */}
+                  List order: Mons Monday Podcast first, then Freelance
+                  writing, then Animation. */}
               <div className="inline-block">
                 <ScrollTypeHeading id="notable-projects" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
                   Notable Work
                 </ScrollTypeHeading>
                 <ul className="list-disc ml-6 leading-relaxed relative z-10">
                   <li><strong>The Mons Monday Podcast</strong> — <a href="https://open.spotify.com/show/3JoJaIgpNMKfDrsUTAx5e9" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Episodes</a>, <a href="https://www.instagram.com/reel/DKZIy7nzjtx/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">launch</a>.</li>
-                  <li><strong>Flow Mountain Bike</strong> — <a href="https://www.facebook.com/flowmountainbike/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Facebook</a>, <a href="https://www.instagram.com/flow_mtb/?hl=en" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Instagram</a>, <a href="https://www.youtube.com/flowmountainbike" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">YouTube</a>.</li>
                   <li><strong>Freelance writing</strong> — <a href="https://fortemagazine.com.au/friends-of-anglesea-river-continue-five-year-fight-amid-mining-corp-alcoas-latest-water-bid/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Forte Magazine</a>, <a href="https://flowmountainbike.com/tag/sid-caulfield/" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Flow Mountain Bike</a>.</li>
                   <li><strong>Animation</strong> — <a href="https://www.youtube.com/watch?v=YKBWF2B2nw0&t=16s&pp=ygUTc2lkIGNhdWxmaWVsZCBicmFpbg%3D%3D" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Brain</a>.</li>
                 </ul>
@@ -360,38 +358,11 @@ const Index = () => {
                 </div>
               </div>
 
-              {/* Skills and Early Life sections — kept at the old main-
+              {/* Early Life section — kept at the old main-
                   column width (card width minus sidebar + gap) so the
                   float restructure above doesn't change how these look.
                   space-y-12 inside matches the outer rhythm. */}
               <div className="max-w-[628px] space-y-12">
-                {/* Skills and Areas of Expertise Section */}
-                <div>
-                  <ScrollTypeHeading id="skills" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
-                    Skills and Areas of Expertise
-                  </ScrollTypeHeading>
-                  <div className="flex flex-wrap gap-2">
-                    {[
-                      "Copywriting and editing",
-                      "Concept and campaign development",
-                      "Social and long-form storytelling",
-                      "PR and media relations",
-                      "Podcast writing and production",
-                      "Video editing and animation",
-                      "Adobe Creative Suite",
-                      "Audience profiling and insights",
-                      "Content strategy and scheduling",
-                      "Cross-platform syndication",
-                      "eDM planning, delivery and performance analysis",
-                      "SEO and metadata optimisation"
-                    ].map((skill) => (
-                      <span key={skill} className="bg-[#eaecf0] border border-[#a2a9b1] px-2 py-1 text-sm rounded cursor-pointer hover:bg-[#c8ccd1] hover:border-[#72777d] transition-colors duration-150">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Early Life and Education Section — last */}
                 <div>
                   <ScrollTypeHeading id="early-life" className="text-2xl font-serif border-b border-[#a2a9b1] mb-3">
@@ -404,7 +375,7 @@ const Index = () => {
                     Caulfield completed his secondary education at <a href="https://en.wikipedia.org/wiki/Belmont_High_School_(Victoria)" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Belmont High School</a> in <a href="https://en.wikipedia.org/wiki/Geelong" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">Geelong</a>, where he studied Media, Linguistics and Indonesian.
                   </p>
                   <p className="leading-relaxed relative z-10">
-                    He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a> and will graduate with a Bachelor of Communication (Journalism) in 2026.
+                    He went on to study at <a href="https://en.wikipedia.org/wiki/Royal_Melbourne_Institute_of_Technology" className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer">RMIT University</a>, graduating with a Bachelor of Communication (Journalism) in 2026.
                   </p>
                 </div>
               </div>
@@ -642,14 +613,6 @@ const SidebarContent = () => {
             <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Social</th>
             <td className="py-2 px-2 relative z-10">
               <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/sid-caulfield-27b838356/">LinkedIn</a>
-            </td>
-          </tr>
-          <tr className="border-t border-[#a2a9b1]">
-            <th className="text-left py-2 pr-2 align-top bg-[#eaecf0] px-2 relative z-[1]">Resume</th>
-            <td className="py-2 px-2 relative z-10">
-              <a className="text-[#0645ad] hover:underline" target="_blank" rel="noopener noreferrer" href="https://drive.google.com/file/d/1vcGW67M-gpblpqpXl9Ph46fHd17-7L6N/view?usp=sharing">
-                View PDF
-              </a>
             </td>
           </tr>
         </tbody>
