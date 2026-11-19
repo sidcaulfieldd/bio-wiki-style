@@ -33,13 +33,16 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
-      <main className="max-w-[1000px] mx-auto px-4 min-h-screen flex items-center">
+      <main className="max-w-[1000px] mx-auto px-4">
+        {/* Card runs the full height of the window (no top/bottom border,
+            so it reads as touching the edges); text centered inside it. */}
         <div
           ref={cardRef}
           data-cursor-trail-card
-          className="w-full bg-white border border-[#a7d7f9] p-6 relative"
+          className="w-full min-h-screen bg-white border-x border-[#a7d7f9] p-6 relative flex items-center justify-center"
         >
-          <p className="text-3xl font-serif text-center leading-snug relative z-10">
+          {/* 15px = half the previous text-3xl (30px). */}
+          <p className="text-[15px] font-serif text-center leading-snug relative z-10">
             Back in a min.
             <br />
             While you wait,{" "}
